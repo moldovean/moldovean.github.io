@@ -1,34 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-  <title> Hidden Markov Model Transition Matrix Estimation</title>
-  <meta charset="utf-8"> 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-  <!-- jQuery library -->
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-  <!-- Latest compiled JavaScript -->
-  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <title> Hidden Markov Model Transition Matrix Estimation</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- MathJax -->
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
   </head>
-  
-<body>
- <div class="container">
-  <h1> Estimating the Transition Probability Matrix in Hidden Markov Models <small> A gentle Introduction to Parameters estimation in <abbr title="Hidden Markov Model"> HMM </abbr> </small> </h1>
-  <p>Author: Adrian Vrabie</p> 
-  <p>Adviser: Dr. habil. Univ Prof Lozovanu Dmitrii</p> 
-  
-  <div class="row">
-    <div class="col-sm-2" style="background-color:lavender;">
-	<h2> Preface <small> Why study Markov Processes? </small></h2>
-    </div>
-    
-    <div class="col-sm-10" style="background-color:#dedede;">
-	Markovian Processes are used in a wide range of applications.
-    </div>
 
-  </div>
+  <body>
+    <div class="container">
+      <h1> Estimating the Transition Probability Matrix in the <abbr title="Hidden Markov Model"> HMM</abbr>s.
+        <small> A gentle Introduction to Markovian Processes and the Baum-Welch algorithm.  </small> </h1>
+      <p>Author: Adrian Vrabie</p>
+      <p>Adviser: Dr. habil. Univ Prof Lozovanu Dmitrii</p>
+
+      <div class="row">
+         <div class="col-sm-2" style="background-color:lavender;">
+           <h2>
+             Motivation
+           </h2>
+         </div>
+         <div class="col-sm-10" style="background-color:#dedede;">
+           <p>
+             The question that sparked my interest in studying Markovian processes is how to estimate the parameters of a HMM. In particular, given a set of observations, how to find the best estimates for the state transition stochastic matrix <span class="math inline">\(\mathbb{A}\)</span>.
+           </p>
+         </div>
+       </div>
+
+      <div class="row">
+        <div class="col-sm-2" style="background-color:lavender;">
+          <h2> Introduction <small> Why study Markov Processes? </small></h2>
+        </div>
+
+        <div class="col-sm-10" style="background-color:#dedede;">
+          <p> Markovian processes are ubiquitous in many real world applications, including algorithmic music composition, the Google search engine<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, asset pricing models, information processing, machine learning, computer malware detection<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> and many more.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> Markov chains can be used to help model how plants grow, chemicals react, and atoms diffuse and applications are increasingly being found in such areas as engineering, computer science, economics, and education. Jeffrey Kuan at Harvard University claimed that Markov chains not only had a tremendous influence on the development of mathematics, but that Markov models might well be <strong>the most <em>“real world”</em> useful mathematical concept after that of a derivative.</strong></p>
+          <p> The Hidden Markov Model is the most suitable class among Markovian processes for modelling applications in Finance and Economics, yet the difficulties in estimating its parameters still present an issue for widespread adoption by the industry and academia.</p>
+          <p> As we will see, Markovian chains and Hidden Markov Models have a rich yet accessible mathematical texture and have become increasingly applicable in a wide range of applications. Although the assumptions underpinning Markovian processes can be perceived as unacceptably restrictive at first, Markov models tend to fit the data particularly well. One can distinguish many types of Markovian processes, each with its set of particular features. In this tutorial we examine only one particular type: the models with time invariant probability distributions within a state.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> These models allow the use of the theoretical results from studies focused on the convergence properties of stationary distribution as time <span class="math inline">\(t \mapsto \infty\)</span>. This is of use in Economics because it opens avenues not only to reinterpret economic growth in the settings of a stochastic matrix but allows to efficiently compute expected long-term economic growth rates.</p>
+          <p> The extension of Markovian chains to HMMs allows modelling even a wider scope of applications, suitable not only to describing the behaviour of the economy at a macroeconomic level but also for monetary policy advise. This can also have the potential of solving the Morgenstern’s critique.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> </p>
+          <p> A broadly applicable algorithm for computing maximum likelihood estimates from incomplete data is the EM algorithm, see <span class="citation">A. P. Dempster (1977)</span>. The work of <span class="citation">A. P. Dempster (1977)</span> was based on the Ph.D. thesis of <span class="citation">Sundberg (1972)</span> which provided a very detailed treatment of the EM method for exponential functions. The first to describe this EM algorithm in the paradigm of a mathematical maximization technique for probabilistic functions in Markov chains was <span class="citation">Leonard E Baum et al. (1970)</span><a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a>. The paper of <span class="citation">(Rabiner 1989)</span> provided a practical guidance to understanding the results of <span class="citation">(Leonard E. Baum and Petrie 1966)</span> and <span class="citation">(Leonard E Baum et al. 1970)</span> and their application into an Engineering framework, specifically voice recognition tasks. In the same token, the papers <span class="citation">(James D Hamilton 2016)</span>, <span class="citation">(James D. Hamilton and Raj 2002)</span> and <span class="citation">(James D. Hamilton 2005)</span> adapted the mathematical techniques presented by <span class="citation">(Leonard E Baum et al. 1970)</span> in estimating the parameters for the regime-switching models in describing economic aggregates like growth rates. The same theoretical aspects discussed by <span class="citation">A. P. Dempster (1977)</span>, <span class="citation">Rabiner (1989)</span> and <span class="citation">Leonard E. Baum and Eagon (1967)</span> describe the Hidden Markov Models, moreover the EM algorithm is still the state of the art technique in estimating its parameters (<span class="math inline">\(\Theta\)</span>) for the underlying process of generating the observables which we denote by <span class="math inline">\(\mathcal{O}\)</span>. Ideally we would want to have a robust method of estimating the parameters of an HMM which performs well not only on past observations but also predict future outcomes. Such models could easily be adjusted to augment SDGE (Stochastic Dynamic General Equilibrium) models which are currently based on systems of difference equations. </p>
+          <p> Unfortunately, there are still no analytical methods for estimating the transition probability that would guarantee the maximum of probabilities of a certain output generated by a Markovian process and we would still need to use a heuristic approach in determining the “right” number of states within a hidden Markov model. This is because any attempt to use any estimation methodologies suitable to the framework of Markovian processes undoubtedly inherits all its problems (for example the EM algorithm does not guarantee you a global minimum while the Clustering algorithms will not be able to determine a reasonable amount of focal points without an abstract cost function). Therefore, solving a problem with a hidden Markov chain requires a numerical approach.       </p>
+          <p> The good news is that as computers become more powerful, not only more iterations are possible but also more attempts to find the maximum can be made. Paralel computer architectures with mapreduce functions allow even better optimization of the Baum-Welch algorithm and therefore a higher probability of finding the global maximum.  Nevertheless, a heuristic approach in chosing the model that makes sense after applying algorithms for estimating the transition probability matrix is, in my humble opinion, the most viable approach at the moment.</p>
+
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-sm-2" style="background-color:lavender;">
+          <h2>
+            Markov Chains <small> What are first order Markov Processes?</small>
+          </h2>
+        </div>
+        <div class="col-sm-10" style="background-color:#dedede;">
+          <blockquote>
+            <p>
+            One has to keep a particular openness of mind. Solving a problem is like going to a strange place, not to subdue it, but simply to spend time there, to preserve one’s openness, to wait for the signals, to wait for the strangeness to dissolve into sense.
+            </p>
+            <footer>Peter Whittle</footer>
+          </blockquote>
+
+          <p>A Markovian chain is a dynamical stochastic process which has the <em>Markovian property</em><a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a>. Before we formally introduce the notion of a <em>Markovian property</em>, it might be useful to take a step back and ask what a dynamical system is instead.</p>
+          <p>Using the notation of <span class="citation">(Fraser 2008)</span>, a dynamical system is a mapping <span class="math inline">\(f(x_{t}) \mapsto \mathbb{R}^{n}\)</span>, where <span class="math inline">\(x_{t} \in \mathbb{R}^n\)</span> and <span class="math inline">\(t\)</span> is a time-like index, which transitions the state <span class="math inline">\(x_t\)</span> to <span class="math inline">\(x_{t+1}\)</span>.</p>
+          <p>If this is also confusing perhaps the best way is to refer to real world examples: in Economics we might refer to <span class="math inline">\(x\)</span> as the “State of the Economy”, in tagging problems <span class="math inline">\(x\)</span> could be the part of speech in a sentence, in biology <span class="math inline">\(x\)</span> can be a tag from the set <span class="math inline">\(\{A,T,G,C\}\)</span> from the nucleotide sequences found in human DNA or <span class="math inline">\(x\)</span> could be a binary variable corresponding to whether a student gave a correct answer to a particular problem at the PISA test.<a href="#fn8" class="footnoteRef" id="fnref8"><sup>8</sup></a>. In Economic models, since “the state of the economy” is an abstract term which encapsulates various positive and normative elements of the economy,<a href="#fn9" class="footnoteRef" id="fnref9"><sup>9</sup></a> we could restrict the values the economy can take to a particular set <span class="math inline">\(\mathbb{X} = \{\)</span> recession, mild- recession, mild-growth, growth <span class="math inline">\(\}\)</span>. The set <span class="math inline">\(X\)</span> is known as the <em>state space</em>.</p>
+          <p>Given <span class="math inline">\(f(x)\)</span>, if <span class="math inline">\(x(t)\)</span> is known, one can deterministically find future values of <span class="math inline">\(x(t+1)\)</span>, <span class="math inline">\(x(t+2) \dots\)</span> independently of previous states <span class="math inline">\(x(t-1)\)</span>, <span class="math inline">\(x(t-2) \dots\)</span>, making historical information unnecessary. This “uselessness of history”, is also known as a <em>Markov property</em>. Statisticians might refer to the Markovian property by conditional independence of previous states given the current state. Therefore, a dynamical system is an instance of a Markov Chain since it satisfies the Markovian property.</p>
+          <p>One implication is that such models are particularly appealing in models which emphasise fundamental analysis for determining the intrinsic value of financial assets.<a href="#fn10" class="footnoteRef" id="fnref10"><sup>10</sup></a></p>
+          <p>Dynamic stochastic general equilibrium models (abbreviated DSGE or sometimes SDGE or DGE), used by the most influential central banks could also be augmented with Markovian processes. We could think of any dynamical systems and find ways to improve it with Markovian processes.</p>
+          <p>Although Markov chains are useful in their own right, as we will show in section [smc], one problem we face in practice when the state <span class="math inline">\(x(t)\)</span> is latent<a href="#fn11" class="footnoteRef" id="fnref11"><sup>11</sup></a>. Usually we have lagged or only partial information about <span class="math inline">\(x(t)\)</span> and thus we can only estimate it. The information that is available to us, is called also called <em>emissions</em> in the literature, denoted by <span class="math inline">\(y(t)\)</span><a href="#fn12" class="footnoteRef" id="fnref12"><sup>12</sup></a>. The observed variables are a function of the state the system is in, therefore we can represent: <span class="math display">\[y(t) \sim f(x(t))\]</span></p>
+        </div>
+      </div>
+
+
+      <h2>
+        References
+      </h2>
+        <div id="refs" class="references">
+        <div id="ref-Dempster77">
+        <p>A. P. Dempster, D. B. Rubin, N. M. Laird. 1977. “Maximum Likelihood from Incomplete Data via the EM Algorithm.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). [Royal Statistical Society, Wiley]: 1–38. <a href="http://www.jstor.org/stable/2984875" class="uri">http://www.jstor.org/stable/2984875</a>.</p>
+        </div>
+        <div id="ref-barbu08">
+        <p>Barbu, V.S., and N. Limnios. 2008. <em>Semi-Markov Chains and Hidden Semi-Markov Models Toward Applications: Their Use in Reliability and DNA Analysis</em>. Lecture Notes in Statistics. Springer New York. <a href="https://books.google.md/books?id=aNPajwEACAAJ" class="uri">https://books.google.md/books?id=aNPajwEACAAJ</a>.</p>
+        </div>
+        <div id="ref-baum1970maximization">
+        <p>Baum, Leonard E, Ted Petrie, George Soules, and Norman Weiss. 1970. “A Maximization Technique Occurring in the Statistical Analysis of Probabilistic Functions of Markov Chains.” <em>The Annals of Mathematical Statistics</em> 41 (1). JSTOR: 164–71.</p>
+        </div>
+        <div id="ref-baum1967">
+        <p>Baum, Leonard E., and J. A. Eagon. 1967. “An Inequality with Applications to Statistical Estimation for Probabilistic Functions of Markov Processes and to a Model for Ecology.” <em>Bull. Amer. Math. Soc.</em> 73 (3). American Mathematical Society: 360–63. <a href="http://projecteuclid.org/euclid.bams/1183528841" class="uri">http://projecteuclid.org/euclid.bams/1183528841</a>.</p>
+        </div>
+        <div id="ref-baum66">
+        <p>Baum, Leonard E., and Ted Petrie. 1966. “Statistical Inference for Probabilistic Functions of Finite State Markov Chains.” <em>Ann. Math. Statist.</em> 37 (6). The Institute of Mathematical Statistics: 1554–63. doi:<a href="https://doi.org/10.1214/aoms/1177699147">10.1214/aoms/1177699147</a>.</p>
+        </div>
+        <div id="ref-benesch2001baum">
+        <p>Benesch, T. 2001. “The Baum–Welch Algorithm for Parameter Estimation of Gaussian Autoregressive Mixture Models.” <em>Journal of Mathematical Sciences</em> 105 (6). Springer: 2515–8.</p>
+        </div>
+        <div id="ref-fraser08">
+        <p>Fraser, A.M. 2008. <em>Hidden Markov Models and Dynamical Systems</em>. SIAM E-Books. Society for Industrial; Applied Mathematics (SIAM, 3600 Market Street, Floor 6, Philadelphia, PA 19104). <a href="https://books.google.md/books?id=DMEWrB-2gGYC" class="uri">https://books.google.md/books?id=DMEWrB-2gGYC</a>.</p>
+        </div>
+        <div id="ref-Haggstrom02">
+        <p>Häggström, Olle. 2002. <em>Finite Markov Chains and Algorithmic Applications (London Mathematical Society Student Texts)</em>. 1st ed. Cambridge University Press. <a href="http://amazon.com/o/ASIN/0521890012/" class="uri">http://amazon.com/o/ASIN/0521890012/</a>.</p>
+        </div>
+        <div id="ref-hamilton2016macroeconomic">
+        <p>Hamilton, James D. 2016. “Macroeconomic Regimes and Regime Shifts.” National Bureau of Economic Research.</p>
+        </div>
+        <div id="ref-hamilton05">
+        <p>Hamilton, James D. 2005. “What’s Real About the Business Cycle?” Working Paper, Working paper series, no. 11161 (February). National Bureau of Economic Research. doi:<a href="https://doi.org/10.3386/w11161">10.3386/w11161</a>.</p>
+        </div>
+        <div id="ref-hamilton02">
+        <p>Hamilton, James D., and Baldev Raj. 2002. <em>Advances in Markov-Switching Models</em>. Springer Science Business Media. doi:<a href="https://doi.org/10.1007/978-3-642-51182-0">10.1007/978-3-642-51182-0</a>.</p>
+        </div>
+        <div id="ref-langville2011google">
+        <p>Langville, Amy N, and Carl D Meyer. 2011. <em>Google’s PageRank and Beyond: The Science of Search Engine Rankings</em>. Princeton University Press.</p>
+        </div>
+        <div id="ref-lin2011hunting">
+        <p>Lin, Da, and Mark Stamp. 2011. “Hunting for Undetectable Metamorphic Viruses.” <em>Journal in Computer Virology</em> 7 (3). Springer: 201–14.</p>
+        </div>
+        <div id="ref-Lozovanu15">
+        <p>Lozovanu, Dmitrii, and Stefan Pickl. 2015. <em>Optimization of Stochastic Discrete Systems and Control on Complex Networks</em>. Springer International Publishing. doi:<a href="https://doi.org/10.1007/978-3-319-11833-8">10.1007/978-3-319-11833-8</a>.</p>
+        </div>
+        <div id="ref-Rabiner89">
+        <p>Rabiner, L. R. 1989. “A Tutorial on Hidden Markov Models and Selected Applications in Speech Recognition.” <em>Proceedings of the IEEE</em> 77 (2): 257–86. doi:<a href="https://doi.org/10.1109/5.18626">10.1109/5.18626</a>.</p>
+        </div>
+        <div id="ref-Romer06">
+        <p>Romer, D. 2006. <em>Advanced Macroeconomics</em>. McGraw-Hill Higher Education. McGraw-Hill. <a href="https://books.google.md/books?id=9dW7AAAAIAAJ" class="uri">https://books.google.md/books?id=9dW7AAAAIAAJ</a>.</p>
+        </div>
+        <div id="ref-Stachurski2008">
+        <p>Stachurski, John, and Vance Martin. 2008. “Computing the Distributions of Economic Models via Simulation.” <em>Econometrica</em> 76 (2). The Econometric Society: 443–50. doi:<a href="https://doi.org/10.1111/j.1468-0262.2008.00839.x">10.1111/j.1468-0262.2008.00839.x</a>.</p>
+        </div>
+        <div id="ref-quantecon">
+        <p>Stachurski, John, and Thomas J. Sargent. 2016. “Quant Econ Quantative Economics.” <a href="http://quant-econ.net/" class="uri">http://quant-econ.net/</a>.</p>
+        </div>
+        <div id="ref-MITLA">
+        <p>Strang, Gilbert. 2011. “18.06SC Linear Algebra.” Massachusetts Institute of Technology: MIT OpenCourseWare. <a href="http://ocw.mit.edu/courses/mathematics/18-06sc-linear-algebra-fall-2011/index.htm" class="uri">http://ocw.mit.edu/courses/mathematics/18-06sc-linear-algebra-fall-2011/index.htm</a>.</p>
+        </div>
+        <div id="ref-sundberg1972maximum">
+        <p>Sundberg, R. 1972. “Maximum Likelihood Theory and Applications for Distributions Generated When Observing a Function of an Exponential Variable.” PhD thesis, PhD Thesis. Institute of Mathematics; Statistics, Stockholm University, Stockholm.</p>
+        </div>
+        <div id="ref-Tauchen86">
+        <p>Tauchen, George. 1986. “Finite State Markov-Chain Approximations to Univariate and Vector Autoregressions.” <em>Economics Letters</em> 20 (2). Elsevier BV: 177–81. doi:<a href="https://doi.org/10.1016/0165-1765(86)90168-0">10.1016/0165-1765(86)90168-0</a>.</p>
+        </div>
+      </div>
+        <div class="footnotes">
+        <hr />
+        <ol>
+        <li id="fn1"><p>see: <span class="citation">Langville and Meyer (2011)</span> and <span class="citation">Stachurski and Martin (2008)</span>,<a href="#fnref1">↩</a></p></li>
+        <li id="fn2"><p>For computer viruses and malware detection using Hidden Markov Models, see <span class="citation">(Lin and Stamp 2011)</span><a href="#fnref2">↩</a></p></li>
+        <li id="fn3"><p>see speech: <a href="http://www.math.harvard.edu/~kmatveev/markov.html">http://www.math.harvard.edu/ kmatveev/markov.html</a><a href="#fnref3">↩</a></p></li>
+        <li id="fn4"><p>Analogous to difference equations, we are not interested in the systems dependent on time <span class="math inline">\(t\)</span> as this will exponentially complicate our estimation technique.<a href="#fnref4">↩</a></p></li>
+        <li id="fn5"><p>In his book, On the Accuracy of Economic Observations (1950), Morgenstern expressed his concerns in the way the data is used from the national income accounts to reach conclusions about the state of the economy and about appropriate policies. Note for Mathematicians: Morgenstern was a friend of John von Neumann.<a href="#fnref5">↩</a></p></li>
+        <li id="fn6"><p>This is probably the reason this adaptation of the EM algorithm is called the Baum-Welch algorithm.<a href="#fnref6">↩</a></p></li>
+        <li id="fn7"><p>We define formally a Markov chain in section [smc]<a href="#fnref7">↩</a></p></li>
+        <li id="fn8"><p>For example, at the Math PISA test <span class="math inline">\(x_{ij}\)</span> could be whether student <span class="math inline">\(i\)</span> answered correctly problem <span class="math inline">\(j\)</span>.<a href="#fnref8">↩</a></p></li>
+        <li id="fn9"><p>The National Bureau of Economic Research (NBER) defines recession as “a significant decline in economic activity spread across the economy, lasting more than a few months, normally visible in real GDP, real income, employment, industrial production, and wholesale-retail sales.”, this is a much broader view than simply a decrease in GDP.<a href="#fnref9">↩</a></p></li>
+        <li id="fn10"><p>For example, the Gordon Dividend Discount Model which is augmented with a stream of dividends that are governed by a state transition matrix or a HMM which we will present in section [HMM].<a href="#fnref10">↩</a></p></li>
+        <li id="fn11"><p>which is a fancy way of saying that variables of interest are not always directly observable. Example: Suppose you’re looking for a partner and you want it to be intelligent. The IQ however is not directly observable, and you would have to infer it using his or her behaviour as a function of IQ.<a href="#fnref11">↩</a></p></li>
+        <li id="fn12"><p>Which is a fancy way of saying “observations”. The reason for that can be traced back to the applications of the Markovian processes in speech recognition tasks.<a href="#fnref12">↩</a></p></li>
+        <li id="fn13"><p>We could also think of an zero-order Markov process, the case when the current state is completely independent of the previous state, like throwing a dice. But then we simply get back to a classical probability distribution. If <span class="math inline">\(\left(\mathbf{\Omega, \Sigma, Pr}\right)\)</span> is a discrete sample space where <span class="math inline">\(\mathbf{\Omega}\)</span> is the set of all the possible outcomes, <span class="math inline">\(Pr: \Sigma \mapsto \mathbb{R}\)</span> where <span class="math inline">\(\sum_{x_{i}\in\mathbf{\Omega}}{Pr(x_{i})} =1\)</span>. In this case: <span class="math inline">\(Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i \right)\)</span>, therefore, it is completely redundant to introduce a zero-order Markov processes.<a href="#fnref13">↩</a></p></li>
+        <li id="fn14"><p>Please note that in a simple Markov Chain, unlike a Hidden Markov Model which we will define later, the states are observable.<a href="#fnref14">↩</a></p></li>
+        <li id="fn15"><p>One of the key insights of this paper is that a linear statistical model with homoskedastic errors cannot capture the nineteenth-century notion of a recurring cyclical pattern in key economic aggregates and that a simple Markov chain has a much better goodness of fit.<a href="#fnref15">↩</a></p></li>
+        <li id="fn16"><p>You can also simulate a Markov Chain given a stochastic matrix at <a href="http://setosa.io/ev/markov-chains/" class="uri">http://setosa.io/ev/markov-chains/</a><a href="#fnref16">↩</a></p></li>
+        <li id="fn17"><p>period is an abstract term, in the paper of <span class="citation">Rabiner (1989)</span> days are assumed, in the example of <span class="citation">James D. Hamilton and Raj (2002)</span> months, however for economic aggregates usually quarters are assumed<a href="#fnref17">↩</a></p></li>
+        <li id="fn18"><p>according to a Math professor from MIT (quote needed), this is the second most beautiful series in Math after <span class="math inline">\(e^x\)</span><a href="#fnref18">↩</a></p></li>
+        <li id="fn19"><p>other beautiful series derived from the geometric series: <a href="http://lycofs01.lycoming.edu/~sprgene/M332/Sums_Series.pdf"> http://lycofs01.lycoming.edu/ sprgene/M332/Sums_Series.pdf</a><a href="#fnref19">↩</a></p></li>
+        <li id="fn20"><p>data from the upstream oil industry as an example<a href="#fnref20">↩</a></p></li>
+        <li id="fn21"><p>In practice it is easier to estimate the profits of a given project in a year given the state of the economy.<a href="#fnref21">↩</a></p></li>
+        <li id="fn22"><p>Octave programming language is very similar to Matlab, except that it is free and open source.<a href="#fnref22">↩</a></p></li>
+        <li id="fn23"><p>The Production Sharing Contracts can be found at <a href="http://cabinet.gov.krd/p/p.aspx?l=12&amp;p=1" class="uri">http://cabinet.gov.krd/p/p.aspx?l=12&amp;p=1</a><a href="#fnref23">↩</a></p></li>
+        <li id="fn24"><p>This can be usually found at Article 6 clause 6.9, 6.10, 6.11 and 6.12, for example the Contract signed between Marathon and KRG at <a href="http://cabinet.gov.krd/p/p.aspx?l=12&amp;r=296&amp;h=1&amp;s=030000&amp;p=70" class="uri">http://cabinet.gov.krd/p/p.aspx?l=12&amp;r=296&amp;h=1&amp;s=030000&amp;p=70</a><a href="#fnref24">↩</a></p></li>
+        <li id="fn25"><p><span class="math inline">\(\mathbf{x}\mathbb{A} = \mathbf{x}\)</span> should not be confused with <span class="math inline">\(\mathbb{A}\mathbf{x} = \mathbf{x}\)</span> since any vector <span class="math inline">\(\mathbf{x}\)</span> which has <span class="math inline">\(x_i = x_j\)</span> satisfies this equality.<a href="#fnref25">↩</a></p></li>
+        <li id="fn26"><p>that is <span class="math inline">\(\mathbf{v}\)</span> is not a zero vector<a href="#fnref26">↩</a></p></li>
+        <li id="fn27"><p>In Octave as well as in other programming languages directly comparing sum(eig(A)) == trace(A) will usually not work due to rounding errors.<a href="#fnref27">↩</a></p></li>
+        <li id="fn28"><p>we will define what irreducible is later.<a href="#fnref28">↩</a></p></li>
+        <li id="fn29"><p>orthogonal is just another way of saying perpendicular or independent vectors<a href="#fnref29">↩</a></p></li>
+        <li id="fn30"><p>the limiting probability matrix is denoted by <span class="math inline">\(\mathbb{Q}\)</span><a href="#fnref30">↩</a></p></li>
+        <li id="fn31"><p>Of course we are assuming that the space state transition probability matrix <span class="math inline">\(\mathbb{A}\)</span> computed by <span class="citation">James D. Hamilton (2005)</span> for the United States is valid for Kurdistan Region of Iraq. For these conclusions to have any validity, the study of Hamilton needs to be replicated for KRG and more than 3 states would be desirable to be used.<a href="#fnref31">↩</a></p></li>
+        <li id="fn32"><p>we will present a model when the discount rate is not zero<a href="#fnref32">↩</a></p></li>
+        <li id="fn33"><p>also called stochastic kernel in literature, see for example http://quant-econ.net/jl/stationary_densities.html<a href="#fnref33">↩</a></p></li>
+        <li id="fn34"><p>In a nutshell, the Solow–Swan model assumes a closed market economy. A single good (output) is produced using two factors of production, labour <span class="math inline">\(L\)</span> and capital <span class="math inline">\(K\)</span> in an aggregate production function that satisfies the Inada conditions, which imply that the elasticity of substitution must be asymptotically equal to one. https://en.wikipedia.org/wiki/Solow-Swan_model<a href="#fnref34">↩</a></p></li>
+        <li id="fn35"><p>Robert Solow has was awarder the Nobel Prize in Economics.<a href="#fnref35">↩</a></p></li>
+        <li id="fn36"><p>For example the open source library KernelDensity for Julia programming language which is hosted at https://github.com/JuliaStats/KernelDensity.jl<a href="#fnref36">↩</a></p></li>
+        <li id="fn37"><p>For a 2 state economy over a span of 10 years, we would call our function 1024 times, in contrast, a 3 state economy on quarterly data would require 12157665459056928801 (<span class="math inline">\(1.22*10^{19}\)</span>) calls.<a href="#fnref37">↩</a></p></li>
+        <li id="fn38"><p>usually denoted by <span class="math inline">\(\varepsilon_i(k)\)</span> in the literature<a href="#fnref38">↩</a></p></li>
+        <li id="fn39"><p>In the appendix I will present the Bayesian rules in probability<a href="#fnref39">↩</a></p></li>
+        <li id="fn40"><p>Since the current outcome depends on the current state and not on past outcomes <span class="math inline">\(Pr(o_k|x_k,o_{k-1},o_{k-2}...) =Pr(o_k|x_k) \)</span>. In practice, it is reasonable to assume that the expected outcome of a function (the growth of Economy) depends on the intrinsic values that define the system, rather than past outcomes.<a href="#fnref40">↩</a></p></li>
+        <li id="fn41"><p>Mathematicalmonk channel present a gentle introduction to HMM and builds intuition what types of questions we can answer https://www.youtube.com/watch?v=7zDARfKVm7s&amp;list=PLD0F06AA0D2E8FFBA<a href="#fnref41">↩</a></p></li>
+        <li id="fn42"><p>usually denoted by <span class="math inline">\(\varepsilon_i(k)\)</span> in the literature<a href="#fnref42">↩</a></p></li>
+        <li id="fn43"><p>I follow the notation of: http://personal.ee.surrey.ac.uk/Personal/P.Jackson/tutorial/hmm_tut2.pdf<a href="#fnref43">↩</a></p></li>
+        <li id="fn44"><p>I used the steps of the algorithm from Wikipedia, https://en.wikipedia.org/wiki/Forward_algorithm except that I corrected for mistakes. For example: Wiki says it uses chain rule, when they meant the law of total probability.<a href="#fnref44">↩</a></p></li>
+        <li id="fn45"><p>Simple as it may sound, according to David Forney<a href="#fnref45">↩</a></p></li>
+        <li id="fn46"><p>https://en.wikipedia.org/wiki/Baum-Welch_algorithm<a href="#fnref46">↩</a></p></li>
+        <li id="fn47"><p>see: http://ghmm.org/<a href="#fnref47">↩</a></p></li>
+        <li id="fn48"><p>link: <a href="http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml" class="uri">http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml</a><a href="#fnref48">↩</a></p></li>
+        <li id="fn49"><p><a href="https://github.com/moldovean/usm/tree/master/Thesis" class="uri">https://github.com/moldovean/usm/tree/master/Thesis</a><a href="#fnref49">↩</a></p></li>
+        <li id="fn50"><p>link: <a href="http://sourceforge.net/svn/?group_id=67094" class="uri">http://sourceforge.net/svn/?group_id=67094</a><a href="#fnref50">↩</a></p></li>
+        <li id="fn51"><p>link: http://stats.stackexchange.com/questions/70545/looking-for-a-good-and-complete-probability-and-statistics-book<a href="#fnref51">↩</a></p></li>
+        <li id="fn52"><p>link: <a href="https://onlinecourses.science.psu.edu/stat414/node/241" class="uri">https://onlinecourses.science.psu.edu/stat414/node/241</a><a href="#fnref52">↩</a></p></li>
+        <li id="fn53"><p>link: https://www.statlect.com/fundamentals-of-probability/Bayes-rule<a href="#fnref53">↩</a></p></li>
+        <li id="fn54"><p>link: http://stattrek.com/probability/bayes-theorem.aspx<a href="#fnref54">↩</a></p></li>
+        <li id="fn55"><p>link: http://setosa.io/ev/eigenvectors-and-eigenvalues/<a href="#fnref55">↩</a></p></li>
+        <li id="fn56"><p><a href="http://ghmm.org" class="uri">http://ghmm.org</a><a href="#fnref56">↩</a></p></li>
+        <li id="fn57"><p><a href="http://www.cs.rutgers.edu/~schliep/index.html">http://www.cs.rutgers.edu/ schliep/index.html</a><a href="#fnref57">↩</a></p></li>
+        <li id="fn58"><p><a href="https://en.wikipedia.org/wiki/Andrey_Markov" class="uri">https://en.wikipedia.org/wiki/Andrey_Markov</a><a href="#fnref58">↩</a></p></li>
+        </ol>
+      </div>
 
  </div>
-</body>
 
+
+
+  </body>
 </html>
