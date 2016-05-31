@@ -20,7 +20,7 @@
         <h1> Estimating the Transition Probability Matrix in the <abbr title="Hidden Markov Model"> HMM</abbr>s.
           <small> A gentle Introduction to Markovian Processes and the Baum-Welch algorithm.  </small> </h1>
         <p>Author: Adrian Vrabie</p>
-        <p> Contact me at: <em>first_name@last_name.net</em></p>
+        <p> <span class="glyphicon glyphicon-envelope"></span> <em>first_name@last_name.net</em></p>
         <p>Adviser: <a href="http://www.math.md/en/people/lozovanu-dmitrii/" > Dr. habil. Univ Prof Lozovanu Dmitrii </a></p>
 
       </div>
@@ -34,9 +34,9 @@
            </h2>
          </div>
          <div class="col-sm-10" style="background-color:#dedede;">
-           <h2> Motivation </h2>
+           <h2> Pursued Objectives </h2>
            <p>
-             The question that sparked my interest in studying Markovian processes is how to estimate the parameters of a HMM. In particular, given a set of observations, how to find the best estimates for the state transition stochastic matrix <span class="math inline">\(\mathbb{A}\)</span>.
+             The first objective is understanding what Markov Chains and Hidden Markov Models are. Finally, understanding how to estimate the parameters of an <abbr title="Hidden Markov Model">HMM</abbr>. In particular, given a set of observations, how to find the best estimates for the state transition stochastic matrix <span class="math inline">\(\mathbb{A}\)</span>.
            </p>
          </div>
        </div>
@@ -792,6 +792,23 @@
           <p><span class="math display">\[Pr\left(\mathcal{O}, x_1,x_2,...x_T,| \lambda \right)= \underset{X}{\operatorname{argmax}} \: \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
           <p>In a nutshell, the Viterbi algorithm examines at each step all the possibilities of getting to that particular state and retains only the most likely path to it, thus eliminating all other possibilities.<a href="#fn45" class="footnoteRef" id="fnref45"><sup>45</sup></a></p>
           <p>For the first step, the probability of being in state <span class="math inline">\(x_k\)</span> at time <span class="math inline">\(t=1\)</span> and observing <span class="math inline">\(o_1\)</span> is simply an updated version of <span class="math inline">\(\pi_k\)</span>. <span class="math display">\[Pr(x_1=k|o_1,\lambda) = \frac{Pr(x_1=k,o_1)}{\sum_{x_1\in S}Pr(x_1,o_1)}= \frac{\pi_{x_1}b_{x_1}(o_1)}{\sum_{x_i \in S} \pi_{x_i}b_{x_i}(o_1)}\]</span> where <span class="math inline">\(s \in S\)</span> and <span class="math inline">\(S = \{1..N\}\)</span> the set of all possible states. But we can still reduce the complexity of this formula by dropping the denominator, since maximizing the probability depends only on the numerator part, therefore: <span class="math display">\[V_{1,k}=\pi_{x_k}b_{x_k}(o_1)\]</span> For the next iterations: <span class="math display">\[V_{t,k} = \underset{x_{t-1}\in S}{\operatorname{max}}\left( V_{t-1,x_{t-1}} \mathbf{a}_{x_{t-1},k} \mathbf{b}_{k}(o_t) \right)\]</span> <span class="math display">\[\mathbf{V}_t = \{V_{t,k}|k \in  S\}\]</span> We denote the sequence of <span class="math inline">\(X = \{ x_1,x_2,...,x_T \}\)</span> that generates <span class="math inline">\(V_T\)</span>: <span class="math display">\[\mathbf{x}_T = \underset{x\in S}{\operatorname{arg\, max}}\mathbf{V}_{T,x}\]</span> The algorithm’s complexity is <span class="math inline">\(\mathcal{O}(N^2*T)\)</span> which is linear in T.</p>
+
+          <h2 id="viterbi-algorithm">Viterbi Algorithm</h2>
+          <p>The goal of this subsection is to create a parsimonious implementation of the Viterbi algorithm for demonstration purposes. I used the default Python 2.7 and IPython Notebook, but it should work in Python 3.+ as well, though I did not test it.</p>
+          <pre><code>
+          def viterbi(obs, states, start_p, trans_p, emit_p):
+              //obs - Observations vector
+
+              V = [{}]
+              for s in states:
+                  V[0][s] = start_p[s]*emit_p[s][obs[0]]
+              for t in range(1,len(obs)):
+                  V.append({})
+                  for s in states:
+                      V[t][s] = max(V[t-1][s_i]*trans_p[s_i][s]*emit_p[s][obs[t]] for s_i in states)
+              return V
+              </code></pre>
+
 
         </div>
       </div>
