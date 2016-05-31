@@ -29,12 +29,12 @@
 
       <!-- The Kernel -->
       <div class="row">
-         <div class="col-sm-2" style="background-color:lavender;">
+         <div class="col-sm-2 well-sm" style="background-color:lavender;">
            <h2>
              <small> The Kernel </small
            </h2>
          </div>
-         <div class="col-sm-10" style="background-color:#dedede;">
+         <div class="col-sm-10 well" >
            <h2> Pursued Objectives </h2>
            <p>
              The first objective is understanding what Markov Chains and Hidden Markov Models are. Finally, understanding how to estimate the parameters of an <abbr title="Hidden Markov Model">HMM</abbr>. In particular, given a set of observations, how to find the best estimates for the state transition stochastic matrix <span class="math inline">\(\mathbb{A}\)</span>.
@@ -43,11 +43,11 @@
        </div>
       <!-- Introduction-->
       <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h2>  <small> Why study Markov Processes? </small></h2>
         </div>
 
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" >
           <h2> Introduction </h2>
           <p> Markovian processes are ubiquitous in many real world applications, including algorithmic music composition, the Google search engine<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, asset pricing models, information processing, machine learning, computer malware detection<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> and many more.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> Markov chains can be used to help model how plants grow, chemicals react, and atoms diffuse and applications are increasingly being found in such areas as engineering, computer science, economics, and education. Jeffrey Kuan at Harvard University claimed that Markov chains not only had a tremendous influence on the development of mathematics, but that Markov models might well be <strong>the most <em>“real world”</em> useful mathematical concept after that of a derivative.</strong></p>
           <p> The Hidden Markov Model is the most suitable class among Markovian processes for modelling applications in Finance and Economics, yet the difficulties in estimating its parameters still present an issue for widespread adoption by the industry and academia.</p>
@@ -66,7 +66,7 @@
              <small> What are Markovian Processes?</small>
           </h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" >
           <h2> Markov Chains </h2>
           <blockquote>
             <p>
@@ -90,7 +90,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2><small> Examples of Markovian Processes </small></h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" >
           <h2 id="smc">Applications of Markov Chains in Economics </h2>
           <p>There are many types of Markov Chains, choosing the appropriate model depends on the specific problem being modelled:</p>
           <blockquote>
@@ -237,7 +237,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2><small> A little bit of Theory. </small></h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" >
           <h2 id="irreducible-stochastic-matrices">Irreducible Stochastic Matrices</h2>
           <p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>irreducible</strong> if its graph is strongly connected, that is: there <span class="math inline">\(\exists \; t \geq 0\)</span> : <span class="math inline">\(Pr(X_{t}=j|X_{0}=i) &gt; 0 \)</span></p>
           <p>We will denote by <span class="math inline">\(P^t(i,j)= Pr(X_{t}=j|X_{0}=i) \)</span>. In the example from section [smc] our stochastic matrix is irreducible since we can end up in any state from any state after <span class="math inline">\(t \geq 1\)</span> steps.</p>
@@ -258,7 +258,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2><small> What is that theory useful for? </small></h2>
         </div>
-        <div class="col-sm-10" style="background-color:lavender;">
+        <div class="col-sm-10 well" >
           <h2>Back to our Petroleum example</h2>
           <p>A direct result of this theorem is that Marathon Oil company can expect: <span class="math display">\[\lim_{t \to \infty} \mu \mathbb{A}^t = \pi\]</span></p>
           <p>It would be interesting to compare our results with the limiting probability distribution, e.i. when <span class="math inline">\(t \to \infty\)</span>. To find the limiting probability distribution, observe that any <span class="math inline">\(\lambda_i &lt;1\)</span> will tend to be <span class="math inline">\(0\)</span> when <span class="math inline">\(t \to \infty\)</span>, therefore we can write: <span class="math display">\[\mathbf{\phi} = \lim_{t \to \infty} \mathbf{S}\Lambda^t\mathbf{S}^{-1} = \mathbf{S} \left(\begin{array}{ccc}
@@ -285,7 +285,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2> <small> A Monte Carlo Simulation of a Markov Chain </small> </h2>
         </div>
-        <div class="col-sm-10" style="background-color:lavender;">
+        <div class="col-sm-10 well">
           <h2 id="sec:SimMC">Simulating a Markov Chain</h2>
           <p>In order to have a better understanding of the implicit variance of the Markov chain presented above we can simulate it. There are a plethora of open source libraries providing frameworks to accomplish such simulations. We will make our own using the open source QuantEcon package from GitHub which was written by <span class="citation">Stachurski and Sargent. (2016)</span>. We will simulate our example using the Julia programming language for the example from Hamilton based on software recommendations from <span class="citation">Stachurski and Sargent. (2016)</span>. Below we provide a working example. The requirements to replicate this example will be provided in the Annex.</p>
           <p>Inputting the data: The probability transition matrix <span class="math inline">\(\mathbb{A}\)</span>, the initial state probability vector <span class="math inline">\(\mu\)</span> and pay-off expectations <span class="math inline">\(\mathbb{E}\)</span></p>
@@ -429,7 +429,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2> <small> Other types of Discrete Markovian Processes </small> </h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well">
           <h2 id="second-and-n-order-markov-processes">Second and N-order Markov Processes</h2>
           <p>A second order, third order up to <span class="math inline">\(\text{n}^{th}\)</span> order Markov process behaves the same as described by [smc], except: <span class="math display">\[Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i \right|X_{t-1}=x_{t-1},...,X_{t-n}=x_{t-n})\]</span></p>
           <p>Given observable outcomes, choosing a model is a trade-off between a parsimonious model and a better goodness of fit. Given a likelihood function of the model <span class="math inline">\(\mathbf{\Lambda}\)</span>, once can use a loss function, maximize a probability distribution or use AIC, e.i. <span class="math inline">\(2k-\ln{\mathbf{\Lambda}}\)</span>. Another favourable characteristic of the N-order Markov Processes to be useful in practice is that the transition probability matrix <span class="math inline">\(\mathbb{A}\)</span> be <strong><em>irreducible</em></strong>.</p>
@@ -452,7 +452,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2> <small> Continuous State Markov Chains </small> </h2>
         </div>
-        <div class="col-sm-10 well" style="background-color:#dedede;">
+        <div class="col-sm-10 well">
           <h2 id="continuous-state-markov-chains">Continuous State Markov Chains</h2>
           <p>A continuous state Markov Chain extends the model presented in section [smc] by allowing a probability density distribution on the states. These have been analysed extensively in the paper of <span class="citation">Benesch (2001)</span>. More formally, a stochastic kernel on <span class="math inline">\(\mathbb{S}\)</span> is a function <span class="math inline">\(p:\mathbb{S}\times \mathbb{S}\in \mathbb{R}\)</span> with the property that: <span class="math display">\[\begin{aligned}
            &amp; p(x, y) \geq 0 \quad \forall x,y \in \mathbb{S} \\
@@ -631,7 +631,7 @@
         <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h2> <small> Simulating of a <abbr title="Hidden Markov Model">HMM</abbr> </small> </h2>
         </div>
-        <div class="col-sm-10 well" style="background-color:#dedede;">
+        <div class="col-sm-10 well">
           <h2 id="simulating-a-hidden-markov-model">Simulating a Hidden Markov Model</h2>
             <p>In this example we will generate a sequence of a balanced and an unbalanced coin that follows an HMM (<span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>) in the Python programming language using the ghmm package. For installing the ghmm library please refer to the Annex and <a href="http://ghmm.org" class="uri">http://ghmm.org</a>. <span class="math display">\[\mathbb{A}= \left(\begin{array}{cc}
             0.9 &amp; 0.1 \\
@@ -715,7 +715,7 @@
         <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h2><small> The Baum Welch Algorithm </small></h2>
         </div>
-        <div class="col-sm-10 well-sm" >
+        <div class="col-sm-10 well" >
           <h1>The Baum Welch Algorithm</h1>
             <p> The best way to understand why the Baum-Welch algorithm works is to dissect it into easier algorithms and combine them, until we can answer the questions we posed earlier.</p>
             <dl>
@@ -735,7 +735,7 @@
         <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h2><small> The Forward Backward Algorithm </small></h2>
         </div>
-        <div class="col-sm-10 well-sm" >
+        <div class="col-sm-10 well" >
           <h2 id="sec:FBA">The Forward/Backward Algorithm</h2>
             <p>Given an HMM<span class="math inline">\((\mathbb{A}, \mathbb{B}, \pi)\)</span>, as introduced in section [HMM] which we will denote by <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, where <span class="math inline">\(i \in \{1..N\}\)</span>, the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span> e.i.: <span class="math display">\[Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}\]</span> We can use Bayesian rule<a href="#fn39" class="footnoteRef" id="fnref39"><sup>39</sup></a> to write <span class="math inline">\(Pr(x_k | \mathcal{O} , \mathbf{\lambda})\)</span> as</p>
             <p><span class="math display">\[\label{eq:fb1}
@@ -831,7 +831,7 @@
         <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h2><small> The Baum-Welch Algorithm algorithm </small></h2>
         </div>
-        <div class="col-sm-10 well-sm" >
+        <div class="col-sm-10 well" >
           <h2 id="sec:BW">The Baum-Welch Algorithm</h2>
           <p>Given an observable sequence <span class="math inline">\(\mathcal{O} = \{o_1,o_2,...,o_T \}\)</span> and assuming this sequence was generated by an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> as define in section [HMM], we want to find out the most likely set of parameters of <span class="math inline">\(\lambda\)</span> that generated the sequence <span class="math inline">\(\mathcal{O}\)</span>. Denoting by <span class="math inline">\(\theta = \{\mathbb{A,B},\pi\}\)</span> the set of parameters of <span class="math inline">\(\lambda\)</span>, we want to find out <span class="math inline">\(\theta\)</span> that maximizes the probability:</p>
           <p><span class="math display">\[\theta^{\star} = \underset{\theta}{\operatorname{arg\, max}}Pr\left(\mathcal{O} | \lambda(\theta)\right)\]</span></p>
@@ -882,7 +882,7 @@
         <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h1><small> The Baum-Welch Algorithm algorithm </small></h1>
         </div>
-        <div class="col-sm-10 well-sm">
+        <div class="col-sm-10 well">
           <h1 id="conclusions">Conclusions</h1>
           <p>As we have seen in the first part of this thesis Markov Chains have a wide area of applicability in modelling topics in Economics and Finance. Moreover, they provide a fresh paradigm for viewing traditional concepts in Economics such as long term economic growth or stock returns in Finance. The extension of the discrete state Markov chain to continuous states allows us to see the dynamics of the very probability distribution of the variable of interest rather than point estimates. Also, we have seen that the initial distribution assumptions play a crucial role in the variance of subsequent distributions and most importantly, the dispersion not only remains persistent after long periods of time (30 cycles in our case) but it can also increase casting doubt about concepts such as long run equilibrium <em>steady states</em>. On the other hand, Markov Chains are sensitive to how we define and what we incorporate in such abstract concepts as <em>states</em>. Even if we assume that the economy is governed by distinct economic states, it is still a matter of opinion when deciding the number of states. Nevertheless, I avail myself to conclude that the advantages of augmenting a model even with a parsimonious 2 state Markov Model can be expected to yield significant improvements.</p>
           <p>A more general model of the Markov Chains that we have discussed in section [HMM], suitable with latent states or imperfect information, is the Hidden Markov Model (also called regime switching model in some sources). It not only allows better fit of traditional econometrics models such as ARMA and ARIMA, it does so using fewer parameters. The drawbacks of the HMM is its complexity and computational requirements in estimating the state transition probabilities. Fortunately, we have concluded that the use of dynamic programming techniques such as the Baum-Welch algorithm, extensively described in [sec:BW] partially solves these problems. The drawback of the Baum-Welch algorithm is that it does not guarantee a global optimum but only a local one and depending on the model, many random iterations of the initial probability distributions are needed to find the parameters of the HMM that generated the observations.</p>
