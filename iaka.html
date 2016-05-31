@@ -69,12 +69,12 @@
 <p>What is more useful in practice is that this matrix is of use when calculating the expected pay-off of a particular pro-cyclical investment project<a href="#fn20" class="footnoteRef" id="fnref20"><sup>20</sup></a> or even better suited for financial assets. Let’s assume the following net pay-offs as a function of the state:</p>
 <p><span class="math display">\[\mathbb{E} = \left( \begin{array}{c}
 0.215 \\
-0.015 \\ 
+0.015 \\
 -0.18 \\
 \end{array} \right)\]</span></p>
 <p>That is, if the economy is in normal growth state, we expect the Internal Rate of Return to be 21.5 <span class="math inline">\(\%\)</span>.<a href="#fn21" class="footnoteRef" id="fnref21"><sup>21</sup></a></p>
 <p>If the state <span class="math inline">\(x_t\)</span> is known at <span class="math inline">\(t\)</span> the expected pay-off is trivial: <span class="math display">\[E[t+1 | X_t= \texttt{mild recession}] = \sum_{j \in X} \mathbf{a}_{2,j}\mathbf{e}_j\]</span></p>
-<p>If the current state is not known, we can use a discrete distribution to assess in which state the economy is at time <span class="math inline">\(t\)</span>, following <span class="citation">(Lozovanu and Pickl 2015)</span> we will denote it by <span class="math inline">\(\mathbf{\mu}\)</span>. <span class="math display">\[\mu = \left( \begin{array}{c} 
+<p>If the current state is not known, we can use a discrete distribution to assess in which state the economy is at time <span class="math inline">\(t\)</span>, following <span class="citation">(Lozovanu and Pickl 2015)</span> we will denote it by <span class="math inline">\(\mathbf{\mu}\)</span>. <span class="math display">\[\mu = \left( \begin{array}{c}
 0.1 \\
 0.55 \\
 0.35
@@ -84,7 +84,7 @@
      0.14500   0.77800   0.07700;
      0.00000   0.50800   0.49200 ];
 E = [0.215,   0.015,  -0.18];
-E = transpose(E);    
+E = transpose(E);
 mu = [0.1,   0.55,   0.35];
 
 #for the next period, given the state
@@ -183,6 +183,7 @@ ans =
 &gt;&gt; mu*A^25*E
 ans =  0.16822</code></pre>
 <p>we can still expect a 16.8<span class="math inline">\(\%\)</span> return. To understand why this is so, we have to introduce the Fundamental theorem of Markov Chains.</p>
+
 <h2 id="irreducible-stochastic-matrices">Irreducible Stochastic Matrices</h2>
 <p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>irreducible</strong> if its graph is strongly connected, that is: there <span class="math inline">\(\exists \; t \geq 0\)</span> : <span class="math inline">\(Pr(X_{t}=j|X_{0}=i) &gt; 0 \)</span></p>
 <p>We will denote by <span class="math inline">\(P^t(i,j)= Pr(X_{t}=j|X_{0}=i) \)</span>. In the example from section [smc] our stochastic matrix is irreducible since we can end up in any state from any state after <span class="math inline">\(t \geq 1\)</span> steps.</p>
@@ -194,6 +195,7 @@ ans =  0.16822</code></pre>
 <p>As we have shown, the stochastic matrix in the Markov chain presented by <span class="citation">James D. Hamilton (2005)</span> is both irreducible and aperiodic. A theorem proven by <span class="citation">Häggström (2002)</span> states that:</p>
 <p>[Fundamental Theorem of Markov Chains][Haggstrom] If a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> is irreducible and aperiodic then there is a unique probability distribution <span class="math inline">\(\pi\)</span> that is stationary on <span class="math inline">\(\mathbb{A}\)</span>.</p>
 <p>provided by <span class="citation">Häggström (2002)</span>.</p>
+
 <p>A direct result of this theorem is that Marathon Oil company can expect: <span class="math display">\[\lim_{t \to \infty} \mu \mathbb{A}^t = \pi\]</span></p>
 <p>It would be interesting to compare our results with the limiting probability distribution, e.i. when <span class="math inline">\(t \to \infty\)</span>. To find the limiting probability distribution, observe that any <span class="math inline">\(\lambda_i &lt;1\)</span> will tend to be <span class="math inline">\(0\)</span> when <span class="math inline">\(t \to \infty\)</span>, therefore we can write: <span class="math display">\[\mathbf{\phi} = \lim_{t \to \infty} \mathbf{S}\Lambda^t\mathbf{S}^{-1} = \mathbf{S} \left(\begin{array}{ccc}
 1 &amp;0 &amp;0 \\
@@ -210,6 +212,7 @@ ans =
 0.812800, 0.162560,  0.024640\\
 \end{array} \right)\]</span> which is surprisingly close to our results when <span class="math inline">\(t=25\)</span>.</p>
 <p>Having the state space stochastic matrix, we can answer how long does a recession usually last? To answer this question, as well as questions related to analysis of variance (ANOVA), we could use Monte Carlo simulations.</p>
+
 <h3 id="sec:SimMC">Simulating a Markov Chain</h3>
 <p>In order to have a better understanding of the implicit variance of the Markov chain presented above we can simulate it. There are a plethora of open source libraries providing frameworks to accomplish such simulations. We will make our own using the open source QuantEcon package from GitHub which was written by <span class="citation">Stachurski and Sargent. (2016)</span>. We will simulate our example using the Julia programming language for the example from Hamilton based on software recommendations from <span class="citation">Stachurski and Sargent. (2016)</span>. Below we provide a working example. The requirements to replicate this example will be provided in the Annex.</p>
 <p>Inputting the data: The probability transition matrix <span class="math inline">\(\mathbb{A}\)</span>, the initial state probability vector <span class="math inline">\(\mu\)</span> and pay-off expectations <span class="math inline">\(\mathbb{E}\)</span></p>
@@ -266,7 +269,7 @@ end</code></pre>
     A - Probability Transition Matrix nxn stochastic matrix
     mu - initial state probability distribution 1xn vector
     E - expected pay-off emission probability nx1 vector
-    
+
     Optional:
     nr_iter - Integer+
     t - number of periods in the mc function
@@ -284,17 +287,17 @@ end</code></pre>
     &quot;&quot;&quot;
     Markov Chain Simulation computes the average log return
     Required:
-    
+
     mc - The function that we want to simulate (ex: Markov Chain sample path )
     A - Probability Transition Matrix nxn stochastic matrix
     mu - initial state probability distribution 1xn vector
     E - expected pay-off emission probability nx1 vector
-    
+
     Optional:
     nr_iter - Integer+
     t - number of periods in the mc function
     &quot;&quot;&quot;
-    
+
     X = Array(Float32,nr_iter)
     map!(y-&gt;mapreduce(x-&gt;log(1+E[x]),+, mc(A,mu, sample_size= t))/t,X)
     return X
@@ -317,6 +320,7 @@ title(&quot;Markov Chain Simulation for Marathon Oil, \$n=10^3\$&quot;)</code></
 <p class="caption">Markov Chain Simulation<span data-label="fig:MCSim5"></span></p>
 </div>
 <p>For <span class="math inline">\(n = \{10^3, 10^4, 10^6\}\)</span> see the Annex.</p>
+
 <h2 id="second-and-n-order-markov-processes">Second and N-order Markov Processes</h2>
 <p>A second order, third order up to <span class="math inline">\(\text{n}^{th}\)</span> order Markov process behaves the same as described by [smc], except: <span class="math display">\[Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i \right|X_{t-1}=x_{t-1},...,X_{t-n}=x_{t-n})\]</span></p>
 <p>Given observable outcomes, choosing a model is a trade-off between a parsimonious model and a better goodness of fit. Given a likelihood function of the model <span class="math inline">\(\mathbf{\Lambda}\)</span>, once can use a loss function, maximize a probability distribution or use AIC, e.i. <span class="math inline">\(2k-\ln{\mathbf{\Lambda}}\)</span>. Another favourable characteristic of the N-order Markov Processes to be useful in practice is that the transition probability matrix <span class="math inline">\(\mathbb{A}\)</span> be <strong><em>irreducible</em></strong>.</p>
@@ -332,7 +336,7 @@ title(&quot;Markov Chain Simulation for Marathon Oil, \$n=10^3\$&quot;)</code></
 <p>As defined by <span class="citation">Barbu and Limnios (2008)</span>[pp. 2] a process that has these two properties will be called a semi-Markov process.</p>
 <h2 id="continuous-state-markov-chains">Continuous State Markov Chains</h2>
 <p>A continuous state Markov Chain extends the model presented in section [smc] by allowing a probability density distribution on the states. These have been analysed extensively in the paper of <span class="citation">Benesch (2001)</span>. More formally, a stochastic kernel on <span class="math inline">\(\mathbb{S}\)</span> is a function <span class="math inline">\(p:\mathbb{S}\times \mathbb{S}\in \mathbb{R}\)</span> with the property that: <span class="math display">\[\begin{aligned}
- &amp; p(x, y) \geq 0 \quad \forall x,y \in \mathbb{S} \\ 
+ &amp; p(x, y) \geq 0 \quad \forall x,y \in \mathbb{S} \\
  &amp; \int_{-\infty}^{+\infty} p(x, y) dy = 1 \quad\forall x \in \mathbb{S}\end{aligned}\]</span></p>
 <p>For example, suppose the random variable <span class="math inline">\(X_t\)</span> is characterized by the famous normally distributed random walk: <span class="math display">\[\label{eq:RWalkNorm}
 X_{t+1} = X_t + \xi_{t+1} \quad \text{where} \quad
@@ -387,14 +391,14 @@ k_{t+1} = s  A_{t+1} f(k_t) + (1 - \delta) k_t\]</span> where</p>
     Both x and y must be strictly positive.
     =#
     d = s * x.^alpha
-    pdf_arg = clamp((y .- (1-sigma) .* x) ./ d, eps(), Inf) 
+    pdf_arg = clamp((y .- (1-sigma) .* x) ./ d, eps(), Inf)
     return pdf(phi, pdf_arg) ./ d
 end</code></pre>
 <p>The idea is that any initial state density distribution for the <span class="math inline">\(k_0\)</span> will converge to a steady state density distribution. Suppose the initial density distribution follows: <span class="math display">\[f(x; \alpha, \beta) = \frac{1}{B(\alpha, \beta)}
  x^{\alpha - 1} (1 - x)^{\beta - 1}, \quad x \in [0, 1]\]</span> which is known as the Beta Distribution.</p>
 <pre><code>a_sigma = 0.4
 phi = LogNormal(0.0, a_sigma) #Technological Change Distribution
-psi_0 = Beta(1.8, 2.8) 
+psi_0 = Beta(1.8, 2.8)
 ygrid = linspace(0.01, 4.0, 200)</code></pre>
 <pre><code>fig, ax = subplots()
 #for (x,y) in zip(ygrid, ygrid)
@@ -460,6 +464,8 @@ a_\sigma = 0.4  # A = exp(B) where B ~ N(0, a_sigma)
 \psi_0 = Levy(0,1.5) # Initial Continuous State distribution
 \phi = LogNormal(0.0, a_\sigma)</code></pre>
 <p>The conclusion about Continuous State Markov chains is that they are powerful tools to expend point estimates of economic aggregates. As we can see in our example, not only that capital per capita can have a wide range as a function of modest technology shocks, we cannot expect that with time the variance of our distribution will decrease as <span class="math inline">\(t \to \infty\)</span>. In the case of the Levy distribution, we can see that the range the capital per effective capita, as seen in figure [fig:LevyDistConvergence] can increase.</p>
+
+
 <h1 id="HMM">The Hidden Markov Model and Latent Parameters Estimation</h1>
 <p>A great introduction into the workings of the Hidden Markov processes was presented by <span class="citation">Rabiner (1989)</span>. In a nutshell, a HMM is defined by a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> that changes the the states <span class="math inline">\(s_i\)</span> of the system according to some probability, where <span class="math inline">\(s_i \in S\)</span> and <span class="math inline">\(S\)</span> is the set of all possible States. These states are not observable. Each state can emit some observable outcomes with its own probability distribution which we will summarize in the emission matrix <span class="math inline">\(\mathbb{B}\)</span>. We will take the example given by <span class="citation">Fraser (2008, 9)</span>.</p>
 <div class="figure">
@@ -472,9 +478,9 @@ a_\sigma = 0.4  # A = exp(B) where B ~ N(0, a_sigma)
 0   &amp; 0  &amp; 1  &amp; 0 \\
 0   &amp; 0  &amp; 0.9&amp; 0.1 \\
 1   &amp; 0  &amp; 0  &amp; 0 \end{array} \right)\]</span></p>
-<p>The emission probabilities for the events <span class="math inline">\(\Sigma = \{a,b,c,d\}\)</span>, as specified in the [smc]: <span class="math display">\[\mathbb{B} = 
+<p>The emission probabilities for the events <span class="math inline">\(\Sigma = \{a,b,c,d\}\)</span>, as specified in the [smc]: <span class="math display">\[\mathbb{B} =
 \begin{array}{c} e \\ f \\ g \\ h \end{array}
-\begin{pmatrix} 
+\begin{pmatrix}
 0.1 &amp; 0.9 &amp; 0 &amp; 0 \\
 0   &amp; 1   &amp; 0 &amp; 0 \\
 0 &amp; 0.8 &amp; 0.2 &amp; 0 \\
@@ -536,6 +542,8 @@ Pr\left(\mathcal{O} | \lambda \right)= \sum_X  \pi_i b_i(o_1) \prod_{t=2}^{t=T} 
 <li><p><span>Decoding</span> - find the sequence of Hidden States that most likely generated the observation. That is: find the highest probability of a sequence. (until the Viterbi algorithm it was possible only theoretically)</p></li>
 <li><p><span>Learning</span> - Generate the best possible HMM for the observed outcome (really difficult - there are no analytic solutions to this problem. Use Baum-Welch algorithm)</p></li>
 </ol>
+
+
 <h2 id="sec:FBA">The Forward/Backward Algorithm</h2>
 <p>Given an HMM<span class="math inline">\((\mathbb{A}, \mathbb{B}, \pi)\)</span>, as introduced in section [HMM] which we will denote by <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, where <span class="math inline">\(i \in \{1..N\}\)</span>, the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span> e.i.: <span class="math display">\[Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}\]</span> We can use Bayesian rule<a href="#fn39" class="footnoteRef" id="fnref39"><sup>39</sup></a> to write <span class="math inline">\(Pr(x_k | \mathcal{O} , \mathbf{\lambda})\)</span> as</p>
 <p><span class="math display">\[\label{eq:fb1}
@@ -560,7 +568,7 @@ Pr(x_k | \mathcal{O}, \mathbf{\lambda}) = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\
 \alpha_i\left( x_k \right) =&amp; \sum_{x_{k-1}} Pr(o_1,o_2,...o_k,x_{k-1},x_k | \lambda) \\
 = &amp;\sum_{x_{k-1}} Pr(o_k | o_1,o_2,...o_{k-1},x_{k-1},x_k, \lambda)\times \\&amp;Pr(x_k|o_1,o_2,...o_{k-1},x_{k-1},\lambda) Pr(o_1,o_2,...o_{k-1},x_{k-1}|\lambda)
 \\ =&amp; \sum_{x_{k-1}} Pr(o_k | x_k, \lambda)Pr(x_k|x_{k-1},\lambda) \alpha\left( x_{k-1} \right)
-\\ =&amp; \sum_{x_{k-1}} \mathbf{b}_{x_k}(o_k)  \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right) 
+\\ =&amp; \sum_{x_{k-1}} \mathbf{b}_{x_k}(o_k)  \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right)
 \\ =&amp; \mathbf{b}_{x_k}(o_k) \sum_{x_{k-1}} \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right) , \quad x_{k-1}=\overline{1,N}, k=\overline{2,T}\end{aligned}\]</span></p>
 <p>Therefore, we can calculate the probability of observing a particular state <span class="math inline">\(x\)</span> at time <span class="math inline">\(t\)</span> with a cost of <span class="math inline">\(\mathcal{O}(N^2T)\)</span> operations using this recursive algorithm which is linear in <span class="math inline">\(T\)</span>, rather than exponential for the naive approach.</p>
 <p>Once we have a procedure to efficiently calculate <span class="math inline">\(\alpha_i(k)\)</span> we can also express the unconditional probability of observing <span class="math inline">\(\mathcal{O}\)</span> as the sum of all <span class="math inline">\(\alpha_i(T)\)</span> over all states. <span class="math display">\[\label{eq:Pr(O)}
@@ -592,10 +600,10 @@ Pr(\mathcal{O}|\lambda) = \sum_{i=1}^N \alpha_i(x_T)\]</span></p>
 Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right) =  \frac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }\]</span> we will denote equation [eq:gamma] by: <span class="math display">\[\gamma_i(t) = Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right)\]</span> please note that in equation [eq:gamma] the denominator <span class="math inline">\(\sum_{j \in S}\alpha_j(t) \beta_j(t) \)</span> was used rather that a computationally more efficient <span class="math inline">\(\sum_{i \in S} \alpha_i(x_T) = Pr(\mathcal{O}|\lambda(\theta))\)</span> in order to make <span class="math inline">\(\gamma_i(t)\)</span> a probability distribution.</p>
 <p>Also, using the same backward and forward procedures as described in equation [eq:ba1] and [eq:fwa] we can also compute the probability of switching from state <span class="math inline">\(x_k=i\)</span> to <span class="math inline">\(x_{k+1}=j\)</span> given a particular model <span class="math inline">\(\lambda(\theta)\)</span>:</p>
 <p><span class="math display">\[\label{eq:xi}
-Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda) = 
+Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda) =
 \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t)}{Pr(\mathcal{O}|\lambda(\theta))}\]</span></p>
 <p>we will denote equation [eq:xi] by <span class="math display">\[\xi_{ij}(t) = Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda)\]</span></p>
-<p>Again, we need to make [eq:xi] a probability distribution, and even though it looks computationally attractive to rewrite the denominator as the probability of observing <span class="math inline">\(\mathcal{O}\)</span> either by the forward or backward algorithm, we cannot write [eq:xi], although wikipedia does<a href="#fn46" class="footnoteRef" id="fnref46"><sup>46</sup></a>, as: <span class="math display">\[\xi_{ij}(t) =  
+<p>Again, we need to make [eq:xi] a probability distribution, and even though it looks computationally attractive to rewrite the denominator as the probability of observing <span class="math inline">\(\mathcal{O}\)</span> either by the forward or backward algorithm, we cannot write [eq:xi], although wikipedia does<a href="#fn46" class="footnoteRef" id="fnref46"><sup>46</sup></a>, as: <span class="math display">\[\xi_{ij}(t) =
 \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}{\sum_{j\in S} \alpha_j(T)}\]</span> for <span class="math inline">\(\xi_{ij}(t)\)</span> to be a probability distribution: <span class="math display">\[\xi_{ij}(t) =  \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
                     {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }\]</span></p>
 <p>Now recall that <span class="math inline">\(a_{ij}\)</span> is the probability of moving to state <span class="math inline">\(j\)</span> while already being in state <span class="math inline">\(i\)</span>, e.i. <span class="math display">\[a_{ij}= Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta)\]</span></p>
@@ -610,7 +618,7 @@ Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta) = \frac{Pr(x_{t+1}=j,x_t=i| \ma
 <p>To update the initial state probability distribution: <span class="math display">\[\bar{\pi_i} = \gamma_1(i) = \frac{\alpha_i(1)\beta_i(1)}{\sum_{i \in S} \alpha_i(1)\beta_i(1) }\]</span></p>
 <p>For the emissions probability we have the expected number of the system being in state <span class="math inline">\(i\)</span> and observing <span class="math inline">\(o_k\)</span> : <span class="math display">\[\bar{b_i(o_k)} = \frac{\sum_{t \in T} \gamma_t(i) \mathbf{1}_{o_t=o_k}}{\sum_{t \in T} \gamma_t(i)}\]</span></p>
 <p>Therefore, given a model <span class="math inline">\(\lambda\)</span> , we can compute <span class="math inline">\(\bar{lambda}(\bar{\mathbb{A}}, \bar{\mathbb{B}}, \bar{\pi})\)</span> and using the results of the theorem provided by <span class="citation">Leonard E. Baum and Eagon (1967)</span>, specifically:</p>
-<p>Let <span class="math inline">\(P(x) = P (\{x_{ij} \})\)</span> be a polynomial with non-negative coefficients homogeneous of degree <span class="math inline">\(d\)</span>. If <span class="math inline">\(x_{ij} \geq 0\)</span> and <span class="math inline">\(\sum_j x_{ij}=1\)</span>. Denoting: <span class="math display">\[\mathfrak{I}(x)_{ij}= 
+<p>Let <span class="math inline">\(P(x) = P (\{x_{ij} \})\)</span> be a polynomial with non-negative coefficients homogeneous of degree <span class="math inline">\(d\)</span>. If <span class="math inline">\(x_{ij} \geq 0\)</span> and <span class="math inline">\(\sum_j x_{ij}=1\)</span>. Denoting: <span class="math display">\[\mathfrak{I}(x)_{ij}=
 \dfrac{\left( x_{ij} \dfrac{\partial P}{\partial x_{ij}} \middle |_{(x)} \right)}
 {\left( \sum_j x_{ij} \dfrac{\partial P}{\partial x_{ij}} \right)  }\]</span> then <span class="math inline">\(\mathbb{P}(\mathfrak{I}(x_{ij})) \geq \mathbb{P}(x_{ij}) \)</span></p>
 <p>The proof is provided by <span class="citation">Leonard E. Baum and Eagon (1967)</span>.</p>
@@ -630,7 +638,7 @@ Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta) = \frac{Pr(x_{t+1}=j,x_t=i| \ma
 <p>All script files can be found at my GitHub repository at <a href="https://github.com/moldovean/usm/tree/master/Thesis">https://github.com/moldovean/</a><a href="#fn49" class="footnoteRef" id="fnref49"><sup>49</sup></a>. For any questions, please do not hesitate to contact me at <a href="adrian@vrabie.net" class="uri">adrian@vrabie.net</a></p>
 <h2 id="installing-the-ghmm-library">Installing the GHMM library</h2>
 <p>Unfortunately the GHMM cannot be installed using pip command, on the other hand, the installation instructions to build the GHMM package can be found at <a href="http://ghmm.org" class="uri">http://ghmm.org</a> and are fairly easy. For convenience purposes I will list the terminal commands for Ubuntu (Debian Linux). First of all the ghmm package has some requirements:</p>
-<pre><code>sudo apt-get update 
+<pre><code>sudo apt-get update
 sudo apt-get install build-essential automake autoconf libtool
 sudo apt-get install python-dev libxml++2.6-dev swig</code></pre>
 <p>Now create a new folder (ex. ghmm) and copy the source files from <a href="http://sourceforge.net/svn/?group_id=67094">sourceforge</a><a href="#fn50" class="footnoteRef" id="fnref50"><sup>50</sup></a>. Extract them in the newly created folder. Now we are ready to install the ghmm package for Python2.7+.</p>
@@ -657,7 +665,7 @@ sudo ldconfig</code></pre>
 <h2 id="look-ahead-estimate-implementation">Look Ahead Estimate Implementation</h2>
 <p>This code was implemented by Spencer Lyon and referenced by <span class="citation">(Stachurski and Martin 2008)</span> in the <span class="citation">Stachurski and Sargent. (2016)</span> blog. It implements a class for the purpose of simulating a continuous state Markov process. The implementation leveraged on the paradigm of object oriented programming and creates a class <code>LAE</code> (Look Ahead Estimate) which takes the stochastic kernel <span class="math inline">\(p\)</span> and the observations vector <span class="math inline">\(n \times 1\)</span> vector.</p>
 <pre><code>#=
-Creats and Object which will be used to compute a sequence of marginal densities for a continuous state space Markov chain where the transition probabilities can be represented as densities rather than a discrete distribution. 
+Creats and Object which will be used to compute a sequence of marginal densities for a continuous state space Markov chain where the transition probabilities can be represented as densities rather than a discrete distribution.
 @author : Spencer Lyon &lt;spencer.lyon@nyu.edu&gt; @date: 2014-08-01
 @modified: Adrian Vrabie &lt;adrian@vrabie.net&gt; @date: 2016-05-17
 References: http://quant-econ.net/jl/stationary_densities.html
@@ -706,7 +714,7 @@ end</code></pre>
 <pre><code>
 def viterbi(obs, states, start_p, trans_p, emit_p):
     //obs - Observations vector
-    
+
     V = [{}]
     for s in states:
         V[0][s] = start_p[s]*emit_p[s][obs[0]]
