@@ -14,11 +14,17 @@
   </head>
 
   <body>
+
     <div class="container">
-      <h1> Estimating the Transition Probability Matrix in the <abbr title="Hidden Markov Model"> HMM</abbr>s.
-        <small> A gentle Introduction to Markovian Processes and the Baum-Welch algorithm.  </small> </h1>
-      <p>Author: Adrian Vrabie</p>
-      <p>Adviser: Dr. habil. Univ Prof Lozovanu Dmitrii</p>
+      <div class="jumbotron">
+        <h1> Estimating the Transition Probability Matrix in the <abbr title="Hidden Markov Model"> HMM</abbr>s.
+          <small> A gentle Introduction to Markovian Processes and the Baum-Welch algorithm.  </small> </h1>
+        <p>Author: Adrian Vrabie</p>
+        <p> Contact me at: <em>first_name@last_name.net</em></p>
+        <p>Adviser: <a href="http://www.math.md/en/people/lozovanu-dmitrii/" > Dr. habil. Univ Prof Lozovanu Dmitrii </a></p>
+
+      </div>
+
 
       <!-- The Kernel -->
       <div class="row">
@@ -382,10 +388,37 @@
 
           title(&quot;Markov Chain Simulation for Marathon Oil, \$n=10^3\$&quot;)</code></pre>
           <div class="figure">
-          <img src="graphs/mcLogReturns_5.png" alt="Markov Chain Simulation" style="width:85.0%" />
+          <img src="graphs/mcLogReturns_5.png" class="img-responsive" alt="Markov Chain Simulation" style="width:90.0%" />
           <p class="caption">Markov Chain Simulation<span data-label="fig:MCSim5"></span></p>
           </div>
-          <p>For <span class="math inline">\(n = \{10^3, 10^4, 10^6\}\)</span> see the Annex.</p>
+          <div class="row">
+            <div class="col-sm-3">
+              <a href="graphs/mcLogReturns_3.png"  class="thumbnail">
+                <p> Monte Carlo for <span class="math inline"> \(n=10^3 \)</span> iterations </p>
+                <img src="graphs/mcLogReturns_3.png" alt="Log Returns for 1000 iterations" style="width:95.0%" />
+              </a>
+            </div>
+            <div class="col-sm-3">
+              <a href="graphs/mcLogReturns_4.png"  class="thumbnail">
+                <p> Monte Carlo for <span class="math inline"> \(n=10^4 \)</span> iterations </p>
+                <img src="graphs/mcLogReturns_4.png" alt="Log Returns for 10000 iterations" style="width:95.0%" />
+              </a>
+            </div>
+            <div class="col-sm-3">
+              <a href="graphs/mcLogReturns_5.png"  class="thumbnail">
+                <p> Monte Carlo for <span class="math inline"> \(n=10^5 \)</span> iterations </p>
+                <img src="graphs/mcLogReturns_5.png" alt="Log Returns for 100000 iterations" style="width:95.0%" />
+              </a>
+            </div>
+            <div class="col-sm-3">
+              <a href="graphs/mcLogReturns_6.png"  class="thumbnail">
+                <p> Monte Carlo for <span class="math inline"> \(n=10^6 \)</span> iterations </p>
+                <img src="graphs/mcLogReturns_6.png" alt="Log Returns for 1000000 iterations" style="width:95.0%" />
+              </a>
+            </div>
+          </div>
+
+          <p>To get bigger images for <span class="math inline">\(n = \{10^3, 10^4, 10^5, 10^6\}\)</span> iterations, click on the thumbnails above. </p>
 
         </div>
       </div>
@@ -418,7 +451,7 @@
         <div class="col-sm-2" style="background-color:lavender;">
           <h2> <small> Continuous State Markov Chains </small> </h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" style="background-color:#dedede;">
           <h2 id="continuous-state-markov-chains">Continuous State Markov Chains</h2>
           <p>A continuous state Markov Chain extends the model presented in section [smc] by allowing a probability density distribution on the states. These have been analysed extensively in the paper of <span class="citation">Benesch (2001)</span>. More formally, a stochastic kernel on <span class="math inline">\(\mathbb{S}\)</span> is a function <span class="math inline">\(p:\mathbb{S}\times \mathbb{S}\in \mathbb{R}\)</span> with the property that: <span class="math display">\[\begin{aligned}
            &amp; p(x, y) \geq 0 \quad \forall x,y \in \mathbb{S} \\
@@ -555,106 +588,288 @@
 
       <!--The Hidden Markov Model -->
       <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
           <h2> <small> The Hidden Markov Model </small> </h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
-          <h2 id="HMM">The Hidden Markov Model and Latent Parameters Estimation</h2>
-          <p>A great introduction into the workings of the Hidden Markov processes was presented by <span class="citation">Rabiner (1989)</span>. In a nutshell, a HMM is defined by a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> that changes the the states <span class="math inline">\(s_i\)</span> of the system according to some probability, where <span class="math inline">\(s_i \in S\)</span> and <span class="math inline">\(S\)</span> is the set of all possible States. These states are not observable. Each state can emit some observable outcomes with its own probability distribution which we will summarize in the emission matrix <span class="math inline">\(\mathbb{B}\)</span>. We will take the example given by <span class="citation">Fraser (2008, 9)</span>.</p>
-          <div class="figure">
-          <img src="graphs/HMM" alt="Hidden Markov Model from pp.9Fraser (2008, 9)" style="width:85.0%" />
-          <p class="caption">Hidden Markov Model from <span class="citation">Fraser (2008, 9)</span><span data-label="fig:HMM"></span></p>
-          </div>
-          <p>As we can see in figure [fig:HMM], we have an oriented graph which can easily be transposed to a HMM model.</p>
-          <p><span class="math display">\[\mathbb{A} = \begin{array}{c} e \\ f \\ g \\ h \end{array} \left( \begin{array}{cccc}
-          0.9 &amp; 0.1&amp; 0  &amp; 0 \\
-          0   &amp; 0  &amp; 1  &amp; 0 \\
-          0   &amp; 0  &amp; 0.9&amp; 0.1 \\
-          1   &amp; 0  &amp; 0  &amp; 0 \end{array} \right)\]</span></p>
-          <p>The emission probabilities for the events <span class="math inline">\(\Sigma = \{a,b,c,d\}\)</span>, as specified in the [smc]: <span class="math display">\[\mathbb{B} =
-          \begin{array}{c} e \\ f \\ g \\ h \end{array}
-          \begin{pmatrix}
-          0.1 &amp; 0.9 &amp; 0 &amp; 0 \\
-          0   &amp; 1   &amp; 0 &amp; 0 \\
-          0 &amp; 0.8 &amp; 0.2 &amp; 0 \\
-          0 &amp; 0&amp; 0&amp; 1
-          \end{pmatrix}\]</span></p>
-          <p>Lastly, to fully define a HMM, we would either need a starting point, or an initial probability distribution among the states usually denoted by <span class="math inline">\(\pi\)</span>.</p>
-          <p>Having defined a hidden Markov model, we can endeavour to find answers to the following questions:</p>
-          <ol>
-          <li><p>When was the last recession?</p></li>
-          <li><p>Are we still in the recession?</p></li>
-          <li><p>What is the probability for the economy to follow a particular path of states?</p></li>
-          <li><p>What is the unconditional probability of observing certain outcome <span class="math inline">\(e_i \)</span> or what is the probability of being in a particular state <span class="math inline">\(s_i\)</span> e <span class="math inline">\(Pr(S=s_i | e_i)\)</span>?</p></li>
-          </ol>
-          <p>We conclude that a Hidden Markov Model extends the class of the Markov Chain models, since any order of a Markov model can be represented as an HMM. We will denote a Hidden Markov Model by <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span>.</p>
+        <div class="col-sm-10 well" >
+          <h2 id="HMM">The Hidden Markov Model </h2>
+            <p>A great introduction into the workings of the Hidden Markov processes was presented by <span class="citation">Rabiner (1989)</span>. In a nutshell, a HMM is defined by a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> that changes the the states <span class="math inline">\(s_i\)</span> of the system according to some probability, where <span class="math inline">\(s_i \in S\)</span> and <span class="math inline">\(S\)</span> is the set of all possible States. These states are not observable. Each state can emit some observable outcomes with its own probability distribution which we will summarize in the emission matrix <span class="math inline">\(\mathbb{B}\)</span>. We will take the example given by <span class="citation">Fraser (2008, 9)</span>.</p>
+            <div class="figure">
+            <img src="graphs/HMM.jpg" alt="Hidden Markov Model from pp.9Fraser (2008, 9)" style="width:95.0%" />
+            <p class="caption">Hidden Markov Model from <span class="citation">Fraser (2008, 9)</span><span data-label="fig:HMM"></span></p>
+            </div>
+            <p>As we can see in figure [fig:HMM], we have an oriented graph which can easily be transposed to a HMM model.</p>
+            <p><span class="math display">\[\mathbb{A} = \begin{array}{c} e \\ f \\ g \\ h \end{array} \left( \begin{array}{cccc}
+            0.9 &amp; 0.1&amp; 0  &amp; 0 \\
+            0   &amp; 0  &amp; 1  &amp; 0 \\
+            0   &amp; 0  &amp; 0.9&amp; 0.1 \\
+            1   &amp; 0  &amp; 0  &amp; 0 \end{array} \right)\]</span></p>
+            <p>The emission probabilities for the events <span class="math inline">\(\Sigma = \{a,b,c,d\}\)</span>, as specified in the [smc]: <span class="math display">\[\mathbb{B} =
+            \begin{array}{c} e \\ f \\ g \\ h \end{array}
+            \begin{pmatrix}
+            0.1 &amp; 0.9 &amp; 0 &amp; 0 \\
+            0   &amp; 1   &amp; 0 &amp; 0 \\
+            0 &amp; 0.8 &amp; 0.2 &amp; 0 \\
+            0 &amp; 0&amp; 0&amp; 1
+            \end{pmatrix}\]</span></p>
+            <p>Lastly, to fully define a HMM, we would either need a starting point, or an initial probability distribution among the states usually denoted by <span class="math inline">\(\pi\)</span>.</p>
+            <p>Having defined a hidden Markov model, we can endeavour to find answers to the following questions:</p>
+            <ol>
+            <li><p>When was the last recession?</p></li>
+            <li><p>Are we still in the recession?</p></li>
+            <li><p>What is the probability for the economy to follow a particular path of states?</p></li>
+            <li><p>What is the unconditional probability of observing certain outcome <span class="math inline">\(e_i \)</span> or what is the probability of being in a particular state <span class="math inline">\(s_i\)</span> e <span class="math inline">\(Pr(S=s_i | e_i)\)</span>?</p></li>
+            </ol>
+            <p>We conclude that a Hidden Markov Model extends the class of the Markov Chain models, since any order of a Markov model can be represented as an HMM. We will denote a Hidden Markov Model by <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span>.</p>
 
         </div>
       </div>
 
       <!--Simulationg the Hidden Markov Model -->
       <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2> <small> Simulating of an HMM </small> </h2>
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2> <small> Simulating of a <abbr title="Hidden Markov Model">HMM</abbr> </small> </h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" style="background-color:#dedede;">
           <h2 id="simulating-a-hidden-markov-model">Simulating a Hidden Markov Model</h2>
-          <p>In this example we will generate a sequence of a balanced and an unbalanced coin that follows an HMM (<span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>) in the Python programming language using the ghmm package. For installing the ghmm library please refer to the Annex and <a href="http://ghmm.org" class="uri">http://ghmm.org</a>. <span class="math display">\[\mathbb{A}= \left(\begin{array}{cc}
-          0.9 &amp; 0.1 \\
-          0.2 &amp; 0.8 \\
-          \end{array}\right)\]</span></p>
-          <pre><code>import ghmm
-          A = [[0.9, 0.1], [0.2, 0.8]]
-          efair = [1.0 / 2] * 2
-          eloaded = [0.15, 0.85]
-          sigma = ghmm.IntegerRange(0,2)
-          B = [efair, eloaded]
-          pi = [0.5]*2
-          m = ghmm.HMMFromMatrices(sigma, ghmm.DiscreteDistribution(sigma), A, B, pi)</code></pre>
-          <p>invoking the print method for the HMM model <span class="math inline">\(m\)</span></p>
-          <pre><code>print m
+            <p>In this example we will generate a sequence of a balanced and an unbalanced coin that follows an HMM (<span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>) in the Python programming language using the ghmm package. For installing the ghmm library please refer to the Annex and <a href="http://ghmm.org" class="uri">http://ghmm.org</a>. <span class="math display">\[\mathbb{A}= \left(\begin{array}{cc}
+            0.9 &amp; 0.1 \\
+            0.2 &amp; 0.8 \\
+            \end{array}\right)\]</span></p>
+            <div>
+              <pre>
+                <code>
+                  import ghmm
+                  A = [[0.9, 0.1], [0.2, 0.8]]
+                  efair = [1.0 / 2] * 2
+                  eloaded = [0.15, 0.85]
+                  sigma = ghmm.IntegerRange(0,2)
+                  B = [efair, eloaded]
+                  pi = [0.5]*2
+                  m = ghmm.HMMFromMatrices(sigma, ghmm.DiscreteDistribution(sigma), A, B, pi)
+                </code>
+              </pre>
+            </div>
 
-          DiscreteEmissionHMM(N=2, M=2)
-            state 0 (initial=0.50)
-              Emissions: 0.50, 0.50
-              Transitions: -&gt;0 (0.90), -&gt;1 (0.10)
-            state 1 (initial=0.50)
-              Emissions: 0.15, 0.85
-              Transitions: -&gt;0 (0.20), -&gt;1 (0.80)</code></pre>
-          <p>generating a sample of 40 observations and printing them.</p>
-          <pre><code>obs_seq = m.sampleSingle(40)
-          obs = map(sigma.external, obs_seq)
+            <p>invoking the print method for the HMM model <span class="math inline">\(m\)</span></p>
+            <pre class="pre-scrollable">
+              <code>print m
 
-          print obs
+            DiscreteEmissionHMM(N=2, M=2)
+              state 0 (initial=0.50)
+                Emissions: 0.50, 0.50
+                Transitions: -&gt;0 (0.90), -&gt;1 (0.10)
+              state 1 (initial=0.50)
+                Emissions: 0.15, 0.85
+                Transitions: -&gt;0 (0.20), -&gt;1 (0.80)</code></pre>
+            <p>generating a sample of 40 observations and printing them.</p>
+            <pre><code>obs_seq = m.sampleSingle(40)
+            obs = map(sigma.external, obs_seq)
 
-          [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0]</code></pre>
-          <p>For a dice simulation generated by an HMM, refer to appendix [app:simHMM].</p>
+            print obs
 
+            [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0]</code></pre>
+            <p>For a dice simulation generated by an HMM, refer to appendix [app:simHMM].</p>
+
+        </div>
+      </div>
+
+
+
+      <!-- Part 2 -->
+      <div class="row">
+        <div class="col-sm-12 well-lg" >
+          <center><h1> Part II: Estimating the State Transition Matrix </h1></center>
         </div>
       </div>
 
       <!--A formal introduction to Hidden Markov Model -->
       <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2> <small> A formal introduction to HMMs </small> </h2>
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2> <small> Some formal questions to get from an <abbr title="Hidden Markov Model">HMM</abbr> </small> </h2>
         </div>
-        <div class="col-sm-10" style="background-color:#dedede;">
+        <div class="col-sm-10 well" >
           <h2 id="a-formal-introduction-to-an-hmm">A formal introduction to an HMM</h2>
-          <p>Suppose we have identified a sequence <span class="math inline">\(\mathcal{O} \in \mathbf{\Omega}\)</span> that we assume is generated by an HMM: <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span> as defined in chapter [HMM]. Given <span class="math inline">\(\lambda\)</span>, we would like to know: <span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></p>
-          <p>A direct approach is that given the parameters of the HMM, we can compute the probability of observing a particular observation on a given chain of states: <span class="math display">\[\label{eq:basic}
-          Pr\left(o_1,o_2,...,o_{T} |x_1,x_2,...,x_k,...x_T, \lambda \right)=  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
-          <p>And then we could sum the probabilities from equation [eq:basic] over all possible states <span class="math inline">\(X\)</span>:</p>
-          <p><span class="math display">\[\label{eq:directApproach}
-          Pr\left(\mathcal{O} | \lambda \right)= \sum_X  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t) Pr(X|\lambda)\]</span></p>
-          <p>Therefore, the direct approach is very difficult to assess. The difficulty of this problem consists in the fact that the total number of possibilities of sequences of states that can generate <span class="math inline">\(\mathcal{O}\)</span> is exponential in the number of observations <span class="math inline">\(T\)</span> and would require <span class="math inline">\(\mathbf{\mathcal{O}}(N^T)\)</span> operations, where <span class="math inline">\(N\)</span> is the total number of states. At a first glance this might not appear to be a particular big issue in Economics: consider analysing yearly aggregates of a span of 10 years with 2 states <span class="math inline">\(\Omega = \{Recession, Growth\}\)</span>. If, however, we would increase the number of states to 3 and use quarterly data, finding the maximum would require years of computation - clearly not feasible for any practical purpose.<a href="#fn37" class="footnoteRef" id="fnref37"><sup>37</sup></a> A better approach to calculate the unconditional probability <span class="math inline">\(Pr(\mathcal{O}|\lambda)\)</span> is the forward/backward algorithm which is a class of dynamic programming algorithms and takes advantage of the assumptions of the Markovian processes to filter all possible combinations of states <span class="math inline">\(X\)</span>.</p>
-          <p>Secondly, another question of interest is to find the most likely sequence of states from <span class="math inline">\(X\)</span> given <span class="math inline">\(\mathcal{O}\)</span>, e.i. the states that generated the highest probability <span class="math inline">\(Pr(\mathcal{O}| X, \lambda)\)</span>.</p>
-          <p>Finally, the question that sparked my interest in studying Markovian processes is how do we estimate the parameters of an HMM, in particular <span class="math inline">\(\mathbb{A}\)</span> and <span class="math inline">\(\mathbb{B}\)</span>. Unfortunately, this is still an unsolved problem in Mathematics and requires numerical methods. Once the matrix <span class="math inline">\(\mathbb{A}\)</span> is determined we can use the dynamic programming and combinatorial methods proposed by <span class="citation">Lozovanu and Pickl (2015)</span> for determining the state-time probabilities and the matrix of limiting probabilities. These methods can be directly applied to refine not only the point estimates of long-term economic growth at the country level, as defined by the International Monetary Fond, but also update the concept of long term growth as an integral part of limiting probabilities of a HMM.</p>
-          <p>To summarize, we could enumerate the key issues we would have to address and solve efficiently for an HMM model to be useful in practice. As expressed by <span class="citation">Fraser (2008)</span> and <span class="citation">James D. Hamilton and Raj (2002)</span>:</p>
-          <ol>
-          <li><p><span>Evaluation</span> - e.i. find the probability of an observed sequence given an HMM (relatively easy to do in practice)</p></li>
-          <li><p><span>Decoding</span> - find the sequence of Hidden States that most likely generated the observation. That is: find the highest probability of a sequence. (until the Viterbi algorithm it was possible only theoretically)</p></li>
-          <li><p><span>Learning</span> - Generate the best possible HMM for the observed outcome (really difficult - there are no analytic solutions to this problem. Use Baum-Welch algorithm)</p></li>
-          </ol>
+            <p>Suppose we have identified a sequence <span class="math inline">\(\mathcal{O} \in \mathbf{\Omega}\)</span> that we assume is generated by an HMM: <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span> as defined in chapter [HMM]. Given <span class="math inline">\(\lambda\)</span>, we would like to know: <span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></p>
+            <p>A direct approach is that given the parameters of the HMM, we can compute the probability of observing a particular observation on a given chain of states: <span class="math display">\[\label{eq:basic}
+            Pr\left(o_1,o_2,...,o_{T} |x_1,x_2,...,x_k,...x_T, \lambda \right)=  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
+            <p>And then we could sum the probabilities from equation [eq:basic] over all possible states <span class="math inline">\(X\)</span>:</p>
+            <p><span class="math display">\[\label{eq:directApproach}
+            Pr\left(\mathcal{O} | \lambda \right)= \sum_X  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t) Pr(X|\lambda)\]</span></p>
+            <p>Therefore, the direct approach is very difficult to assess. The difficulty of this problem consists in the fact that the total number of possibilities of sequences of states that can generate <span class="math inline">\(\mathcal{O}\)</span> is exponential in the number of observations <span class="math inline">\(T\)</span> and would require <span class="math inline">\(\mathbf{\mathcal{O}}(N^T)\)</span> operations, where <span class="math inline">\(N\)</span> is the total number of states. At a first glance this might not appear to be a particular big issue in Economics: consider analysing yearly aggregates of a span of 10 years with 2 states <span class="math inline">\(\Omega = \{Recession, Growth\}\)</span>. If, however, we would increase the number of states to 3 and use quarterly data, finding the maximum would require years of computation - clearly not feasible for any practical purpose.<a href="#fn37" class="footnoteRef" id="fnref37"><sup>37</sup></a> A better approach to calculate the unconditional probability <span class="math inline">\(Pr(\mathcal{O}|\lambda)\)</span> is the forward/backward algorithm which is a class of dynamic programming algorithms and takes advantage of the assumptions of the Markovian processes to filter all possible combinations of states <span class="math inline">\(X\)</span>.</p>
+            <p>Secondly, another question of interest is to find the most likely sequence of states from <span class="math inline">\(X\)</span> given <span class="math inline">\(\mathcal{O}\)</span>, e.i. the states that generated the highest probability <span class="math inline">\(Pr(\mathcal{O}| X, \lambda)\)</span>.</p>
+            <p>Finally, the question that sparked my interest in studying Markovian processes is how do we estimate the parameters of an HMM, in particular <span class="math inline">\(\mathbb{A}\)</span> and <span class="math inline">\(\mathbb{B}\)</span>. Unfortunately, this is still an unsolved problem in Mathematics and requires numerical methods. Once the matrix <span class="math inline">\(\mathbb{A}\)</span> is determined we can use the dynamic programming and combinatorial methods proposed by <span class="citation">Lozovanu and Pickl (2015)</span> for determining the state-time probabilities and the matrix of limiting probabilities. These methods can be directly applied to refine not only the point estimates of long-term economic growth at the country level, as defined by the International Monetary Fond, but also update the concept of long term growth as an integral part of limiting probabilities of a HMM.</p>
+            <p>To summarize, we could enumerate the key issues we would have to address and solve efficiently for an HMM model to be useful in practice. As expressed by <span class="citation">Fraser (2008)</span> and <span class="citation">James D. Hamilton and Raj (2002)</span>:</p>
+            <ol>
+              <li><p><span>Evaluation</span> - e.i. find the probability of an observed sequence given an HMM (relatively easy to do in practice)</p></li>
+              <li><p><span>Decoding</span> - find the sequence of Hidden States that most likely generated the observation. That is: find the highest probability of a sequence. (until the Viterbi algorithm it was possible only theoretically)</p></li>
+              <li><p><span>Learning</span> - Generate the best possible HMM for the observed outcome (really difficult - there are no analytic solutions to this problem. Use Baum-Welch algorithm)</p></li>
+            </ol>
+
+        </div>
+      </div>
+
+      <!-- The Baum Welch Algorithm -->
+      <div class="row">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2><small> The Baum Welch Algorithm </small></h2>
+        </div>
+        <div class="col-sm-10 well-sm" >
+          <h1>The Baum Welch Algorithm</h1>
+            <p> The best way to understand why the Baum-Welch algorithm works is to dissect it into easier algorithms and combine them, until we can answer the questions we posed earlier.</p>
+            <dl>
+              <dt> Evaluation </dt>
+                <dd>- Use the Forward in combination with Backward algorithm </dd>
+              <dt> Decoding </dt>
+                <dd>- Viterbi algorithm </dd>
+              <dt> Learning </dt>
+                <dd>- Use the <em>Bayesian rule</em> along with the <em>Markovian property</em> to update the parameters of the HMM: Baum-Welch algorithm.
+            </dl>
+        </div>
+      </div>
+
+
+      <!-- The Forward / Backward Algorithm -->
+      <div class="row">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2><small> The Forward Backward Algorithm </small></h2>
+        </div>
+        <div class="col-sm-10 well-sm" >
+          <h2 id="sec:FBA">The Forward/Backward Algorithm</h2>
+            <p>Given an HMM<span class="math inline">\((\mathbb{A}, \mathbb{B}, \pi)\)</span>, as introduced in section [HMM] which we will denote by <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, where <span class="math inline">\(i \in \{1..N\}\)</span>, the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span> e.i.: <span class="math display">\[Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}\]</span> We can use Bayesian rule<a href="#fn39" class="footnoteRef" id="fnref39"><sup>39</sup></a> to write <span class="math inline">\(Pr(x_k | \mathcal{O} , \mathbf{\lambda})\)</span> as</p>
+            <p><span class="math display">\[\label{eq:fb1}
+            Pr(x_k | O, \mathbf{\lambda}) =  \frac{Pr(x_k, \mathcal{O} | \mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})} = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} )*Pr(o_{k+1},...,o_T|x_k,o_1,...o_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
+            <p>Using the Markovian property in the second half of [eq:fb1]<a href="#fn40" class="footnoteRef" id="fnref40"><sup>40</sup></a> :</p>
+            <p><span class="math display">\[\label{eq:fb2}
+            Pr(x_k | \mathcal{O}, \mathbf{\lambda}) = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} ) Pr(o_{k+1},...,o_T|x_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
+            <p>The first part in the numerator of equation [eq:fb2], <span class="math inline">\(Pr (x_k,o_1,o_2,...o_k |\mathbf{\lambda} )\)</span> is called the forward part and <span class="math inline">\(Pr(o_{k+1},...,o_T|x_k,\mathbf{\lambda})\)</span> the backward part.</p>
+            <p>Once we can find an algorithm to compute the forward and the backward part, we can compute <span class="math inline">\(Pr(x_k | O, \mathbf{\lambda})\)</span> which enables us to answer the following questions:<a href="#fn41" class="footnoteRef" id="fnref41"><sup>41</sup></a></p>
+            <ol>
+            <li><p>The Probability of being in a transition: <span class="math inline">\(Pr(x_k \not= x_{k-1}|\mathcal{O})\)</span></p></li>
+            <li><p>Helps augment the numerical methods in estimating the parameters of <span class="math inline">\(\lambda\)</span></p></li>
+            <li><p>Make samples on <span class="math inline">\(x_k|\mathcal{O}\)</span></p></li>
+            </ol>
+
+            <h3 id="sec:fa">Forward Algorithm</h3>
+              <p>Given an HMM as presented in section [HMM]: <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn42" class="footnoteRef" id="fnref42"><sup>42</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, the objective of the forward algorithm is to compute <span class="math display">\[\label{eq:fwa}
+              \alpha_i(k)=\alpha\left( x_k=i \right) = Pr(o_1,o_2,...o_k,x_k | \lambda) \quad\quad o_k \in \mathcal{O}, k=\overline{1,T}\]</span><a href="#fn43" class="footnoteRef" id="fnref43"><sup>43</sup></a></p>
+              <p>The forward algorithm is also known as the <em>filtering</em> algorithm as it uses the available information up to the point of <span class="math inline">\(o_k \in \mathcal{O}\)</span>. Again, computing <span class="math inline">\(Pr(o_1,o_2,...o_k,x_k | \lambda)\)</span> directly would require a computation time exponential on <span class="math inline">\(T\)</span> and would not be feasible for practical purposes. On the other hand, we can use the <em>Law of Total Probability</em><a href="#fn44" class="footnoteRef" id="fnref44"><sup>44</sup></a> and the Markov property to express:</p>
+              <p>If <span class="math inline">\(k=1\)</span>, from the definition of <span class="math inline">\(\lambda\)</span>: <span class="math display">\[\alpha(x_k) = \pi_{x_k}\]</span></p>
+              <p>else:</p>
+              <p><span class="math display">\[\begin{aligned}
+              \alpha_i\left( x_k \right) =&amp; \sum_{x_{k-1}} Pr(o_1,o_2,...o_k,x_{k-1},x_k | \lambda) \\
+              = &amp;\sum_{x_{k-1}} Pr(o_k | o_1,o_2,...o_{k-1},x_{k-1},x_k, \lambda)\times \\&amp;Pr(x_k|o_1,o_2,...o_{k-1},x_{k-1},\lambda) Pr(o_1,o_2,...o_{k-1},x_{k-1}|\lambda)
+              \\ =&amp; \sum_{x_{k-1}} Pr(o_k | x_k, \lambda)Pr(x_k|x_{k-1},\lambda) \alpha\left( x_{k-1} \right)
+              \\ =&amp; \sum_{x_{k-1}} \mathbf{b}_{x_k}(o_k)  \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right)
+              \\ =&amp; \mathbf{b}_{x_k}(o_k) \sum_{x_{k-1}} \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right) , \quad x_{k-1}=\overline{1,N}, k=\overline{2,T}\end{aligned}\]</span></p>
+              <p>Therefore, we can calculate the probability of observing a particular state <span class="math inline">\(x\)</span> at time <span class="math inline">\(t\)</span> with a cost of <span class="math inline">\(\mathcal{O}(N^2T)\)</span> operations using this recursive algorithm which is linear in <span class="math inline">\(T\)</span>, rather than exponential for the naive approach.</p>
+              <p>Once we have a procedure to efficiently calculate <span class="math inline">\(\alpha_i(k)\)</span> we can also express the unconditional probability of observing <span class="math inline">\(\mathcal{O}\)</span> as the sum of all <span class="math inline">\(\alpha_i(T)\)</span> over all states. <span class="math display">\[\label{eq:Pr(O)}
+              Pr(\mathcal{O}|\lambda) = \sum_{i=1}^N \alpha_i(x_T)\]</span></p>
+
+            <h3 id="sec:ba">Backward Algorithm</h3>
+              <p>The backward algorithm is the second part of the forward/backward algorithm in equation [eq:fb2].</p>
+              <p>As in subsection [sec:fa] we assume that an HMM as presented in section [HMM]: <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span> is given, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability and <span class="math inline">\(\mathbb{B}\)</span> is the emission probability matrix, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span> and <span class="math inline">\(\pi\)</span> is the initial state probability distribution, the objective of the backward algorithm is to compute: <span class="math display">\[\label{eq:ba1}
+              \beta_i(k)=\beta(x_k=i) = Pr(o_{k+1},o_{k+2},...,o_{T} | x_k=i, \lambda) \quad i=\overline{1,N}, k=\overline{1,T}\]</span> Again, to get the recursive approach we will make use of the law of total probability to write: <span class="math display">\[\begin{aligned}
+              \beta(x_k) =&amp;  Pr(o_{k+1},o_{k+2},...,o_{T} | x_k=i, \lambda) \\
+              =&amp; \sum_{x_{k+1}} Pr(o_{k+1},o_{k+2},...,o_{T},x_{k+1} | x_k=i, \lambda)\end{aligned}\]</span> Now we can divide se sequence of observables and isolate the <span class="math inline">\(o_{k+1}\)</span> observation as follows: <span class="math display">\[\begin{aligned}
+              \beta(x_k) =&amp; \sum_{x_{k+1}} Pr(o_{k+2},...,o_{T}|x_{k+1},x_{k}=i,o_{k+1}, \lambda)\times\\
+              &amp;Pr(o_{k+1}|x_{k+1},x_{k}=i,\lambda) \times Pr(x_{k+1}|x_{k}=i,\lambda) \end{aligned}\]</span> Now using the Markovian property and the fact that <span class="math inline">\(Pr(o_{k+1}|x_{k+1},x_{k}=i,\lambda) = Pr(o_{k+1}|x_{k+1},\lambda)\)</span></p>
+              <p><span class="math display">\[\begin{aligned}
+              \beta(x_k) &amp;= \sum_{x_{k+1}}\beta(x_{k+1})\mathbf{b}_{k+1}(o_{k+1})\mathbf{a}_{k,k+1}, \quad\quad k=\overline{1,T-1}\end{aligned}\]</span></p>
+              <p>The trick in the backward algorithm is that as shown above, <span class="math inline">\(k\)</span> takes values from <span class="math inline">\(1\)</span> to <span class="math inline">\(T-1\)</span>. For <span class="math inline">\(k=T\)</span>, we define: <span class="math display">\[\beta(x_T)=1\]</span> The intuition for this is clear when applying these algorithms to tagging problems in the Natural Language Programming, since we can define the state of the end of a sentence to be a special symbol “STOP”. And since every sentence ends with this special symbol, the probability of getting <span class="math inline">\(x_{T+1}=STOP\)</span> equals <span class="math inline">\(1\)</span>.</p>
+
+        </div>
+      </div>
+
+      <!-- The Viterbi Algorithm-->
+      <div class="row">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2><small> The Viterbi Algorithm </small></h2>
+        </div>
+        <div class="col-sm-10 well-sm" >
+          <h2 id="the-viterbi-algorithm">The Viterbi Algorithm</h2>
+          <p>Given an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> and an observable sequence <span class="math inline">\(\mathcal{O} = \{o_1,o_2,...,o_T \}\)</span>, we want to find the sequence <span class="math inline">\(X=\{x_1,x_2,...,x_T\}\)</span> that maximizes the probability in equation [eq:basic]:</p>
+          <p><span class="math display">\[Pr\left(\mathcal{O}, x_1,x_2,...x_T,| \lambda \right)= \underset{X}{\operatorname{argmax}} \: \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
+          <p>In a nutshell, the Viterbi algorithm examines at each step all the possibilities of getting to that particular state and retains only the most likely path to it, thus eliminating all other possibilities.<a href="#fn45" class="footnoteRef" id="fnref45"><sup>45</sup></a></p>
+          <p>For the first step, the probability of being in state <span class="math inline">\(x_k\)</span> at time <span class="math inline">\(t=1\)</span> and observing <span class="math inline">\(o_1\)</span> is simply an updated version of <span class="math inline">\(\pi_k\)</span>. <span class="math display">\[Pr(x_1=k|o_1,\lambda) = \frac{Pr(x_1=k,o_1)}{\sum_{x_1\in S}Pr(x_1,o_1)}= \frac{\pi_{x_1}b_{x_1}(o_1)}{\sum_{x_i \in S} \pi_{x_i}b_{x_i}(o_1)}\]</span> where <span class="math inline">\(s \in S\)</span> and <span class="math inline">\(S = \{1..N\}\)</span> the set of all possible states. But we can still reduce the complexity of this formula by dropping the denominator, since maximizing the probability depends only on the numerator part, therefore: <span class="math display">\[V_{1,k}=\pi_{x_k}b_{x_k}(o_1)\]</span> For the next iterations: <span class="math display">\[V_{t,k} = \underset{x_{t-1}\in S}{\operatorname{max}}\left( V_{t-1,x_{t-1}} \mathbf{a}_{x_{t-1},k} \mathbf{b}_{k}(o_t) \right)\]</span> <span class="math display">\[\mathbf{V}_t = \{V_{t,k}|k \in  S\}\]</span> We denote the sequence of <span class="math inline">\(X = \{ x_1,x_2,...,x_T \}\)</span> that generates <span class="math inline">\(V_T\)</span>: <span class="math display">\[\mathbf{x}_T = \underset{x\in S}{\operatorname{arg\, max}}\mathbf{V}_{T,x}\]</span> The algorithm’s complexity is <span class="math inline">\(\mathcal{O}(N^2*T)\)</span> which is linear in T.</p>
+
+        </div>
+      </div>
+
+      <!-- The EM algorithm -->
+      <div class="row">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2><small> The <abbr title="Expectation Maximization">EM</abbr> algorithm </small></h2>
+        </div>
+        <div class="col-sm-10 well-sm" >
+          <h2 id="sec:EM">The EM algorithm</h2>
+          <p>The Expectation Maximization algorithm was describe in the paper of <span class="citation">A. P. Dempster (1977)</span>. The Baum-Welch algorithm extends the class of the EM algorithm and so we will focus on Baum-Welch instead.</p>
+
+        </div>
+      </div>
+
+      <!-- The Baum-Welch Algorithm -->
+      <div class="row">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h2><small> The Baum-Welch Algorithm algorithm </small></h2>
+        </div>
+        <div class="col-sm-10 well-sm" >
+          <h2 id="sec:BW">The Baum-Welch Algorithm</h2>
+          <p>Given an observable sequence <span class="math inline">\(\mathcal{O} = \{o_1,o_2,...,o_T \}\)</span> and assuming this sequence was generated by an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> as define in section [HMM], we want to find out the most likely set of parameters of <span class="math inline">\(\lambda\)</span> that generated the sequence <span class="math inline">\(\mathcal{O}\)</span>. Denoting by <span class="math inline">\(\theta = \{\mathbb{A,B},\pi\}\)</span> the set of parameters of <span class="math inline">\(\lambda\)</span>, we want to find out <span class="math inline">\(\theta\)</span> that maximizes the probability:</p>
+          <p><span class="math display">\[\theta^{\star} = \underset{\theta}{\operatorname{arg\, max}}Pr\left(\mathcal{O} | \lambda(\theta)\right)\]</span></p>
+          <p>The Baum-Welch algorithm uses as the basis the EM algorithm, which in turn is very similar to the k-means algorithm.</p>
+          <p>The first step is to infer the number of states and initial parameters of the <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> using heuristic methods.</p>
+          <p>Secondly, using the forward/backward algorithm as described in section [sec:FBA] from page we find the updated Bayesian probability of observing <span class="math inline">\(o_t\)</span> at time <span class="math inline">\(t\)</span> in state <span class="math inline">\(x_i\)</span> : <span class="math display">\[\label{eq:gamma}
+          Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right) =  \frac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }\]</span> we will denote equation [eq:gamma] by: <span class="math display">\[\gamma_i(t) = Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right)\]</span> please note that in equation [eq:gamma] the denominator <span class="math inline">\(\sum_{j \in S}\alpha_j(t) \beta_j(t) \)</span> was used rather that a computationally more efficient <span class="math inline">\(\sum_{i \in S} \alpha_i(x_T) = Pr(\mathcal{O}|\lambda(\theta))\)</span> in order to make <span class="math inline">\(\gamma_i(t)\)</span> a probability distribution.</p>
+          <p>Also, using the same backward and forward procedures as described in equation [eq:ba1] and [eq:fwa] we can also compute the probability of switching from state <span class="math inline">\(x_k=i\)</span> to <span class="math inline">\(x_{k+1}=j\)</span> given a particular model <span class="math inline">\(\lambda(\theta)\)</span>:</p>
+          <p><span class="math display">\[\label{eq:xi}
+          Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda) =
+          \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t)}{Pr(\mathcal{O}|\lambda(\theta))}\]</span></p>
+          <p>we will denote equation [eq:xi] by <span class="math display">\[\xi_{ij}(t) = Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda)\]</span></p>
+          <p>Again, we need to make [eq:xi] a probability distribution, and even though it looks computationally attractive to rewrite the denominator as the probability of observing <span class="math inline">\(\mathcal{O}\)</span> either by the forward or backward algorithm, we cannot write [eq:xi], although wikipedia does<a href="#fn46" class="footnoteRef" id="fnref46"><sup>46</sup></a>, as: <span class="math display">\[\xi_{ij}(t) =
+          \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}{\sum_{j\in S} \alpha_j(T)}\]</span> for <span class="math inline">\(\xi_{ij}(t)\)</span> to be a probability distribution: <span class="math display">\[\xi_{ij}(t) =  \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
+                              {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }\]</span></p>
+          <p>Now recall that <span class="math inline">\(a_{ij}\)</span> is the probability of moving to state <span class="math inline">\(j\)</span> while already being in state <span class="math inline">\(i\)</span>, e.i. <span class="math display">\[a_{ij}= Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta)\]</span></p>
+          <p>We can rewrite the above equation of <span class="math inline">\(a_{ij}\)</span> by applying the Bayesian rule: <span class="math display">\[\label{eq:aij}
+          Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta) = \frac{Pr(x_{t+1}=j,x_t=i| \mathcal{O}, \lambda(\theta)}{Pr(x_t=i | \mathcal{O}, \lambda(\theta)}\]</span></p>
+          <p>Using equations [eq:xi] and [eq:gamma] in equation [eq:aij] we can finally obtain the posterior distribution of <span class="math inline">\(\bar{a_{ij}}\)</span>:</p>
+          <p><span class="math display">\[\bar{a_{ij}} = \frac{\sum_{t=1}^{T-1}\xi_{ij}(t)}{\sum_{t=1}^{T-1} \gamma_i(t)}\]</span></p>
+          <p>equivalently: <span class="math display">\[\bar{a_{ij}} = \dfrac{\dfrac{Pr(x_{t+1}=j,x_t=i| \mathcal{O}, \lambda(\theta)}{Pr(x_t=i | \mathcal{O}, \lambda(\theta)}}
+                   {\dfrac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }}\]</span> substituting <span class="math display">\[\bar{a_{ij}} = \dfrac{  \dfrac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
+                              {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }}
+                              {\dfrac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }}\]</span> now we have a formula for re-estimating the transition probabilities as a function of the backward and forward probabilities, both of which are linear in <span class="math inline">\(T\)</span>.</p>
+          <p>To update the initial state probability distribution: <span class="math display">\[\bar{\pi_i} = \gamma_1(i) = \frac{\alpha_i(1)\beta_i(1)}{\sum_{i \in S} \alpha_i(1)\beta_i(1) }\]</span></p>
+          <p>For the emissions probability we have the expected number of the system being in state <span class="math inline">\(i\)</span> and observing <span class="math inline">\(o_k\)</span> : <span class="math display">\[\bar{b_i(o_k)} = \frac{\sum_{t \in T} \gamma_t(i) \mathbf{1}_{o_t=o_k}}{\sum_{t \in T} \gamma_t(i)}\]</span></p>
+          <p>Therefore, given a model <span class="math inline">\(\lambda\)</span> , we can compute <span class="math inline">\(\bar{lambda}(\bar{\mathbb{A}}, \bar{\mathbb{B}}, \bar{\pi})\)</span> and using the results of the theorem provided by <span class="citation">Leonard E. Baum and Eagon (1967)</span>, specifically:</p>
+          <p>Let <span class="math inline">\(P(x) = P (\{x_{ij} \})\)</span> be a polynomial with non-negative coefficients homogeneous of degree <span class="math inline">\(d\)</span>. If <span class="math inline">\(x_{ij} \geq 0\)</span> and <span class="math inline">\(\sum_j x_{ij}=1\)</span>. Denoting: <span class="math display">\[\mathfrak{I}(x)_{ij}=
+          \dfrac{\left( x_{ij} \dfrac{\partial P}{\partial x_{ij}} \middle |_{(x)} \right)}
+          {\left( \sum_j x_{ij} \dfrac{\partial P}{\partial x_{ij}} \right)  }\]</span> then <span class="math inline">\(\mathbb{P}(\mathfrak{I}(x_{ij})) \geq \mathbb{P}(x_{ij}) \)</span></p>
+          <p>The proof is provided by <span class="citation">Leonard E. Baum and Eagon (1967)</span>.</p>
+          <p>we conclude that <span class="math inline">\(\bar{\lambda}\)</span> is a <em>better</em> HMM model than <span class="math inline">\(\lambda\)</span>. By <em>•</em><span>better</span> we mean that <span class="math display">\[\mathbb{P}(\mathcal{O}|\bar{\lambda} \geq \mathbb{P}(\mathcal{O}|\lambda)\]</span> Therefore we have obtained an improved version of <span class="math inline">\(\lambda\)</span>. Repeating this process iteratively we will converge to a local maximum. There is no guarantee however that this local maximum will also be a global maximum. Since the optimization surface of a Markov process can be extremely complex, what we can do is randomly assign initial probability distributions <span class="math inline">\(\mu_i\)</span> for <span class="math inline">\(i \in \bar{1..n}\)</span> and compare the local optima for each <span class="math inline">\(i\)</span>, hoping we reached the highest value. Most importantly, these new estimated probabilities <span class="math inline">\(\bar{A}, \bar{B}\)</span> need to make sense, therefore the holistic and heuristic reviews of the most likely models <span class="math inline">\(\lambda_i\)</span> need to be performed by experts in the field.</p>
+          <p>The implementation of the Baum Welch algorithm is at the heart of the open source HMM implementation<a href="#fn47" class="footnoteRef" id="fnref47"><sup>47</sup></a>.</p>
+          <p>To show for convenience purposes how the Baum Welch algorithm works in practice, we will use the data from the example provided by <a href="http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml">byu.edu</a><a href="#fn48" class="footnoteRef" id="fnref48"><sup>48</sup></a>, consider the nucleotide sequence <span class="math inline">\(\{a, c, g, t\}\)</span>, assume there is an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> and the observations <span class="math inline">\(\mathcal{O}\)</span>:</p>
+          <pre><code>[&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;,&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;]</code></pre>
+          <p>generated by two states <span class="math inline">\(normal, island\)</span>. We would like to know what was the sequence of states that generated these observations and would also like to see the most likelihood matrix <span class="math inline">\(\mathbb{A}\)</span> from the <span class="math inline">\(\lambda\)</span>.</p>
+          <p>The software implementation is provided in the Annex [app:simHMM].</p>
+          <p>As we see we have obtained <span class="math inline">\(\bar{\lambda}\)</span> with updated transition probabilities.</p>
+
+
+
+        </div>
+      </div>
+
+
+      <!-- Conclusioins -->
+      <div class="row">
+        <div class="col-sm-2 well-sm" style="background-color:lavender;">
+          <h1><small> The Baum-Welch Algorithm algorithm </small></h1>
+        </div>
+        <div class="col-sm-10 well-sm">
+          <h1 id="conclusions">Conclusions</h1>
+          <p>As we have seen in the first part of this thesis Markov Chains have a wide area of applicability in modelling topics in Economics and Finance. Moreover, they provide a fresh paradigm for viewing traditional concepts in Economics such as long term economic growth or stock returns in Finance. The extension of the discrete state Markov chain to continuous states allows us to see the dynamics of the very probability distribution of the variable of interest rather than point estimates. Also, we have seen that the initial distribution assumptions play a crucial role in the variance of subsequent distributions and most importantly, the dispersion not only remains persistent after long periods of time (30 cycles in our case) but it can also increase casting doubt about concepts such as long run equilibrium <em>steady states</em>. On the other hand, Markov Chains are sensitive to how we define and what we incorporate in such abstract concepts as <em>states</em>. Even if we assume that the economy is governed by distinct economic states, it is still a matter of opinion when deciding the number of states. Nevertheless, I avail myself to conclude that the advantages of augmenting a model even with a parsimonious 2 state Markov Model can be expected to yield significant improvements.</p>
+          <p>A more general model of the Markov Chains that we have discussed in section [HMM], suitable with latent states or imperfect information, is the Hidden Markov Model (also called regime switching model in some sources). It not only allows better fit of traditional econometrics models such as ARMA and ARIMA, it does so using fewer parameters. The drawbacks of the HMM is its complexity and computational requirements in estimating the state transition probabilities. Fortunately, we have concluded that the use of dynamic programming techniques such as the Baum-Welch algorithm, extensively described in [sec:BW] partially solves these problems. The drawback of the Baum-Welch algorithm is that it does not guarantee a global optimum but only a local one and depending on the model, many random iterations of the initial probability distributions are needed to find the parameters of the HMM that generated the observations.</p>
+          <p>On future work I would like to continue on focusing on Hidden Markov Models and provide solutions to the problem of finding the global optimum. One way is to take advantage of computing parallelism or network distributed systems. This is possible since the bottleneck of estimating the transition probability matrix is in computing power and not in the network of the dimensions of the training set. Using mapreduce functions the central node can easily retain the highest likelihoods and discard others. Furthermore, I would like to further advance the HMM in the continuous state space and allow dimensionality reduction of external variables when defining abstract states of an HMM.</p>
+          <p>On a more philosophical note, we can conclude that history doesn’t matter for the future if we know <em>the present</em>. Therefore, predicting future returns, especially growth rates, solely on past returns is the wrong path. But do we know <em>the present</em>?</p>
 
         </div>
       </div>
