@@ -1,1031 +1,304 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title> Hidden Markov Model Transition Matrix Estimation</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <!-- MathJax -->
-    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-  </head>
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <body>
+		<title> Estimating Latent Parameters in Stochastic State Transition Matrices in HMMs </title>
 
-    <div class="container">
-      <div class="jumbotron">
-        <h1> Estimating the Transition Probability Matrix in the <abbr title="Hidden Markov Model"> HMM</abbr>s.
-          <small> A gentle Introduction to Markovian Processes and the Baum-Welch algorithm.  </small> </h1>
-        <p>Author: Adrian Vrabie</p>
-        <p> <span class="glyphicon glyphicon-envelope"></span> <em>first_name@last_name.net</em></p>
-        <p> <a href="docs/thesis_main.pdf"> <span class="glyphicon glyphicon-download"></span> pdf version </a> </p>
-        <p>Adviser: <a href="http://www.math.md/en/people/lozovanu-dmitrii/" > Dr. habil. Univ Prof Lozovanu Dmitrii </a></p>
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
 
-      </div>
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+
+				<!-- Slide Intro and Contents -->
+				<section>
+					<!-- Name -->
+					<section>
+						<h2>Applications of Markovian Processes in Economics and Latent Parameters Estimation in <abbr title="Hidden Markov Model">Hidden Markov Models</abbr></h2>
+						<p> Author: Adrian@Vrabie.net </p>
+						<p> Adviser: Dr. Habil. Univ Professor Dmitrii Lozovanu </p>
+
+					</section>
+
+					<!-- Contents -->
+					<section>
+						<h2>Contens:</h2>
+						<ol>
+
+							<li> Introduction	</li>
+							<li> Applications of Discrete State Markov Chains in Economics</li>
+							<li> Continuous State Space Markov Chains	</li>
+
+							<li> Part II: Estimating the State Transition Matrix </li>
+							<li> Code Implementation </li>
+
+						</ol>
+
+					</section>
+
+					<!-- Introduction -->
+					<section>
+						 <h3> Introduction </h3>
+							<ol>
+								<li class="fragment"> Why study Markov Chains? </li>
+								<li class="fragment"> What are Markovian Processes? </li>
+								<li class="fragment"> What types of questions can we answer using Markov Chains? </li>
+							</ol>
+					</section>
+
+					<!-- Applications of Discrete State Markov Chains in Economics -->
+					<section>
+						 <h3> Applications of Discrete State Markov Chains in Economics </h3>
+							<ol>
+								<li>First Order Markov Chain </li>
+								<li> Stationary Distribution </li>
+								<li> Simulating a Markov Chain </li>
+								<li> Second and N-order Markov Processes </li>
+							</ol>
+					</section>
+
+					<!-- Continuous State Markov Chains -->
+					<section>
+						<h3> Continuous State Markov Chains </h3>
+							<ul>
+								<li> Simulating a Continuous State Markov Chain </li>
+								<li> Look Ahead Estimate </li>
+							</ul>
+
+					</section>
+
+					<!-- Part II: Estimating the State Transition Matrix -->
+					<section>
+						<h2> Part II: Estimating the State Transition Matrix </h2>
+							<ol>
+								<li> The Hidden Markov Model </li>
+								<li> Simulating a Hidden Markov Model </li>
+								<li> The Forward/Backward Algorithm> </li>
+								<li> The Viterbi Algorithm> </li>
+								<li> The Baum Welch Algorithm </li>
+							</ol>
+
+					</section>
+
+				</section>
+
+				<!-- Introduction Presentation -->
+				<section>
+					<section>
+						<h1>Why study Markov Chains? </h1>
+						<blockquote>
+							Jeffrey Kuan at Harvard University claimed that Markov models might well be the most “real world” useful mathematical concept after that of a derivative.
+						</blockquote>
+					</section>
+					<section>
+						<h2>Why study Markov Chains? </h2>
+
+						<p> Markovian processes are used in:
+						<ul>
+							<li> algorithmic music composition </li>
+							<li> <a href="https://en.wikipedia.org/wiki/PageRank"> google search engine </a> </li>
+							<li> asset pricing models  </li>
+							<li> information processing  </li>
+							<li> machine learning </li>
+							<li> computer malware detection </li>
+							<li> speech recognition </li>
+							<li> nucleotide sequencing </li>
+							<li> <a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0034637"> lung cancer </a> </li>
+							<li> and many more </li>
+						</ul>
+					</p>
+
+					</section>
 
 
-      <!-- The Kernel -->
-      <div class="row">
-         <div class="col-sm-2 well-sm" style="background-color:lavender;">
-           <h2>
-             <small> The Kernel </small
-           </h2>
-         </div>
-         <div class="col-sm-10 well" >
-           <h2> Pursued Objectives </h2>
-           <p>
-             The first objective is understanding what Markov Chains and Hidden Markov Models are. Finally, understanding how to estimate the parameters of an <abbr title="Hidden Markov Model">HMM</abbr>. In particular, given a set of observations, how to find the best estimates for the state transition stochastic matrix <span class="math inline">\(\mathbb{A}\)</span>.
-           </p>
-         </div>
-       </div>
-      <!-- Introduction-->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2>  <small> Why study Markov Processes? </small></h2>
-        </div>
+					<section>
+						<h2> History of Markov Chains </h2>
+						Andrey Markov wanted to disprove Nekrasov's claim that only independet events could converge on predictable distributions.
+					</section>
 
-        <div class="col-sm-10 well" >
-          <h2> Introduction </h2>
-          <p> Markovian processes are ubiquitous in many real world applications, including algorithmic music composition, the Google search engine<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>, asset pricing models, information processing, machine learning, computer malware detection<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> and many more.<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a> Markov chains can be used to help model how plants grow, chemicals react, and atoms diffuse and applications are increasingly being found in such areas as engineering, computer science, economics, and education. Jeffrey Kuan at Harvard University claimed that Markov chains not only had a tremendous influence on the development of mathematics, but that Markov models might well be <strong>the most <em>“real world”</em> useful mathematical concept after that of a derivative.</strong></p>
-          <p> The Hidden Markov Model is the most suitable class among Markovian processes for modelling applications in Finance and Economics, yet the difficulties in estimating its parameters still present an issue for widespread adoption by the industry and academia.</p>
-          <p> As we will see, Markovian chains and Hidden Markov Models have a rich yet accessible mathematical texture and have become increasingly applicable in a wide range of applications. Although the assumptions underpinning Markovian processes can be perceived as unacceptably restrictive at first, Markov models tend to fit the data particularly well. One can distinguish many types of Markovian processes, each with its set of particular features. In this tutorial we examine only one particular type: the models with time invariant probability distributions within a state.<a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> These models allow the use of the theoretical results from studies focused on the convergence properties of stationary distribution as time <span class="math inline">\(t \mapsto \infty\)</span>. This is of use in Economics because it opens avenues not only to reinterpret economic growth in the settings of a stochastic matrix but allows to efficiently compute expected long-term economic growth rates.</p>
-          <p> The extension of Markovian chains to HMMs allows modelling even a wider scope of applications, suitable not only to describing the behaviour of the economy at a macroeconomic level but also for monetary policy advise. This can also have the potential of solving the Morgenstern’s critique.<a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> </p>
-          <p> A broadly applicable algorithm for computing maximum likelihood estimates from incomplete data is the EM algorithm, see <span class="citation">A. P. Dempster (1977)</span>. The work of <span class="citation">A. P. Dempster (1977)</span> was based on the Ph.D. thesis of <span class="citation">Sundberg (1972)</span> which provided a very detailed treatment of the EM method for exponential functions. The first to describe this EM algorithm in the paradigm of a mathematical maximization technique for probabilistic functions in Markov chains was <span class="citation">Leonard E Baum et al. (1970)</span><a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a>. The paper of <span class="citation">(Rabiner 1989)</span> provided a practical guidance to understanding the results of <span class="citation">(Leonard E. Baum and Petrie 1966)</span> and <span class="citation">(Leonard E Baum et al. 1970)</span> and their application into an Engineering framework, specifically voice recognition tasks. In the same token, the papers <span class="citation">(James D Hamilton 2016)</span>, <span class="citation">(James D. Hamilton and Raj 2002)</span> and <span class="citation">(James D. Hamilton 2005)</span> adapted the mathematical techniques presented by <span class="citation">(Leonard E Baum et al. 1970)</span> in estimating the parameters for the regime-switching models in describing economic aggregates like growth rates. The same theoretical aspects discussed by <span class="citation">A. P. Dempster (1977)</span>, <span class="citation">Rabiner (1989)</span> and <span class="citation">Leonard E. Baum and Eagon (1967)</span> describe the Hidden Markov Models, moreover the EM algorithm is still the state of the art technique in estimating its parameters (<span class="math inline">\(\Theta\)</span>) for the underlying process of generating the observables which we denote by <span class="math inline">\(\mathcal{O}\)</span>. Ideally we would want to have a robust method of estimating the parameters of an HMM which performs well not only on past observations but also predict future outcomes. Such models could easily be adjusted to augment SDGE (Stochastic Dynamic General Equilibrium) models which are currently based on systems of difference equations. </p>
-          <p> Unfortunately, there are still no analytical methods for estimating the transition probability that would guarantee the maximum of probabilities of a certain output generated by a Markovian process and we would still need to use a heuristic approach in determining the “right” number of states within a hidden Markov model. This is because any attempt to use any estimation methodologies suitable to the framework of Markovian processes undoubtedly inherits all its problems (for example the EM algorithm does not guarantee you a global minimum while the Clustering algorithms will not be able to determine a reasonable amount of focal points without an abstract cost function). Therefore, solving a problem with a hidden Markov chain requires a numerical approach.       </p>
-          <p> The good news is that as computers become more powerful, not only more iterations are possible but also more attempts to find the maximum can be made. Paralel computer architectures with mapreduce functions allow even better optimization of the Baum-Welch algorithm and therefore a higher probability of finding the global maximum.  Nevertheless, a heuristic approach in chosing the model that makes sense after applying algorithms for estimating the transition probability matrix is, in my humble opinion, the most viable approach at the moment.</p>
-        </div>
+					<section>
+						<h5>History of Markov Chains from 4m10s</h5>
+						<iframe class="stretch" src="http://www.youtube.com/embed/o-jdJxXL_W4"></iframe>
+					</section>
 
-      </div>
-      <!-- Markov Chains -->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2>
-             <small> What are Markovian Processes?</small>
-          </h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2> Markov Chains </h2>
-          <blockquote>
-            <p>
-            One has to keep a particular openness of mind. Solving a problem is like going to a strange place, not to subdue it, but simply to spend time there, to preserve one’s openness, to wait for the signals, to wait for the strangeness to dissolve into sense.
-            </p>
-            <footer>Peter Whittle</footer>
-          </blockquote>
+					<section>
+						<h5>First Order Markov Chain in Music</h5>
+						<iframe class="stretch" src="http://www.youtube.com/embed/4Gi-TucPQlc"></iframe>
+					</section>
 
-          <p>A Markovian chain is a dynamical stochastic process which has the <em>Markovian property</em><a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a>. Before we formally introduce the notion of a <em>Markovian property</em>, it might be useful to take a step back and ask what a dynamical system is instead.</p>
-          <p>Using the notation of <span class="citation">(Fraser 2008)</span>, a dynamical system is a mapping <span class="math inline">\(f(x_{t}) \mapsto \mathbb{R}^{n}\)</span>, where <span class="math inline">\(x_{t} \in \mathbb{R}^n\)</span> and <span class="math inline">\(t\)</span> is a time-like index, which transitions the state <span class="math inline">\(x_t\)</span> to <span class="math inline">\(x_{t+1}\)</span>.</p>
-          <p>If this is also confusing perhaps the best way is to refer to real world examples: in Economics we might refer to <span class="math inline">\(x\)</span> as the “State of the Economy”, in tagging problems <span class="math inline">\(x\)</span> could be the part of speech in a sentence, in biology <span class="math inline">\(x\)</span> can be a tag from the set <span class="math inline">\(\{A,T,G,C\}\)</span> from the nucleotide sequences found in human DNA or <span class="math inline">\(x\)</span> could be a binary variable corresponding to whether a student gave a correct answer to a particular problem at the PISA test.<a href="#fn8" class="footnoteRef" id="fnref8"><sup>8</sup></a>. In Economic models, since “the state of the economy” is an abstract term which encapsulates various positive and normative elements of the economy,<a href="#fn9" class="footnoteRef" id="fnref9"><sup>9</sup></a> we could restrict the values the economy can take to a particular set <span class="math inline">\(\mathbb{X} = \{\)</span> recession, mild- recession, mild-growth, growth <span class="math inline">\(\}\)</span>. The set <span class="math inline">\(X\)</span> is known as the <em>state space</em>.</p>
-          <p>Given <span class="math inline">\(f(x)\)</span>, if <span class="math inline">\(x(t)\)</span> is known, one can deterministically find future values of <span class="math inline">\(x(t+1)\)</span>, <span class="math inline">\(x(t+2) \dots\)</span> independently of previous states <span class="math inline">\(x(t-1)\)</span>, <span class="math inline">\(x(t-2) \dots\)</span>, making historical information unnecessary. This “uselessness of history”, is also known as a <em>Markov property</em>. Statisticians might refer to the Markovian property by conditional independence of previous states given the current state. Therefore, a dynamical system is an instance of a Markov Chain since it satisfies the Markovian property.</p>
-          <p>One implication is that such models are particularly appealing in models which emphasise fundamental analysis for determining the intrinsic value of financial assets.<a href="#fn10" class="footnoteRef" id="fnref10"><sup>10</sup></a></p>
-          <!-- #redundant <p>Dynamic stochastic general equilibrium models (abbreviated DSGE or sometimes SDGE or DGE), used by the most influential central banks could also be augmented with Markovian processes. We could think of any dynamical systems and find ways to improve it with Markovian processes.</p> -->
-          <p>Although Markov chains are useful in their own right, as we will show in section [smc], one problem we face in practice when the state <span class="math inline">\(x(t)\)</span> is latent<a href="#fn11" class="footnoteRef" id="fnref11"><sup>11</sup></a>. Usually we have lagged or only partial information about <span class="math inline">\(x(t)\)</span> and thus we can only estimate it. The information that is available to us, is called also called <em>emissions</em> in the literature, denoted by <span class="math inline">\(y(t)\)</span><a href="#fn12" class="footnoteRef" id="fnref12"><sup>12</sup></a>. The observed variables are a function of the state the system is in, therefore we can represent: <span class="math display">\[y(t) \sim f(x(t))\]</span></p>
-        </div>
-      </div>
 
-      <!-- Markov Chains and Applications in Economics -->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2><small> Examples of Markovian Processes </small></h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2 id="smc">Applications of Markov Chains in Economics </h2>
-          <p>There are many types of Markov Chains, choosing the appropriate model depends on the specific problem being modelled:</p>
-          <blockquote>
-            <p>“ We may regard the present state of the universe as the effect of its past and the cause of its future ” </p>
-            <footer> Marquis de Laplace </footer>
-          </blockquote>
-          <h3 id="first-order-markov-chain">First Order Markov Chain</h3>
-            <p>Given a set <span class="math inline">\(\mathbf{X}\)</span> which forms the state space and <span class="math inline">\(\mathbf{\Sigma}\)</span> a <span class="math inline">\(\sigma\)</span>-algebra on <span class="math inline">\(\mathbf{X}\)</span> and a probability measure <span class="math inline">\(Pr\)</span>, a Markov Chain <span class="math inline">\(\{x_t\}\)</span> is a sequence of random variables with the property that the probability of moving from the present state <span class="math inline">\(x_t\)</span> to next state <span class="math inline">\(x_{t+1}\)</span> depends only on the present state.<a href="#fn13" class="footnoteRef" id="fnref13"><sup>13</sup></a> This property can be written as: <span class="math display">\[Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i|X_{t-1} \right)\]</span></p>
-            <p>It is useful for abstraction purposes to represent a first order Markov process by a matrix <span class="math inline">\(\mathbb{A}\)</span> where the current state is represented by the row index. For this row to form a discrete probability distribution it must sum to 1. <span class="math display">\[\sum_{j \in X} a_{i,j} =1 \quad , \forall i  \in X\]</span></p>
-            <p>Therefore, a first order Markov process is simply a reinterpretation of a probability transition matrix <span class="math inline">\(\mathbb{A}\)</span>, also called the stochastic matrix, where <span class="math inline">\(a_{ij} \in \mathbb{A}\)</span> represents the probability of observing outcome <span class="math inline">\(j\)</span> at <span class="math inline">\(t+1\)</span> if at time <span class="math inline">\(t\)</span> we are observing <span class="math inline">\(i\)</span>. In it’s simplest form, the future state depends only on the state we are currently in.<a href="#fn14" class="footnoteRef" id="fnref14"><sup>14</sup></a> We will deal only with time-homogeneous Markov chains in this paper.</p>
-            <p>[Time Homogeneous Markov Chain] A time homogeneous Markov Chain is a MC that has a time invariant state-space probability matrix.</p>
-            <p>Using the example from <span class="citation">James D. Hamilton (2005)</span><a href="#fn15" class="footnoteRef" id="fnref15"><sup>15</sup></a> in his paper “What’s Real About the Business Cycle?”, we can write the state space transition matrix corresponding to the states <span class="math inline">\(\mathbf{X}= \{\)</span>normal growth, mild recession, severe recession <span class="math inline">\(\}\)</span> as:</p>
-            <p><span class="math display">\[\mathbb{A} = \left( \begin{array}{ccc}
-            0.971 &amp; 0.029 &amp; 0 \\
-            0.145 &amp; 0.778 &amp; 0.077 \\
-            0 &amp; 0.508 &amp; 0.492
-            \end{array} \right)\]</span></p>
-            <p>How is this useful in practice?<a href="#fn16" class="footnoteRef" id="fnref16"><sup>16</sup></a> One example is to determine how many periods<a href="#fn17" class="footnoteRef" id="fnref17"><sup>17</sup></a> of time a state will persist given that the current state <span class="math inline">\(X_t = x_t\)</span> as asked in the seminal paper of <span class="citation">(Rabiner 1989)</span>. One way to answer this question is to simulate the states generated by this matrix using Monte Carlo methods and then use the frequency approach to get an estimate. A better approach, shown in the paper of <span class="citation">Rabiner (1989)</span> is to observe that staying in a particular number of periods in a state follows a geometric series e.i. if we want to compute the probability the system will stay exactly 2 periods of time in the normal growth given that the current period <span class="math inline">\(x_t = \text{normal growth}\)</span> it will be: <span class="math display">\[\mathbb{P} = a_{11}^2(1-a_{11})\]</span> We know that the average value of <span class="math inline">\(x\)</span> denoted by <span class="math inline">\(\bar{x}\)</span> is <span class="math display">\[\bar{x} = \sum x \mathbb{P}(x)\]</span> similar to our case: the average (expected) number of days to stay in a particular state: <span class="math display">\[\bar{per} = \sum_{per=1}^\infty per a_{ii}^{d-1}(1-a_{ii})\]</span> which is the same as the well know geometric series<a href="#fn18" class="footnoteRef" id="fnref18"><sup>18</sup></a>: <span class="math display">\[\sum_{k=1}^n k z^k = z\frac{1-(n+1)z^n+nz^{n+1}}{(1-z)^2}\]</span><a href="#fn19" class="footnoteRef" id="fnref19"><sup>19</sup></a> Now taking <span class="math inline">\((1-a_{ii})\)</span> in front and taking the limit <span class="math inline">\(\lim_{t\to\infty} a_{ii}^t =0\)</span> we get <span class="math display">\[\bar{per} = (1-a_{ii}) \frac{1}{(1-a_{ii})^2} = \frac{1}{(1-a_{ii})}\]</span> So if we are in the state of <em>normal growth</em> at <span class="math inline">\(t\)</span> then we would expect: <span class="math display">\[\mathbb{E}[\text{periods of growth} | x_t = \text{normal growth}] = \frac{1}{1-0.971} \approx 34\]</span> This brings us back to the original question I posed about estimating a Markovian chain. If we know the expected number of periods a state persists in, we can calculate <span class="math inline">\(a_ii\)</span> from the stochastic matrix <span class="math inline">\(\mathbb{A}\)</span>.</p>
-            <p>What is more useful in practice is that this matrix is of use when calculating the expected pay-off of a particular pro-cyclical investment project<a href="#fn20" class="footnoteRef" id="fnref20"><sup>20</sup></a> or even better suited for financial assets. Let’s assume the following net pay-offs as a function of the state:</p>
-            <p><span class="math display">\[\mathbb{E} = \left( \begin{array}{c}
+				</section>
+
+				<!-- Formal intro of a Markov Chain -->
+				<section>
+					<section>
+						<h1>What is a Markov Chain?</h1>
+
+					</section>
+
+					<section data-autoslide="4000">
+						<h2>A Markov Chain is:</h2>
+						<p class="fragment"> a dynamic stochastic process with a <em>Markovian Property</em> </p>.
+						<h4 class="fragment" data-autoslide="4000"> What is a <em>Markovian Property</em>? </h4>
+						<span class="fragment">$Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i|X_{t-1} \right)$</span>
+						<span class="fragment" data-autoslide="8000"></span>
+
+
+					</section>
+
+					<section>
+						<h3>First order Markov Chain?</h3>
+						<iframe class="stretch" src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.3%2C0.3%2C0.4%5D%2C%5B0.3%2C0.5%2C0.2%5D%2C%5B0.4%2C0.4%2C0.2%5D%5D%7D"> </iframe>
+					</section>
+
+					<section>
+						<h3>First order Markov Chain?</h3>
+						<iframe background-color="transparent" class="stretch" src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.2%2C0.2%2C0%2C0.2%2C0.3%2C0%2C0.1%5D%2C%5B0.9%2C0%2C0%2C0%2C0%2C0%2C0.1%5D%2C%5B0%2C0.8%2C0%2C0.2%2C0%2C0%2C0%5D%2C%5B0%2C0.2%2C0.3%2C0.3%2C0%2C0%2C0.2%5D%2C%5B0%2C0.2%2C0.3%2C0%2C0%2C0.4%2C0.1%5D%2C%5B0.3%2C0.1%2C0%2C0%2C0.1%2C0.2%2C0.3%5D%2C%5B0%2C0.1%2C0%2C0%2C0%2C0.1%2C0.8%5D%5D%7D"> </iframe>
+					</section>
+
+				</section>
+
+				<!--  Applications of Markov Chains in Economics -->
+				<section>
+					<section>
+						<h1> Applications of Markov Chains in Economics </h1>
+					</section>
+					<section>
+						<h3> Applications of Markov Chains in Economics </h3>
+						<p> From Hamilton, Economic Transition </p>
+						$$\mathbb{A} = \left( \begin{array}{ccc}
+            0.971 & 0.029 & 0 \\
+            0.145 & 0.778 & 0.077 \\
+            0 & 0.508 & 0.492
+            \end{array} \right) $$
+						<p>With the followint payoffs</p>
+						$$\mathbb{E} = \left( \begin{array}{c}
             0.215 \\
             0.015 \\
             -0.18 \\
-            \end{array} \right)\]</span></p>
-            <p>That is, if the economy is in normal growth state, we expect the Internal Rate of Return to be 21.5 <span class="math inline">\(\%\)</span>.<a href="#fn21" class="footnoteRef" id="fnref21"><sup>21</sup></a></p>
-            <p>If the state <span class="math inline">\(x_t\)</span> is known at <span class="math inline">\(t\)</span> the expected pay-off is trivial: <span class="math display">\[E[t+1 | X_t= \texttt{mild recession}] = \sum_{j \in X} \mathbf{a}_{2,j}\mathbf{e}_j\]</span></p>
-            <p>If the current state is not known, we can use a discrete distribution to assess in which state the economy is at time <span class="math inline">\(t\)</span>, following <span class="citation">(Lozovanu and Pickl 2015)</span> we will denote it by <span class="math inline">\(\mathbf{\mu}\)</span>. <span class="math display">\[\mu = \left( \begin{array}{c}
-            0.1 \\
-            0.55 \\
-            0.35
-            \end{array} \right)\]</span></p>
-            <p>We can already calculate the expected pay-off using the Octave programming language.<a href="#fn22" class="footnoteRef" id="fnref22"><sup>22</sup></a></p>
-            <pre><code>A = [0.97100   0.02900   0.00000;
-                 0.14500   0.77800   0.07700;
-                 0.00000   0.50800   0.49200 ];
-            E = [0.215,   0.015,  -0.18];
-            E = transpose(E);
-            mu = [0.1,   0.55,   0.35];
-
-            #for the next period, given the state
-            A*E</code></pre>
-            <pre><code>ans =
-
-               0.209200
-               0.028985
-              -0.080940</code></pre>
-            <pre><code>#if the state is not known
-            &gt;&gt; mu*A*E
-            ans =  0.0085328</code></pre>
-            <p>Given that the expected pay-off is basically zero, we might wrongly conclude that the project is not worth investing in.</p>
-            <p>In petroleum industries however, as in the most other industries, the time horizon is not uncommon to be around 25 years. According to the signed Production Sharing Contracts (PSC) from the Kurdistan Region of Iraq published by the KRG Ministry of Natural Resources<a href="#fn23" class="footnoteRef" id="fnref23"><sup>23</sup></a> we can freely examine a sample of 43 PSCs, the majority of them (41 out of 43) have a development period of 25 years (including the 5 years optional extension period).<a href="#fn24" class="footnoteRef" id="fnref24"><sup>24</sup></a> Using this data, we can compute the expected pay-offs at time <span class="math inline">\(t=25\)</span> in the following way:</p>
-            <p><span class="math display">\[E_{\textsf{Payoff}}[t=25] = \mu \mathbb{A}^{25} \mathbb{E}\]</span></p>
-            <p>We can see that even in our example, computing <span class="math inline">\(\mathbb{A}^{25}\)</span> by hand is a very tedious task. And since matrix multiplication is very computationally intensive, computing matrices when <span class="math inline">\(t \mapsto \infty\)</span> becomes an issue.</p>
-            <p>One way to solve this problem is to check if all the column vectors in <span class="math inline">\(\mathbb{A}\)</span> are independent. We can solve for the eigenvalues of <span class="math inline">\(\mathbb{A}\)</span> and if we have as many different eigenvalues <span class="math inline">\(n\)</span> as columns in <span class="math inline">\(\mathbb{A}\)</span> then we can find <span class="math inline">\(n\)</span> distinct eigenvectors and decompose <span class="math inline">\(\mathbb{A}\)</span> into its canonical form: <span class="math display">\[\label{eq:canonical}
-            \mathbb{A} = \mathbf{S} \mathbf{\Lambda} \mathbf{S^{-1}}\]</span> where <span class="math inline">\(\mathbf{S}\)</span> is the matrix of eigenvectors and <span class="math inline">\(\mathbf{\Lambda}\)</span> is the identity matrix multiplied by the vector of eigenvalues. Now to solve for <span class="math display">\[E_{\textsf{Payoff}}[t=25] = \mu \mathbb{A}^{25} \mathbb{E} =  \mathbf{S} \mathbf{\Lambda}^{25} \mathbf{S^{-1}}\mathbb{E}\]</span> Solving for <span class="math inline">\(\mathbf{\Lambda}^{25}\)</span> is a lot easier than <span class="math inline">\(\mathbb{A}^{25}\)</span> since <span class="math inline">\(\mathbf{\Lambda}\)</span> is a diagonal matrix. Moreover, the highest eigenvalue of a the stochastic matrix generating a Markov chain is 1. This is important since if a matrix is: <span class="math display">\[\mathbf{x}\mathbb{A} = \lambda_i \mathbf{x}\]</span> then the stochastic matrix following a Markov chain can be written as:</p>
-            <p><span class="math display">\[\mathbf{x}\mathbb{A} = \mathbf{x}\]</span></p>
-            <p>which implies that <span class="math inline">\(\mathbf{x}\)</span> is a stationary probability distribution.<a href="#fn25" class="footnoteRef" id="fnref25"><sup>25</sup></a> To find the eigenvalues of <span class="math inline">\(\mathbb{A}\)</span> we proceed as follows: <span class="math display">\[\mathbf{v}(\mathbb{A}-I\lambda ) = \mathbf{0}\]</span> where <span class="math inline">\(\mathbf{v}\)</span> is one of the non-trivial eigenvectors<a href="#fn26" class="footnoteRef" id="fnref26"><sup>26</sup></a>. Determining the set of all <span class="math inline">\(\lambda\)</span>s for which the determinant of <span class="math inline">\(\mathbb{A}-I\lambda \)</span> in the above equation is zero is simply solving an <span class="math inline">\(n^{\texttt{th}}\)</span> order polynomial which I would rather do in Octave as follows:</p>
-            <p><span class="math display">\[\left| \mathbb{A}-I\lambda \right| = \left| \begin{array}{ccc}
-            0.971-\lambda &amp; 0.029 &amp; 0 \\
-            0.145 &amp; 0.778-\lambda &amp; 0.077 \\
-            0 &amp; 0.508 &amp; 0.492-\lambda
-            \end{array} \right| =0\]</span></p>
-            <pre><code>&gt;&gt; eigs(A)
-            ans =
-               1.00000
-               0.85157
-               0.38943</code></pre>
-            <p>That is: <span class="math display">\[\mathbf{\lambda} = \left(\begin{array}{c}
+            \end{array} \right)$$
+					</section>
+					<section>
+						<h4>The Hamilton Matrix simulation</h4>
+						<iframe class="stretch" src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.971%2C0.029%2C0%5D%2C%5B0.145%2C0.778%2C0.077%5D%2C%5B0%2C0.508%2C0.492%5D%5D%7D"> </iframe>
+						<p class="fragment"> But We will do this later! </p>
+					</section>
+					<section>
+						<h4>Find Eigenvalues and Eigenvectors of $\mathbb{A}$</h4>
+						$$\left| \mathbb{A}-I\lambda \right| = \left| \begin{array}{ccc}
+            0.971-\lambda & 0.029 & 0 \\
+            0.145 & 0.778-\lambda & 0.077 \\
+            0 & 0.508 & 0.492-\lambda
+            \end{array} \right| =0$$
+						<p class="fragment"> This gives us: </p>
+						<span class="fragment">
+						$$
+						\mathbf{\lambda} = \left(\begin{array}{c}
                1.00000 \\
                0.85157 \\
                0.38943 \\
-            \end{array} \right)\]</span> We can verify that these are indeed the eigenvalues of <span class="math inline">\(\mathbb{A}\)</span> by comparing the trace of <span class="math inline">\(\mathbb{A}\)</span> with the sum of the eigenvalues and the determinant of <span class="math inline">\(\mathbb{A}\)</span> should be equal to the product of the eigenvalues.<a href="#fn27" class="footnoteRef" id="fnref27"><sup>27</sup></a></p>
-            <pre><code>&gt;&gt; trace(A)
-            ans =  2.2410
-            &gt;&gt; sum(eig(A))
-            ans =  2.2410
-            &gt;&gt; prod(eig(A))
-            ans =  0.33163
-            &gt;&gt; det(A)
-            ans =  0.33163</code></pre>
-            <p>Now having found the eigenvalues, we substitute each of the eigenvalues into <span class="math inline">\(\lambda\)</span> and get a 3 degenerate matrices. We can easily verify this:</p>
-            <pre><code>&gt;&gt; det(A-eye(3))
-            ans =   -1.6611e-18</code></pre>
-            <p>which we assume is <span class="math inline">\(0\)</span> due to rounding errors.</p>
-            <p>Then we find the null space of these new matrices and find the eigenvectors corresponding to each eigenvalue.</p>
-            <pre><code>&gt;&gt; [evects, evals] = eigs(A)
-            evects =
+            \end{array} \right)
+						$$
+						<p class="fragment">Then find the null space for each eigenvalue</p>
+						</span>
+					</section>
+					<section>
+						<h4> We can now calculate the expected payoff conditional on $\mu$</h4>
+						$$\mathbf{S}\mathbf{\Lambda}^{25}\mathbf{S}^{-1} = \left(\begin{array}{ccc}
+               0.816125   &0.159822   &0.024054 \\
+               0.799109   &0.173836   &0.027055 \\
+               0.793458   &0.178491   &0.028051 \\
+            \end{array}\right)$$
+					</section>
 
-               0.5773503  -0.1389312   0.0098689
-               0.5773503   0.5721371  -0.1979135
-               0.5773503   0.8083052   0.9801698
+				</section>
 
-            evals =
+				<!-- A lil bit of theory -->
+				<section>
+					<section>
+						<h1> A little bit of Theory </h1>
+					</section>
+					<section>
+						<h4> Irreducible Stochastic Matrices </h4>
+						<p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>irreducible</strong> if its graph is strongly connected, that is: there <span class="math inline">\(\exists \; t \geq 0\)</span> : <span class="math inline">\(Pr(X_{t}=j|X_{0}=i) &gt; 0 \)</span></p>
+						<p> In our example, $\mathbb{A}$ is irreducible since we can end up in any state from any state after <span class="math inline">\(t \geq 1\)</span> steps.</p>
+					</section>
+					<section>
+						<h4 id="aperiodic-stochastic-matrices">Aperiodic Stochastic Matrices</h4>
+	          <p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>aperiodic</strong> if the greatest common divisor of the set S(x) defined as <span class="math display">\[S(x) = \{t \geq 1 : P^t(x, x) &gt; 0\}\]</span> equals 1.</p>
+						<p>We can easily check that matrix <span class="math inline">\(\mathbb{A}\)</span> from our example is aperiodic.</p>
+					</section>
+					<section>
+						<h4 id="stationary-distribution">Stationary Distribution</h4>
+          	<p>A probability distribution <span class="math inline">\(\pi\)</span> over <span class="math inline">\(X\)</span> is <strong>stationary</strong> over <span class="math inline">\(\mathbb{A}\)</span> if: <span class="math display">\[\pi = \pi \mathbb{A}\]</span></p>
+					</section>
+					<section>
+						<h4>Fundamental Theorem of Markov Chains</h4>
+						A theorem proven by <span class="citation">Häggström (2002)</span> states that:</p>
+	          <p>[Fundamental Theorem of Markov Chains][Haggstrom] If a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> is irreducible and aperiodic then there is a unique probability distribution <span class="math inline">\(\pi\)</span> that is stationary on <span class="math inline">\(\mathbb{A}\)</span>.</p>
+	          <p>provided by <span class="citation">Häggström (2002)</span>.</p>
+						<p class="fragment"> Therefore, we can write: $$\lim_{t \to \infty} \mu \mathbb{A}^t = \pi$$</p>
 
-            Diagonal Matrix
-
-               1.00000         0         0
-                     0   0.85157         0
-                     0         0   0.38943</code></pre>
-            <p>Therefore, since <span class="math inline">\(\mathbf{S}\)</span> is: <span class="math display">\[\mathbf{S} = \left(\begin{array}{ccc}
-               0.5773503 &amp;-0.1389312 &amp; 0.0098689 \\
-               0.5773503 &amp; 0.5721371 &amp;-0.1979135 \\
-               0.5773503 &amp; 0.8083052 &amp; 0.9801698 \\
-
-            \end{array}\right)\]</span> then <span class="math inline">\(\mathbf{S}^{-1}\)</span> is:</p>
-            <pre><code>&gt;&gt; pinv(evects)
-            ans =</code></pre>
-            <p><span class="math display">\[\mathbf{S}^{-1} = \left(\begin{array}{ccc}
-            1.407811   &amp;0.281562   &amp;0.042678 \\
-            -1.328512   &amp;1.094198   &amp;0.234314 \\
-            0.266324  &amp;-1.068188   &amp;0.801864 \\
-            \end{array}\right)\]</span></p>
-            <p>Now we are able to compute the values of the vector from equation [eq:canonical] :</p>
-            <pre><code>&gt;&gt; evects*(evals^25)*pinv(evects)
-            ans =</code></pre>
-            <p><span class="math display">\[\mathbf{S}\mathbf{\Lambda}^{25}\mathbf{S}^{-1} = \left(\begin{array}{ccc}
-               0.816125   &amp;0.159822   &amp;0.024054 \\
-               0.799109   &amp;0.173836   &amp;0.027055 \\
-               0.793458   &amp;0.178491   &amp;0.028051 \\
-            \end{array}\right)\]</span></p>
-            <p>What if <span class="math inline">\(\mathbb{A}\)</span> is not irreducible<a href="#fn28" class="footnoteRef" id="fnref28"><sup>28</sup></a> like in a for of a diagonal matrix? In this case, even if we get <span class="math inline">\(n\)</span> different eigenvalues we will not get <span class="math inline">\(n\)</span> orthogonal<a href="#fn29" class="footnoteRef" id="fnref29"><sup>29</sup></a> eigenvectors. To solve these types of problems we can use the algorithms proposed by <span class="citation">(Lozovanu and Pickl 2015)</span> for solving for <span class="math inline">\(\mathbb{Q}\)</span><a href="#fn30" class="footnoteRef" id="fnref30"><sup>30</sup></a> which can solve it in <span class="math inline">\(\mathcal{O}(n^3)\)</span> operations.</p>
-            <p>If eigenvectors seem too foreign or the method is too confusing and since we only have 3 states and <span class="math inline">\(t=25\)</span> we can directly solve it using any programming language. In Octave or Matlab it is as simple as:</p>
-            <pre><code>&gt;&gt; mu*A^25*E
-            ans =  0.16948</code></pre>
-            <p>Now the expected return is 17<span class="math inline">\(\%\)</span> and the decision for Marathon to invest in developing this region will depend on on their ability to attract capital with less than 17<span class="math inline">\(\%\)</span> interest as well as the availability of other more attractive opportunities.<a href="#fn31" class="footnoteRef" id="fnref31"><sup>31</sup></a></p>
-            <p>Another curiosity is the range the IRR takes as a function of <span class="math inline">\(\mu\)</span>. Again, with a Markovian chain this is trivial once we have our limiting probability matrix <span class="math inline">\(\mathbb{Q}\)</span> or <span class="math inline">\(\mathbb{A}^t\)</span>. Using the transition matrix provided by <span class="citation">James D. Hamilton (2005)</span>, the long term expectation of being in a particular state can be written as: <span class="math display">\[E[X] = \mu \mathbb{Q}\]</span> Even if we take <span class="math inline">\(\mu\)</span> to be <span class="math inline">\([0,0,1]\)</span> e.i. the worst case scenario:</p>
-            <pre><code>&gt;&gt; mu
-            mu =
-               0   0   1
-            &gt;&gt; mu*A^25
-            ans =
-               0.793458   0.178491   0.028051
-            &gt;&gt; mu*A^25*E
-            ans =  0.16822</code></pre>
-            <p>we can still expect a 16.8<span class="math inline">\(\%\)</span> return. To understand why this is so, we have to introduce the Fundamental theorem of Markov Chains.</p>
-
-
-        </div>
-
-      </div>
-
-      <!-- A little bit of theory -->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2><small> A little bit of Theory. </small></h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2 id="irreducible-stochastic-matrices">Irreducible Stochastic Matrices</h2>
-          <p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>irreducible</strong> if its graph is strongly connected, that is: there <span class="math inline">\(\exists \; t \geq 0\)</span> : <span class="math inline">\(Pr(X_{t}=j|X_{0}=i) &gt; 0 \)</span></p>
-          <p>We will denote by <span class="math inline">\(P^t(i,j)= Pr(X_{t}=j|X_{0}=i) \)</span>. In the example from section [smc] our stochastic matrix is irreducible since we can end up in any state from any state after <span class="math inline">\(t \geq 1\)</span> steps.</p>
-          <h2 id="aperiodic-stochastic-matrices">Aperiodic Stochastic Matrices</h2>
-          <p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>aperiodic</strong> if the greatest common divisor of the set S(x) defined as <span class="math display">\[S(x) = \{t \geq 1 : P^t(x, x) &gt; 0\}\]</span> equals 1.</p>
-          <p>We can easily check that matrix <span class="math inline">\(\mathbb{A}\)</span> from our example is aperiodic.</p>
-          <h2 id="stationary-distribution">Stationary Distribution</h2>
-          <p>A probability distribution <span class="math inline">\(\pi\)</span> over <span class="math inline">\(X\)</span> is <strong>stationary</strong> over <span class="math inline">\(\mathbb{A}\)</span> if: <span class="math display">\[\pi = \pi \mathbb{A}\]</span></p>
-          <p>As we have shown, the stochastic matrix in the Markov chain presented by <span class="citation">James D. Hamilton (2005)</span> is both irreducible and aperiodic. A theorem proven by <span class="citation">Häggström (2002)</span> states that:</p>
-          <p>[Fundamental Theorem of Markov Chains][Haggstrom] If a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> is irreducible and aperiodic then there is a unique probability distribution <span class="math inline">\(\pi\)</span> that is stationary on <span class="math inline">\(\mathbb{A}\)</span>.</p>
-          <p>provided by <span class="citation">Häggström (2002)</span>.</p>
-
-        </div>
-      </div>
-
-      <!-- Back to Marathon Oil-->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2><small> What is that theory useful for? </small></h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2>Back to our Petroleum example</h2>
-          <p>A direct result of this theorem is that Marathon Oil company can expect: <span class="math display">\[\lim_{t \to \infty} \mu \mathbb{A}^t = \pi\]</span></p>
-          <p>It would be interesting to compare our results with the limiting probability distribution, e.i. when <span class="math inline">\(t \to \infty\)</span>. To find the limiting probability distribution, observe that any <span class="math inline">\(\lambda_i &lt;1\)</span> will tend to be <span class="math inline">\(0\)</span> when <span class="math inline">\(t \to \infty\)</span>, therefore we can write: <span class="math display">\[\mathbf{\phi} = \lim_{t \to \infty} \mathbf{S}\Lambda^t\mathbf{S}^{-1} = \mathbf{S} \left(\begin{array}{ccc}
-          1 &amp;0 &amp;0 \\
-          0 &amp;0 &amp;0 \\
-          0 &amp;0 &amp;0 \\
-          \end{array}\right) \mathbf{S}^{-1}\]</span></p>
-          <pre><code>evects*[1,0,0;0,0,0;0,0,0]*evects^(-1)
-          ans =
-
-             0.812800   0.162560   0.024640
-             0.812800   0.162560   0.024640
-             0.812800   0.162560   0.024640</code></pre>
-          <p>Therefore the limiting probability distribution <span class="math inline">\(\phi\)</span>: <span class="math display">\[\phi = \left(\begin{array}{c}
+					</section>
+					<section>
+						<p> Since all but one of the eigenvalues is smaller than unity. </p>
+						$$\mathbf{\phi} = \lim_{t \to \infty} \mathbf{S}\Lambda^t\mathbf{S}^{-1} = \mathbf{S} \left(\begin{array}{ccc}
+          1 &0 &0 \\
+          0 &0 &0 \\
+          0 &0 &0 \\
+          \end{array}\right) \mathbf{S}^{-1}$$
+					<p class="fragment"> in our example: </p>
+					<span class="fragment">$$\phi = \left(\begin{array}{c}
           0.812800, 0.162560,  0.024640\\
-          \end{array} \right)\]</span> which is surprisingly close to our results when <span class="math inline">\(t=25\)</span>.</p>
-          <p>What about <em>risks</em>? And by risks, we will ignore the obvious ones, such as terrorism and political risks and focus instead on the implicit variance. To answer this question, as well as questions related to analysis of variance (ANOVA), we could use Monte Carlo simulations.</p>
+          \end{array} \right)$$ </span>
+					</section>
 
-        </div>
-      </div>
+				</section>
 
-      <!-- A Monte Carlo Simulation of a Markov Chain -->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2> <small> A Monte Carlo Simulation of a Markov Chain </small> </h2>
-        </div>
-        <div class="col-sm-10 well">
-          <h2 id="sec:SimMC">Simulating a Markov Chain</h2>
-          <p>In order to have a better understanding of the implicit variance of the Markov chain presented above we can simulate it. There are a plethora of open source libraries providing frameworks to accomplish such simulations. We will make our own using the open source QuantEcon package from GitHub which was written by <span class="citation">Stachurski and Sargent. (2016)</span>. We will simulate our example using the Julia programming language for the example from Hamilton based on software recommendations from <span class="citation">Stachurski and Sargent. (2016)</span>. Below we provide a working example. The requirements to replicate this example will be provided in the Annex.</p>
-          <p>Inputting the data: The probability transition matrix <span class="math inline">\(\mathbb{A}\)</span>, the initial state probability vector <span class="math inline">\(\mu\)</span> and pay-off expectations <span class="math inline">\(\mathbb{E}\)</span></p>
-          <pre><code>A = [0.971 0.029 0; 0.145 0.778 0.077; 0 0.508 0.492] # Probability Transition Matrix
-          mu = [0.1 0.55 0.35] # initial state probability vector
-          E = [0.215 0.015 -0.18]&#39; #column vector of pay-off expectations - project specific
-
-          using QuantEcon</code></pre>
-          <p>A sample for Markov Chain is given by the function <em>MarkovChain_sample</em> which takes as input matrix <span class="math inline">\(\mathbb{A}\)</span> - the probability transition matrix and the initial state probability distribution vector <span class="math inline">\(\mu\)</span>. Optionally, we can provide the <em>sample_size</em> or <span class="math inline">\(t\)</span> which in our case for the petroleum industry is 25 years.</p>
-          <pre><code>function MarkovChain_sample(A, mu; sample_size=25)
-              X = Array(Int16, sample_size)
-              p_mu = DiscreteRV(vec(mu))
-              X[1] = draw(p_mu)
-              Pr_A = [DiscreteRV(vec(A[i,:])) for i in 1:(size(A)[1])]
-              for t in 2:(sample_size)
-                  X[t]=QuantEcon.draw(Pr_A[X[t-1]])
-              end
-              return X
-          end</code></pre>
-          <p>The array X is the container of Integers where we will store the state from one instance of the Markov process. The function <em>DiscreteRV</em> from the QuantEcon package take as input a vector whose elements sum to 1 and converts it into a discrete probability distribution. The variable <span class="math inline">\(P_\mu\)</span> is therefore the initial state discrete probability distribution from which we determine the first state our system will take. The <em>draw</em> function form the QuantEcon package takes a probability distribution as input and outputs a sample output. In line 4 we convert our probability transition matrix into <span class="math inline">\(n\)</span> distinct discrete probability distribution and then we assign a state to <span class="math inline">\(X_t\)</span> from a random draw according to the pdf of <span class="math inline">\(X_{t-1}\)</span>. Here is a sample output when we call <em>MarkovChain_sample</em></p>
-          <pre><code>iaka = MarkovChain_sample(A,mu)
-          iaka&#39;
-
-          Out:
-          1x25 Array{Int16,2}:
-           2  2  1  1  1  1  1  1  1  1  1  1  1  1  1  1  3  3  2  2  2  2  1  1  1 </code></pre>
-          <p>Once we have a sample path and the pay-off vector <span class="math inline">\(\mathbb{E}\)</span>, we can calculate the result of the investment project. Assuming for simplicity that the discount <span class="math inline">\(\beta\)</span> rate is zero<a href="#fn32" class="footnoteRef" id="fnref32"><sup>32</sup></a> the pay-off would simply be: <span class="math display">\[\text{Payoff} = \prod_{t=1}^{25}(1+E(x_t))\]</span></p>
-          <p>Below we present a Monte Carlo procedure to simulate a Markov Chain without discount.</p>
-          <pre><code>function MarkovChain_simulation(ff::Function, A, mu, E; nr_iter=100, t=25)
-              X = Array(Float32,nr_iter)
-              #sample_path = Array(Int16, t)
-              for i in 1:nr_iter
-                  sample_path = ff(A,mu, sample_size= t)
-                  X[i] = sum([log(1+E[sample_path[i]]) for i in 1:length(sample_path) ])
-              end
-              return X
-          end    </code></pre>
-          <p>where in addition to the parameters from <em>MarkovChain_sample</em> we have <em>ff</em> which is a reference to a function, and vector <span class="math inline">\(\mathbb{E}\)</span> the pay-offs vector. The function <em>MarkovChain simulation</em> returns an array <span class="math inline">\(X\)</span> of logarithmic returns without a discount. These classes of simulations are useful for simulating the Future Value of a financial asset. Also, this algorithm is not very efficient since it uses iterative processes which do not take advantage for multiprocessor architectures in modern computers. Therefore, we propose a slightly improved procedure for simulating a Markovian process:</p>
-          <pre><code>function MC_sim(ff, A, mu, E; nr_iter=10,t=25)
-              X = Array(Float32,nr_iter)
-              for i in 1:nr_iter
-                  sample_path = ff(A,mu, sample_size= t)
-                  X[i]=mapreduce(x-&gt;log(1+E[x]),+, sample_path)
-              end
-              return X
-          end</code></pre>
-          <p>Here we take advantage of the multi-processor architecture using the mapreduce procedures with the plus binary operator. To be of any use for our petroleum example, we would also need to discount each return with respect to the internal cost of capital <span class="math inline">\(\beta\)</span>. Without loss of generality we assume <span class="math inline">\(\beta = 0.1\)</span></p>
-          <pre><code>function MC_sim_discount(mc::Function, A, mu, E; nr_iter=10,t=25, discount=0.1)
-              &quot;&quot;&quot;
-              Calculates the cummulative Economic profit, based on the discount rate
-              Required:
-              MC_sim_discount - Markov Chain Simulation with discount
-              mc - The function that we want to simulate (ex: Markov Chain sample path )
-              A - Probability Transition Matrix nxn stochastic matrix
-              mu - initial state probability distribution 1xn vector
-              E - expected pay-off emission probability nx1 vector
-
-              Optional:
-              nr_iter - Integer+
-              t - number of periods in the mc function
-              discount - the internal cost of capital or normal rate of return
-              &quot;&quot;&quot;
-              X = Array(Float32,nr_iter)
-              for i in 1:nr_iter
-                  MarkovChain_sample_path = mc(A,mu, sample_size= t)
-                  X[i]=mapreduce(x-&gt;log(1+E[x[2]])-(log(1+discount)),+, enumerate(MarkovChain_sample_path))
-              end
-              return X
-          end</code></pre>
-          <p>Here we take advantage of the log returns property to discount each pay-off as a function of the state the system is in. We can still improve the above algorithm, at the cost of readability, by getting rid of the first <em>for</em> loop and calculate the average log return rather than the cumulative economic return.</p>
-          <pre><code>function MC_sim(mc::Function, A, mu, E; nr_iter=10,t=25)
-              &quot;&quot;&quot;
-              Markov Chain Simulation computes the average log return
-              Required:
-
-              mc - The function that we want to simulate (ex: Markov Chain sample path )
-              A - Probability Transition Matrix nxn stochastic matrix
-              mu - initial state probability distribution 1xn vector
-              E - expected pay-off emission probability nx1 vector
-
-              Optional:
-              nr_iter - Integer+
-              t - number of periods in the mc function
-              &quot;&quot;&quot;
-
-              X = Array(Float32,nr_iter)
-              map!(y-&gt;mapreduce(x-&gt;log(1+E[x]),+, mc(A,mu, sample_size= t))/t,X)
-              return X
-          end</code></pre>
-          <p>Now, thanks to the very high level paradigm of Julia language and onion code, our simulation function is effectively only three lines of code, though much less readable.</p>
-          <p>Now we can proceed to simulate our Markov Chain using different number of iterations to observe how the variance behaves. Since a picture is a thousand words we will plot the log returns for <span class="math inline">\(n= \{10^3, 10^4, 10^5, 10^6 \}\)</span> where <span class="math inline">\(n\)</span> is the number of iterations.</p>
-          <pre><code>n = 1000
-          simulation = MC_sim(MarkovChain_sample,A, mu, E; nr_iter=n);
-
-          fig = figure(&quot;pyplot_histogram&quot;,figsize=(8,8))
-          ax = axes()
-          h = plt[:hist](simulation,20)
-          grid(&quot;on&quot;)
-          xlabel(&quot;Log Returns&quot;)
-          ylabel(&quot;Frequency&quot;)
-
-          title(&quot;Markov Chain Simulation for Marathon Oil, \$n=10^3\$&quot;)</code></pre>
-          <div class="figure">
-          <img src="graphs/mcLogReturns_5.png" class="img-responsive" alt="Markov Chain Simulation" style="width:90.0%" />
-          <p class="caption">Markov Chain Simulation<span data-label="fig:MCSim5"></span></p>
-          </div>
-          <div class="row">
-            <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_3.png"  class="thumbnail">
-                <p> Monte Carlo for <span class="math inline"> \(n=10^3 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_3.png" alt="Log Returns for 1000 iterations" style="width:95.0%" />
-              </a>
-            </div>
-            <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_4.png"  class="thumbnail">
-                <p> Monte Carlo for <span class="math inline"> \(n=10^4 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_4.png" alt="Log Returns for 10000 iterations" style="width:95.0%" />
-              </a>
-            </div>
-            <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_5.png"  class="thumbnail">
-                <p> Monte Carlo for <span class="math inline"> \(n=10^5 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_5.png" alt="Log Returns for 100000 iterations" style="width:95.0%" />
-              </a>
-            </div>
-            <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_6.png"  class="thumbnail">
-                <p> Monte Carlo for <span class="math inline"> \(n=10^6 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_6.png" alt="Log Returns for 1000000 iterations" style="width:95.0%" />
-              </a>
-            </div>
-          </div>
-
-          <p>To get bigger images for <span class="math inline">\(n = \{10^3, 10^4, 10^5, 10^6\}\)</span> iterations, click on the thumbnails above. </p>
-
-        </div>
-      </div>
-
-      <!-- Other types of Markovian Processes -->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2> <small> Other types of Discrete Markovian Processes </small> </h2>
-        </div>
-        <div class="col-sm-10 well">
-          <h2 id="second-and-n-order-markov-processes">Second and N-order Markov Processes</h2>
-          <p>A second order, third order up to <span class="math inline">\(\text{n}^{th}\)</span> order Markov process behaves the same as described by [smc], except: <span class="math display">\[Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i \right|X_{t-1}=x_{t-1},...,X_{t-n}=x_{t-n})\]</span></p>
-          <p>Given observable outcomes, choosing a model is a trade-off between a parsimonious model and a better goodness of fit. Given a likelihood function of the model <span class="math inline">\(\mathbf{\Lambda}\)</span>, once can use a loss function, maximize a probability distribution or use AIC, e.i. <span class="math inline">\(2k-\ln{\mathbf{\Lambda}}\)</span>. Another favourable characteristic of the N-order Markov Processes to be useful in practice is that the transition probability matrix <span class="math inline">\(\mathbb{A}\)</span> be <strong><em>irreducible</em></strong>.</p>
-          <p>Any N-order Markovian Process can be represented by a first order Markovian process.</p>
-          <p>This is rather a trivial proof. Suppose we observe a process that is indeed governed by the function <span class="math inline">\(f(x,y) \to \mathbb{R}\)</span> where <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span> <span class="math inline">\(\in\)</span> state spaces <span class="math inline">\(S,V\)</span> respectively and we want to transform <span class="math inline">\(f(x,y)\)</span> into <span class="math inline">\(f(z)\)</span>. We can define a state space <span class="math inline">\(z \in\)</span> <span class="math inline">\(T = \{(x_i,y_j), \quad x_i \in S \quad y_j \in V  \}\)</span> and then rewrite <span class="math inline">\(f(x,y)\)</span> as <span class="math inline">\(f(z)\)</span>.</p>
-          <p>Of course the proof goes beyond saying that we can represent any 2-nd order Markov Chains, e.i.: <span class="math display">\[Pr\left(X_t |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i |X_{t-1}=x_{t-1},X_{t-2}=x_{t-2} \right)\]</span> as: <span class="math display">\[Pr\left(X_t |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i |(X_{t-1},X_{t-2}) \right)\]</span> where <span class="math inline">\((X_{t-1},X_{t-2})\)</span> is defined as a new state. What the second fundamental theorem of Markov Chains suggests is that even if we have a very complex dynamic process which emits observations <span class="math inline">\(\epsilon_i\)</span>, we can still describe it by a first order Markov chain, given enough states.</p>
-          <h2 id="semi-markov-chains-and-semi-hidden-markov-models">Semi Markov Chains and Semi Hidden Markov Models</h2>
-          <p>The SMC and the SHMM are a generalization of the MC and HMM in the sense that they:</p>
-          <ol>
-          <li><p>Allow arbitrarily distributed sojourn times in any state</p></li>
-          <li><p>Still have the Markovian hypothesis, but in a more flexible manner.</p></li>
-          </ol>
-          <p>As defined by <span class="citation">Barbu and Limnios (2008)</span>[pp. 2] a process that has these two properties will be called a semi-Markov process.</p>
-
-        </div>
-      </div>
-
-      <!--Continuous State Markov Chains -->
-      <div class="row">
-        <div class="col-sm-2" style="background-color:lavender;">
-          <h2> <small> Continuous State Markov Chains </small> </h2>
-        </div>
-        <div class="col-sm-10 well">
-          <h2 id="continuous-state-markov-chains">Continuous State Markov Chains</h2>
-          <p>A continuous state Markov Chain extends the model presented in section [smc] by allowing a probability density distribution on the states. These have been analysed extensively in the paper of <span class="citation">Benesch (2001)</span>. More formally, a stochastic kernel on <span class="math inline">\(\mathbb{S}\)</span> is a function <span class="math inline">\(p:\mathbb{S}\times \mathbb{S}\in \mathbb{R}\)</span> with the property that: <span class="math display">\[\begin{aligned}
-           &amp; p(x, y) \geq 0 \quad \forall x,y \in \mathbb{S} \\
-           &amp; \int_{-\infty}^{+\infty} p(x, y) dy = 1 \quad\forall x \in \mathbb{S}\end{aligned}\]</span></p>
-          <p>For example, suppose the random variable <span class="math inline">\(X_t\)</span> is characterized by the famous normally distributed random walk: <span class="math display">\[\label{eq:RWalkNorm}
-          X_{t+1} = X_t + \xi_{t+1} \quad \text{where} \quad
-          \{ \xi_t \} \stackrel {\textrm{ IID }} {\sim} N(0, 1)\]</span></p>
-          <p>We could characterize this random distribution through the use of a continuous state Markov Chain, specifically by defining the transition probability <span class="math inline">\(p(x_t, x_{t+1})\)</span> analogous to <span class="math inline">\(\mathbb{A}\)</span><a href="#fn33" class="footnoteRef" id="fnref33"><sup>33</sup></a> to be: <span class="math display">\[p(x_t, x_{t+1}) = \frac{1}{\sqrt{2 \pi}} \exp \left\{ - \frac{(x_{t+1} - x_t)^2}{2} \right\}\]</span></p>
-          <p>Combining the ideas from the blog of <span class="citation">Stachurski and Sargent. (2016)</span> as well as the seminal paper <span class="citation">Tauchen (1986)</span> we can connect Stochastic difference equations to the probability kernel. <span class="math display">\[\label{eq:genericKernel}
-          X_{t+1} = \mu(X_t) +\sigma(X_t)\xi_{t+1}\]</span> where <span class="math inline">\(\{ \xi_t \} \stackrel {\textrm{ IID }} {\sim} \phi\)</span> and <span class="math inline">\(\mu, \sigma\)</span> are functions. This is clearly a Markov process, since the state of the system at <span class="math inline">\(t+1\)</span> depends only on the current state <span class="math inline">\(t\)</span>. Under this equation, which we will call <em>generic Markov process</em>, we can write the normally distributed random walk stochastic process, as shown in [eq:RWalkNorm] as a special case of equation [eq:genericKernel] when <span class="math inline">\(\sigma(x_t)=1\)</span> and <span class="math inline">\(\mu(x_t)=x_t\)</span>.</p>
-          <p>Consider <span class="math inline">\(X_t\)</span> following an ARCH(1) process: <span class="math display">\[\begin{aligned}
-          &amp; y_{t}   = a_0 + a_1y_{t-1}+ a_2y_{t-2}+...+a_qy_{t-q-1} + X_t \\
-          &amp; y_{t+1} = a_0 + a_1y_{t}+ a_2y_{t-1}+...+a_qy_{t-q} + X_{t+1} \\
-          &amp; X_{t+1} = \alpha X_{t} + \sigma_t \xi_{t+1} \\
-          &amp; \sigma_t^2 = \beta + \gamma X_t^2, \quad \text{where} \beta, \gamma &gt;0\end{aligned}\]</span></p>
-          <p>This is a special case of equation [eq:genericKernel] with <span class="math inline">\(\sigma(x) = (\beta + \gamma x^2)^{1/2}\)</span> and <span class="math inline">\(\mu(x) = \alpha x\)</span></p>
-          <p>Moreover, it is useful to write equation [eq:genericKernel] in a form of a probability kernel.</p>
-          <p>Any Markov Process in the form <span class="math inline">\(X_{t+1} = \mu(X_t) +\sigma(X_t)\xi_{t+1}\)</span> as specified in equation [eq:genericKernel] where <span class="math inline">\(\xi_{t+1} \sim \phi\)</span> can be written as: <span class="math display">\[Pr(x_{t+1}|x_t)
-          = \frac{1}{\sigma(x_t)}
-          \phi \left( \frac{x_{t+1} - \mu(x)}{\sigma(x)} \right)\]</span></p>
-          <p>Let <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> be two random variables with probability density functions <span class="math inline">\(f_U(u)\)</span> and <span class="math inline">\(f_V(v)\)</span> and the cumulative probability distributions <span class="math inline">\(F_U\)</span> and <span class="math inline">\(F_V\)</span> respectively and <span class="math inline">\(V = a+bU\)</span> where <span class="math inline">\(a,b \in \mathbb{R}\)</span> and <span class="math inline">\(b&gt;0\)</span>. Theorem 8.1.3 from <span class="citation">Stachurski and Sargent. (2016)</span> proves that in this case: <span class="math inline">\(f_V(v)= \frac{1}{b} f_U \left( \frac{v - a}{b} \right)\)</span> and since <span class="math inline">\(\sigma(x)\)</span> is the square root of <span class="math inline">\(\sigma^2(x)\)</span> results that <span class="math inline">\(\sigma(x)&gt;0\)</span> and we can apply Theorem 8.1.3 directly in our case which completes the proof. Proving theorem 8.1.3 from <span class="citation">Stachurski and Sargent. (2016)</span> is also straightforward: We know that <span class="math inline">\(F_V(v) = \mathbb P\{V \leq v \}\)</span>, and from the assumption that <span class="math inline">\(V = a+bU\)</span> we substitute <span class="math inline">\(V\)</span> and obtain <span class="math inline">\(F_V(v) = \mathbb P \{ a + b U \leq v \} = \mathbb P \{ U \leq (v - a) / b \}\)</span>. We can now write that: <span class="math display">\[F_V(v) = F_U ( (v - a)/b )\]</span> and since the probability density function <span class="math inline">\(f_V(v)\)</span> is the derivative of the cumulative probability distribution <span class="math inline">\(F_V(v)\)</span> with respect to <span class="math inline">\(v\)</span>, we take the derivative of <span class="math inline">\(F_V(v)\)</span> and obtain: <span class="math display">\[f_V(v)
-          = \frac{1}{b}
-          f_U \left( \frac{v - a}{b} \right)\]</span></p>
-          <p>For example, following the Solow-Swan model<a href="#fn34" class="footnoteRef" id="fnref34"><sup>34</sup></a> presented in <span class="citation">Romer (2006)</span> the capital per capita <span class="math inline">\(k\)</span> difference equation is: <span class="math display">\[\label{eq:SolowK}
-          k_{t+1} = s  A_{t+1} f(k_t) + (1 - \delta) k_t\]</span> where</p>
-          <ol>
-          <li><p><span class="math inline">\(s\)</span> is the savings ratio</p></li>
-          <li><p><span class="math inline">\(\delta\)</span> is the normal depreciation rate of the capital</p></li>
-          <li><p><span class="math inline">\(A_{t+1}\)</span> is the production shock at time <span class="math inline">\(t+1\)</span> which is latent at time <span class="math inline">\(t\)</span></p></li>
-          <li><p>and <span class="math inline">\(f \colon \mathbb R_+ \to \mathbb R_+\)</span> is a production function, usually of the labour augmenting Cobb-Douglas form.</p></li>
-          </ol>
-          <p>Equation [eq:SolowK] is the driving force of the most popular economic growth model in Economics.<a href="#fn35" class="footnoteRef" id="fnref35"><sup>35</sup></a> Since in equation [eq:SolowK] the production shock <span class="math inline">\(A_{t+1}\)</span> is a random variable, it is also a special case of equation [eq:genericKernel] with <span class="math inline">\(\mu (x) = (1-\delta)x\)</span> and <span class="math inline">\(\sigma (x) = sf(x)\)</span>. Now we can also write the probability kernel of equation [eq:SolowK] as: <span class="math display">\[p(x, y) = \frac{1}{sf(x)} \phi \left( \frac{y - (1 - \delta) x}{s f(x)} \right)\]</span> where <span class="math inline">\(\phi \sim A_{t+1}\)</span>, <span class="math inline">\(x = k_t\)</span> and <span class="math inline">\(y=k_{t+1}\)</span>.</p>
-          <p>Having defined the continuous probability transition density, we can generalize the formula for the probability state density at <span class="math inline">\(t+1\)</span>. In the continuous case, if the distribution of <span class="math inline">\(X_t \sim \psi_t\)</span> then <span class="math inline">\(\psi_{t+1}\)</span>, analogous to the sum as specified in section [smc] for the discrete case: <span class="math display">\[\label{eq:CSMC_probVec}
-          \psi_{t+1}(y) = \int p(x,y) \psi_t(x) \, dx,
-          \qquad \forall y \in S\]</span></p>
-          <h3 id="simulating-a-continuous-state-markov-chain">Simulating a Continuous State Markov Chain</h3>
-          <p>Once we have established a probability kernel and having the initial probability state distribution <span class="math inline">\(\psi_0\)</span>, we can proceed to estimating the state density distribution <span class="math inline">\(\psi_1\)</span> at <span class="math inline">\(t=1\)</span>. The straight forward way for simulating the growth of capital as described in equation [eq:SolowK]: <span class="math inline">\(k_{t+1} = s  A_{t+1} f(k_t) + (1 - \delta) k_t\)</span> is to:</p>
-          <ol>
-          <li><p>draw <span class="math inline">\({k_0}\)</span> from the initial probability density <span class="math inline">\(\psi_0\)</span></p></li>
-          <li><p>draw <span class="math inline">\(n\)</span> parameters from the probability density <span class="math inline">\(\phi\)</span>, in the case of the model at equation [eq:SolowK] these are the technology shocks <span class="math inline">\(A_1 ... A_n\)</span>.</p></li>
-          <li><p>repeat by computing <span class="math inline">\(k_{t+1}\)</span> from [eq:SolowK] and store them in an array.</p></li>
-          </ol>
-          <p>Once we have <span class="math inline">\(n\)</span> instances of <span class="math inline">\(k_{t+1}\)</span>s, we can use kernel density estimates functions to make inferences about the probability distribution.<a href="#fn36" class="footnoteRef" id="fnref36"><sup>36</sup></a></p>
-          <p>The paper of <span class="citation">Stachurski and Martin (2008)</span>, based on the look-ahead estimator, provides an improved Monte Carlo algorithm for computing marginal and stationary densities of stochastic models with the Markov property, establishing global asymptotic normality and fast convergence. The idea is that, by the strong law of large numbers: <span class="math display">\[\frac{1}{n} \sum_{i=1}^n p(k_{t-1}^i, y)
-          \to
-          \mathbb E p(k_{t-1}^i, y)
-          = \int p(x, y) \psi_{t-1}(x) \, dx
-          = \psi_t(y)\]</span> where <span class="math inline">\(p(x,y)\)</span> is the example specific stochastic kernel e.i. <span class="math inline">\(p(x, y) = \frac{1}{sf(x)} \phi \left( \frac{y - (1 - \delta) x}{s f(x)} \right)\)</span></p>
-          <p>Therefore, we can write our continuous state probability density as the average of probabilities: <span class="math display">\[\psi_t^n(y) = \frac{1}{n} \sum_{i=1}^n p(k_{t-1}^i, y)\]</span></p>
-          <p>Since an efficient implementation of the Monte Carlo simulation for the continuous state Markov process requires a more significant number of steps than in the discrete case, as shown in section [sec:SimMC], and also taking into account that the continuous case is not conceptually different than in the discrete case, providing a step by step implementation as in section is beyond the scope of this thesis. On the other hand, I will present the implementation of <span class="citation">Stachurski and Martin (2008)</span> in Julia language in the Annex for convenience purposes.</p>
-          <p>Given the Solow-Swan model, and using the implementation of the <code>LAE, lae_est</code> as provided in the Annex, we can now ask how fast does the initial density probability function for the continuous state Markov Chain converge to the steady state distribution of capital per capita <span class="math inline">\(k\)</span>. To answer this question we only need to write the function for the probability kernel <span class="math inline">\(p(x,y)\)</span>.</p>
-          <pre><code>function p(x, y)
-              #=
-              Stochastic kernel for the growth model with Cobb-Douglas production.
-              Both x and y must be strictly positive.
-              =#
-              d = s * x.^alpha
-              pdf_arg = clamp((y .- (1-sigma) .* x) ./ d, eps(), Inf)
-              return pdf(phi, pdf_arg) ./ d
-          end</code></pre>
-          <p>The idea is that any initial state density distribution for the <span class="math inline">\(k_0\)</span> will converge to a steady state density distribution. Suppose the initial density distribution follows: <span class="math display">\[f(x; \alpha, \beta) = \frac{1}{B(\alpha, \beta)}
-           x^{\alpha - 1} (1 - x)^{\beta - 1}, \quad x \in [0, 1]\]</span> which is known as the Beta Distribution.</p>
-          <pre><code>a_sigma = 0.4
-          phi = LogNormal(0.0, a_sigma) #Technological Change Distribution
-          psi_0 = Beta(1.8, 2.8)
-          ygrid = linspace(0.01, 4.0, 200)</code></pre>
-          <pre><code>fig, ax = subplots()
-          #for (x,y) in zip(ygrid, ygrid)
-          ax[:plot](ygrid, pdf(psi_0, ygrid), color=&quot;0.5&quot;)
-          t=LaTeXString(&quot; Initial density Distribution: Beta(1.8,2.8) &quot;)
-          ax[:set_title](t)
-          show()</code></pre>
-          <p>We can plot the initial distribution of <span class="math inline">\(\psi_0\)</span></p>
-          <div class="figure">
-          <img src="graphs/BetaDistribution.png" alt="Beta Distribution" style="width:95.0%" />
-          <p class="caption">Beta Distribution<span data-label="fig:BD"></span></p>
-          </div>
-          <p>and then by iteratively applying the lae function with the density kernel, we can observe the speed of convergence.</p>
-          <pre><code>s = 0.2 # Savings Rate
-          \delta = 0.1 # Capital Depreciation Rate
-          a_\sigma = 0.4  # A = exp(B) where B ~ N(0, a_sigma)
-          \alpha = 0.4  # We set f(k) = k**alpha
-          \psi_0 = Beta(1.8, 2.8)  # Initial Continuous State distribution
-          \phi = LogNormal(0.0, a_\sigma)
-
-
-          n = 10000  # Number of observations at each date t
-          T = 30  # Compute density of k_t at 1,...,T+1
-
-          # Generate matrix s.t. t-th column is n observations of k_t
-          k = Array(Float64, n, T)
-          A = rand!(\phi, Array(Float64, n, T))
-
-          # Draw first column from initial distribution
-          k[:, 1] = rand(\psi_0, n)   # divide by 2 to match scale=0.5 in py version
-          for t=1:T-1
-              k[:, t+1] = s*A[:, t] .* k[:, t].^\alpha + (1-\delta) .* k[:, t]
-          end</code></pre>
-          <div class="figure">
-          <img src="graphs/CMCConvergence1.png" alt="Look Ahead Estimate" style="width:95.0%" />
-          <p class="caption">Look Ahead Estimate<span data-label="fig:LAEConvergence1"></span></p>
-          </div>
-          <p>Now let us take a more sophisticated probability distribution and observe the convergence. Suppose the initial continuous state distribution follows: <span class="math display">\[\begin{split}f(x; \xi, \sigma, \mu) = \begin{cases}
-                  \frac{1}{\sigma} \left[ 1+\left(\frac{x-\mu}{\sigma}\right)\xi\right]^{-1/\xi-1} \exp\left\{-\left[ 1+ \left(\frac{x-\mu}{\sigma}\right)\xi\right]^{-1/\xi} \right\} &amp; \text{for } \xi \neq 0 \\
-                  \frac{1}{\sigma} \exp\left\{-\frac{x-\mu}{\sigma}\right\} \exp\left\{-\exp\left[-\frac{x-\mu}{\sigma}\right]\right\} &amp; \text{for } \xi = 0
-              \end{cases}\end{split}\]</span> for <span class="math display">\[\begin{split}x \in \begin{cases}
-                  \left[ \mu - \frac{\sigma}{\xi}, + \infty \right) &amp; \text{for } \xi &gt; 0 \\
-                  \left( - \infty, + \infty \right) &amp; \text{for } \xi = 0 \\
-                  \left( - \infty, \mu - \frac{\sigma}{\xi} \right] &amp; \text{for } \xi &lt; 0
-              \end{cases}\end{split}\]</span> known in the literature as the Generalized extreme value distribution. Unfortunately, this distribution throws an error.</p>
-          <p>When trying to test the pareto distribution: <span class="math display">\[f(x; \alpha, \theta) = \frac{\alpha \theta^\alpha}{x^{\alpha + 1}}, \quad x \ge \theta\]</span> with parameters (3,2), Julia kernel dies.</p>
-          <p>I have not enough information for the reasons why not all initial distributions converge. I have not tested whether restricting the range will solve this problem or whether there is a bug in the implementations of the distributions.</p>
-          <p>On the other hand, the most popular distributions do work. For example the Levy distribution. <span class="math display">\[\begin{split}f(x; \mu, \sigma) = \sqrt{\frac{\sigma}{2 \pi (x - \mu)^3}}
-          \exp \left( - \frac{\sigma}{2 (x - \mu)} \right), \quad x &gt; \mu\end{split}\]</span></p>
-          <div class="figure">
-          <img src="graphs/LevyDist.png" alt="Levy Distribution" style="width:95.0%" />
-          <p class="caption">Levy Distribution<span data-label="fig:Levy Distribution"></span></p>
-          </div>
-          <p>after 30 iterations of look ahead estimate with the same parameters as before:</p>
-          <div class="figure">
-          <img src="graphs/LevyConvergence.png" alt="Levy Distribution Convergence" style="width:95.0%" />
-          <p class="caption">Levy Distribution Convergence<span data-label="fig:LevyDistConvergence"></span></p>
-          </div>
-          <pre><code>s = 0.2 # Savings Rate
-          \delta = 0.1 # Capital Depreciation Rate
-          a_\sigma = 0.4  # A = exp(B) where B ~ N(0, a_sigma)
-          \alpha = 0.4  # We set f(k) = k**alpha
-          \psi_0 = Levy(0,1.5) # Initial Continuous State distribution
-          \phi = LogNormal(0.0, a_\sigma)</code></pre>
-          <p>The conclusion about Continuous State Markov chains is that they are powerful tools to expend point estimates of economic aggregates. As we can see in our example, not only that capital per capita can have a wide range as a function of modest technology shocks, we cannot expect that with time the variance of our distribution will decrease as <span class="math inline">\(t \to \infty\)</span>. In the case of the Levy distribution, we can see that the range the capital per effective capita, as seen in figure [fig:LevyDistConvergence] can increase.</p>
-
-        </div>
-      </div>
-
-      <!--The Hidden Markov Model -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2> <small> The Hidden Markov Model </small> </h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2 id="HMM">The Hidden Markov Model </h2>
-            <p>A great introduction into the workings of the Hidden Markov processes was presented by <span class="citation">Rabiner (1989)</span>. In a nutshell, a HMM is defined by a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> that changes the the states <span class="math inline">\(s_i\)</span> of the system according to some probability, where <span class="math inline">\(s_i \in S\)</span> and <span class="math inline">\(S\)</span> is the set of all possible States. These states are not observable. Each state can emit some observable outcomes with its own probability distribution which we will summarize in the emission matrix <span class="math inline">\(\mathbb{B}\)</span>. We will take the example given by <span class="citation">Fraser (2008, 9)</span>.</p>
-            <div class="figure">
-            <img src="graphs/HMM.jpg" alt="Hidden Markov Model from pp.9Fraser (2008, 9)" style="width:95.0%" />
-            <p class="caption">Hidden Markov Model from <span class="citation">Fraser (2008, 9)</span><span data-label="fig:HMM"></span></p>
-            </div>
-            <p>As we can see in figure [fig:HMM], we have an oriented graph which can easily be transposed to a HMM model.</p>
-            <p><span class="math display">\[\mathbb{A} = \begin{array}{c} e \\ f \\ g \\ h \end{array} \left( \begin{array}{cccc}
-            0.9 &amp; 0.1&amp; 0  &amp; 0 \\
-            0   &amp; 0  &amp; 1  &amp; 0 \\
-            0   &amp; 0  &amp; 0.9&amp; 0.1 \\
-            1   &amp; 0  &amp; 0  &amp; 0 \end{array} \right)\]</span></p>
-            <p>The emission probabilities for the events <span class="math inline">\(\Sigma = \{a,b,c,d\}\)</span>, as specified in the [smc]: <span class="math display">\[\mathbb{B} =
-            \begin{array}{c} e \\ f \\ g \\ h \end{array}
-            \begin{pmatrix}
-            0.1 &amp; 0.9 &amp; 0 &amp; 0 \\
-            0   &amp; 1   &amp; 0 &amp; 0 \\
-            0 &amp; 0.8 &amp; 0.2 &amp; 0 \\
-            0 &amp; 0&amp; 0&amp; 1
-            \end{pmatrix}\]</span></p>
-            <p>Lastly, to fully define a HMM, we would either need a starting point, or an initial probability distribution among the states usually denoted by <span class="math inline">\(\pi\)</span>.</p>
-            <p>Having defined a hidden Markov model, we can endeavour to find answers to the following questions:</p>
-            <ol>
-            <li><p>When was the last recession?</p></li>
-            <li><p>Are we still in the recession?</p></li>
-            <li><p>What is the probability for the economy to follow a particular path of states?</p></li>
-            <li><p>What is the unconditional probability of observing certain outcome <span class="math inline">\(e_i \)</span> or what is the probability of being in a particular state <span class="math inline">\(s_i\)</span> e <span class="math inline">\(Pr(S=s_i | e_i)\)</span>?</p></li>
-            </ol>
-            <p>We conclude that a Hidden Markov Model extends the class of the Markov Chain models, since any order of a Markov model can be represented as an HMM. We will denote a Hidden Markov Model by <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span>.</p>
-
-        </div>
-      </div>
-
-      <!--Simulationg the Hidden Markov Model -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2> <small> Simulating of a <abbr title="Hidden Markov Model">HMM</abbr> </small> </h2>
-        </div>
-        <div class="col-sm-10 well">
-          <h2 id="simulating-a-hidden-markov-model">Simulating a Hidden Markov Model</h2>
-            <p>In this example we will generate a sequence of a balanced and an unbalanced coin that follows an HMM (<span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>) in the Python programming language using the ghmm package. For installing the ghmm library please refer to the Annex and <a href="http://ghmm.org" class="uri">http://ghmm.org</a>. <span class="math display">\[\mathbb{A}= \left(\begin{array}{cc}
-            0.9 &amp; 0.1 \\
-            0.2 &amp; 0.8 \\
-            \end{array}\right)\]</span></p>
-            <div>
-              <pre>
-                <code>
-                  import ghmm
-                  A = [[0.9, 0.1], [0.2, 0.8]]
-                  efair = [1.0 / 2] * 2
-                  eloaded = [0.15, 0.85]
-                  sigma = ghmm.IntegerRange(0,2)
-                  B = [efair, eloaded]
-                  pi = [0.5]*2
-                  m = ghmm.HMMFromMatrices(sigma, ghmm.DiscreteDistribution(sigma), A, B, pi)
-                </code>
-              </pre>
-            </div>
-
-            <p>invoking the print method for the HMM model <span class="math inline">\(m\)</span></p>
-            <pre class="pre-scrollable">
-              <code>print m
-
-            DiscreteEmissionHMM(N=2, M=2)
-              state 0 (initial=0.50)
-                Emissions: 0.50, 0.50
-                Transitions: -&gt;0 (0.90), -&gt;1 (0.10)
-              state 1 (initial=0.50)
-                Emissions: 0.15, 0.85
-                Transitions: -&gt;0 (0.20), -&gt;1 (0.80)</code></pre>
-            <p>generating a sample of 40 observations and printing them.</p>
-            <pre><code>obs_seq = m.sampleSingle(40)
-            obs = map(sigma.external, obs_seq)
-
-            print obs
-
-            [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0]</code></pre>
-            <p>For a dice simulation generated by an HMM, refer to appendix [app:simHMM].</p>
-
-        </div>
-      </div>
+			</div>
+		</div>
 
 
 
-      <!-- Part 2 -->
-      <div class="row">
-        <div class="col-sm-12 well-lg" >
-          <center><h1> Part II: Estimating the State Transition Matrix </h1></center>
-        </div>
-      </div>
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
 
-      <!--A formal introduction to Hidden Markov Model -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2> <small> Some formal questions to get from an <abbr title="Hidden Markov Model">HMM</abbr> </small> </h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2 id="a-formal-introduction-to-an-hmm">A formal introduction to an HMM</h2>
-            <p>Suppose we have identified a sequence <span class="math inline">\(\mathcal{O} \in \mathbf{\Omega}\)</span> that we assume is generated by an HMM: <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span> as defined in chapter [HMM]. Given <span class="math inline">\(\lambda\)</span>, we would like to know: <span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></p>
-            <p>A direct approach is that given the parameters of the HMM, we can compute the probability of observing a particular observation on a given chain of states: <span class="math display">\[\label{eq:basic}
-            Pr\left(o_1,o_2,...,o_{T} |x_1,x_2,...,x_k,...x_T, \lambda \right)=  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
-            <p>And then we could sum the probabilities from equation [eq:basic] over all possible states <span class="math inline">\(X\)</span>:</p>
-            <p><span class="math display">\[\label{eq:directApproach}
-            Pr\left(\mathcal{O} | \lambda \right)= \sum_X  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t) Pr(X|\lambda)\]</span></p>
-            <p>Therefore, the direct approach is very difficult to assess. The difficulty of this problem consists in the fact that the total number of possibilities of sequences of states that can generate <span class="math inline">\(\mathcal{O}\)</span> is exponential in the number of observations <span class="math inline">\(T\)</span> and would require <span class="math inline">\(\mathbf{\mathcal{O}}(N^T)\)</span> operations, where <span class="math inline">\(N\)</span> is the total number of states. At a first glance this might not appear to be a particular big issue in Economics: consider analysing yearly aggregates of a span of 10 years with 2 states <span class="math inline">\(\Omega = \{Recession, Growth\}\)</span>. If, however, we would increase the number of states to 3 and use quarterly data, finding the maximum would require years of computation - clearly not feasible for any practical purpose.<a href="#fn37" class="footnoteRef" id="fnref37"><sup>37</sup></a> A better approach to calculate the unconditional probability <span class="math inline">\(Pr(\mathcal{O}|\lambda)\)</span> is the forward/backward algorithm which is a class of dynamic programming algorithms and takes advantage of the assumptions of the Markovian processes to filter all possible combinations of states <span class="math inline">\(X\)</span>.</p>
-            <p>Secondly, another question of interest is to find the most likely sequence of states from <span class="math inline">\(X\)</span> given <span class="math inline">\(\mathcal{O}\)</span>, e.i. the states that generated the highest probability <span class="math inline">\(Pr(\mathcal{O}| X, \lambda)\)</span>.</p>
-            <p>Finally, the question that sparked my interest in studying Markovian processes is how do we estimate the parameters of an HMM, in particular <span class="math inline">\(\mathbb{A}\)</span> and <span class="math inline">\(\mathbb{B}\)</span>. Unfortunately, this is still an unsolved problem in Mathematics and requires numerical methods. Once the matrix <span class="math inline">\(\mathbb{A}\)</span> is determined we can use the dynamic programming and combinatorial methods proposed by <span class="citation">Lozovanu and Pickl (2015)</span> for determining the state-time probabilities and the matrix of limiting probabilities. These methods can be directly applied to refine not only the point estimates of long-term economic growth at the country level, as defined by the International Monetary Fond, but also update the concept of long term growth as an integral part of limiting probabilities of a HMM.</p>
-            <p>To summarize, we could enumerate the key issues we would have to address and solve efficiently for an HMM model to be useful in practice. As expressed by <span class="citation">Fraser (2008)</span> and <span class="citation">James D. Hamilton and Raj (2002)</span>:</p>
-            <ol>
-              <li><p><span>Evaluation</span> - e.i. find the probability of an observed sequence given an HMM (relatively easy to do in practice)</p></li>
-              <li><p><span>Decoding</span> - find the sequence of Hidden States that most likely generated the observation. That is: find the highest probability of a sequence. (until the Viterbi algorithm it was possible only theoretically)</p></li>
-              <li><p><span>Learning</span> - Generate the best possible HMM for the observed outcome (really difficult - there are no analytic solutions to this problem. Use Baum-Welch algorithm)</p></li>
-            </ol>
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+				parallaxBackgroundImage: 'mandelbrot.png',
+				parallaxBackgroundSize: '1920px 1080px',
 
-        </div>
-      </div>
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					// MathJax
+        	{ src: 'plugin/math/math.js', async: true }
+				]
+			});
+			Reveal.configure({ slideNumber: 'h/v' });
 
-      <!-- The Baum Welch Algorithm -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2><small> The Baum Welch Algorithm </small></h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h1>The Baum Welch Algorithm</h1>
-            <p> The best way to understand why the Baum-Welch algorithm works is to dissect it into easier algorithms and combine them, until we can answer the questions we posed earlier.</p>
-            <dl>
-              <dt> Evaluation </dt>
-                <dd>- Use the Forward in combination with Backward algorithm </dd>
-              <dt> Decoding </dt>
-                <dd>- Viterbi algorithm </dd>
-              <dt> Learning </dt>
-                <dd>- Use the <em>Bayesian rule</em> along with the <em>Markovian property</em> to update the parameters of the HMM: Baum-Welch algorithm.
-            </dl>
-        </div>
-      </div>
-
-
-      <!-- The Forward / Backward Algorithm -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2><small> The Forward Backward Algorithm </small></h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2 id="sec:FBA">The Forward/Backward Algorithm</h2>
-            <p>Given an HMM<span class="math inline">\((\mathbb{A}, \mathbb{B}, \pi)\)</span>, as introduced in section [HMM] which we will denote by <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, where <span class="math inline">\(i \in \{1..N\}\)</span>, the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span> e.i.: <span class="math display">\[Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}\]</span> We can use Bayesian rule<a href="#fn39" class="footnoteRef" id="fnref39"><sup>39</sup></a> to write <span class="math inline">\(Pr(x_k | \mathcal{O} , \mathbf{\lambda})\)</span> as</p>
-            <p><span class="math display">\[\label{eq:fb1}
-            Pr(x_k | O, \mathbf{\lambda}) =  \frac{Pr(x_k, \mathcal{O} | \mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})} = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} )*Pr(o_{k+1},...,o_T|x_k,o_1,...o_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
-            <p>Using the Markovian property in the second half of [eq:fb1]<a href="#fn40" class="footnoteRef" id="fnref40"><sup>40</sup></a> :</p>
-            <p><span class="math display">\[\label{eq:fb2}
-            Pr(x_k | \mathcal{O}, \mathbf{\lambda}) = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} ) Pr(o_{k+1},...,o_T|x_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
-            <p>The first part in the numerator of equation [eq:fb2], <span class="math inline">\(Pr (x_k,o_1,o_2,...o_k |\mathbf{\lambda} )\)</span> is called the forward part and <span class="math inline">\(Pr(o_{k+1},...,o_T|x_k,\mathbf{\lambda})\)</span> the backward part.</p>
-            <p>Once we can find an algorithm to compute the forward and the backward part, we can compute <span class="math inline">\(Pr(x_k | O, \mathbf{\lambda})\)</span> which enables us to answer the following questions:<a href="#fn41" class="footnoteRef" id="fnref41"><sup>41</sup></a></p>
-            <ol>
-            <li><p>The Probability of being in a transition: <span class="math inline">\(Pr(x_k \not= x_{k-1}|\mathcal{O})\)</span></p></li>
-            <li><p>Helps augment the numerical methods in estimating the parameters of <span class="math inline">\(\lambda\)</span></p></li>
-            <li><p>Make samples on <span class="math inline">\(x_k|\mathcal{O}\)</span></p></li>
-            </ol>
-
-            <h3 id="sec:fa">Forward Algorithm</h3>
-              <p>Given an HMM as presented in section [HMM]: <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn42" class="footnoteRef" id="fnref42"><sup>42</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, the objective of the forward algorithm is to compute <span class="math display">\[\label{eq:fwa}
-              \alpha_i(k)=\alpha\left( x_k=i \right) = Pr(o_1,o_2,...o_k,x_k | \lambda) \quad\quad o_k \in \mathcal{O}, k=\overline{1,T}\]</span><a href="#fn43" class="footnoteRef" id="fnref43"><sup>43</sup></a></p>
-              <p>The forward algorithm is also known as the <em>filtering</em> algorithm as it uses the available information up to the point of <span class="math inline">\(o_k \in \mathcal{O}\)</span>. Again, computing <span class="math inline">\(Pr(o_1,o_2,...o_k,x_k | \lambda)\)</span> directly would require a computation time exponential on <span class="math inline">\(T\)</span> and would not be feasible for practical purposes. On the other hand, we can use the <em>Law of Total Probability</em><a href="#fn44" class="footnoteRef" id="fnref44"><sup>44</sup></a> and the Markov property to express:</p>
-              <p>If <span class="math inline">\(k=1\)</span>, from the definition of <span class="math inline">\(\lambda\)</span>: <span class="math display">\[\alpha(x_k) = \pi_{x_k}\]</span></p>
-              <p>else:</p>
-              <p><span class="math display">\[\begin{aligned}
-              \alpha_i\left( x_k \right) =&amp; \sum_{x_{k-1}} Pr(o_1,o_2,...o_k,x_{k-1},x_k | \lambda) \\
-              = &amp;\sum_{x_{k-1}} Pr(o_k | o_1,o_2,...o_{k-1},x_{k-1},x_k, \lambda)\times \\&amp;Pr(x_k|o_1,o_2,...o_{k-1},x_{k-1},\lambda) Pr(o_1,o_2,...o_{k-1},x_{k-1}|\lambda)
-              \\ =&amp; \sum_{x_{k-1}} Pr(o_k | x_k, \lambda)Pr(x_k|x_{k-1},\lambda) \alpha\left( x_{k-1} \right)
-              \\ =&amp; \sum_{x_{k-1}} \mathbf{b}_{x_k}(o_k)  \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right)
-              \\ =&amp; \mathbf{b}_{x_k}(o_k) \sum_{x_{k-1}} \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right) , \quad x_{k-1}=\overline{1,N}, k=\overline{2,T}\end{aligned}\]</span></p>
-              <p>Therefore, we can calculate the probability of observing a particular state <span class="math inline">\(x\)</span> at time <span class="math inline">\(t\)</span> with a cost of <span class="math inline">\(\mathcal{O}(N^2T)\)</span> operations using this recursive algorithm which is linear in <span class="math inline">\(T\)</span>, rather than exponential for the naive approach.</p>
-              <p>Once we have a procedure to efficiently calculate <span class="math inline">\(\alpha_i(k)\)</span> we can also express the unconditional probability of observing <span class="math inline">\(\mathcal{O}\)</span> as the sum of all <span class="math inline">\(\alpha_i(T)\)</span> over all states. <span class="math display">\[\label{eq:Pr(O)}
-              Pr(\mathcal{O}|\lambda) = \sum_{i=1}^N \alpha_i(x_T)\]</span></p>
-
-            <h3 id="sec:ba">Backward Algorithm</h3>
-              <p>The backward algorithm is the second part of the forward/backward algorithm in equation [eq:fb2].</p>
-              <p>As in subsection [sec:fa] we assume that an HMM as presented in section [HMM]: <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span> is given, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability and <span class="math inline">\(\mathbb{B}\)</span> is the emission probability matrix, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span> and <span class="math inline">\(\pi\)</span> is the initial state probability distribution, the objective of the backward algorithm is to compute: <span class="math display">\[\label{eq:ba1}
-              \beta_i(k)=\beta(x_k=i) = Pr(o_{k+1},o_{k+2},...,o_{T} | x_k=i, \lambda) \quad i=\overline{1,N}, k=\overline{1,T}\]</span> Again, to get the recursive approach we will make use of the law of total probability to write: <span class="math display">\[\begin{aligned}
-              \beta(x_k) =&amp;  Pr(o_{k+1},o_{k+2},...,o_{T} | x_k=i, \lambda) \\
-              =&amp; \sum_{x_{k+1}} Pr(o_{k+1},o_{k+2},...,o_{T},x_{k+1} | x_k=i, \lambda)\end{aligned}\]</span> Now we can divide se sequence of observables and isolate the <span class="math inline">\(o_{k+1}\)</span> observation as follows: <span class="math display">\[\begin{aligned}
-              \beta(x_k) =&amp; \sum_{x_{k+1}} Pr(o_{k+2},...,o_{T}|x_{k+1},x_{k}=i,o_{k+1}, \lambda)\times\\
-              &amp;Pr(o_{k+1}|x_{k+1},x_{k}=i,\lambda) \times Pr(x_{k+1}|x_{k}=i,\lambda) \end{aligned}\]</span> Now using the Markovian property and the fact that <span class="math inline">\(Pr(o_{k+1}|x_{k+1},x_{k}=i,\lambda) = Pr(o_{k+1}|x_{k+1},\lambda)\)</span></p>
-              <p><span class="math display">\[\begin{aligned}
-              \beta(x_k) &amp;= \sum_{x_{k+1}}\beta(x_{k+1})\mathbf{b}_{k+1}(o_{k+1})\mathbf{a}_{k,k+1}, \quad\quad k=\overline{1,T-1}\end{aligned}\]</span></p>
-              <p>The trick in the backward algorithm is that as shown above, <span class="math inline">\(k\)</span> takes values from <span class="math inline">\(1\)</span> to <span class="math inline">\(T-1\)</span>. For <span class="math inline">\(k=T\)</span>, we define: <span class="math display">\[\beta(x_T)=1\]</span> The intuition for this is clear when applying these algorithms to tagging problems in the Natural Language Programming, since we can define the state of the end of a sentence to be a special symbol “STOP”. And since every sentence ends with this special symbol, the probability of getting <span class="math inline">\(x_{T+1}=STOP\)</span> equals <span class="math inline">\(1\)</span>.</p>
-
-        </div>
-      </div>
-
-      <!-- The Viterbi Algorithm-->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2><small> The Viterbi Algorithm </small></h2>
-        </div>
-        <div class="col-sm-10 well-sm" >
-          <h2 id="the-viterbi-algorithm">The Viterbi Algorithm</h2>
-          <p>Given an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> and an observable sequence <span class="math inline">\(\mathcal{O} = \{o_1,o_2,...,o_T \}\)</span>, we want to find the sequence <span class="math inline">\(X=\{x_1,x_2,...,x_T\}\)</span> that maximizes the probability in equation [eq:basic]:</p>
-          <p><span class="math display">\[Pr\left(\mathcal{O}, x_1,x_2,...x_T,| \lambda \right)= \underset{X}{\operatorname{argmax}} \: \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
-          <p>In a nutshell, the Viterbi algorithm examines at each step all the possibilities of getting to that particular state and retains only the most likely path to it, thus eliminating all other possibilities.<a href="#fn45" class="footnoteRef" id="fnref45"><sup>45</sup></a></p>
-          <p>For the first step, the probability of being in state <span class="math inline">\(x_k\)</span> at time <span class="math inline">\(t=1\)</span> and observing <span class="math inline">\(o_1\)</span> is simply an updated version of <span class="math inline">\(\pi_k\)</span>. <span class="math display">\[Pr(x_1=k|o_1,\lambda) = \frac{Pr(x_1=k,o_1)}{\sum_{x_1\in S}Pr(x_1,o_1)}= \frac{\pi_{x_1}b_{x_1}(o_1)}{\sum_{x_i \in S} \pi_{x_i}b_{x_i}(o_1)}\]</span> where <span class="math inline">\(s \in S\)</span> and <span class="math inline">\(S = \{1..N\}\)</span> the set of all possible states. But we can still reduce the complexity of this formula by dropping the denominator, since maximizing the probability depends only on the numerator part, therefore: <span class="math display">\[V_{1,k}=\pi_{x_k}b_{x_k}(o_1)\]</span> For the next iterations: <span class="math display">\[V_{t,k} = \underset{x_{t-1}\in S}{\operatorname{max}}\left( V_{t-1,x_{t-1}} \mathbf{a}_{x_{t-1},k} \mathbf{b}_{k}(o_t) \right)\]</span> <span class="math display">\[\mathbf{V}_t = \{V_{t,k}|k \in  S\}\]</span> We denote the sequence of <span class="math inline">\(X = \{ x_1,x_2,...,x_T \}\)</span> that generates <span class="math inline">\(V_T\)</span>: <span class="math display">\[\mathbf{x}_T = \underset{x\in S}{\operatorname{arg\, max}}\mathbf{V}_{T,x}\]</span> The algorithm’s complexity is <span class="math inline">\(\mathcal{O}(N^2*T)\)</span> which is linear in T.</p>
-
-          <h2 id="viterbi-algorithm">Viterbi Algorithm</h2>
-          <p>The goal of this subsection is to create a parsimonious implementation of the Viterbi algorithm for demonstration purposes. I used the default Python 2.7 and IPython Notebook, but it should work in Python 3.+ as well, though I did not test it.</p>
-          <pre><code>
-          def viterbi(obs, states, start_p, trans_p, emit_p):
-              //obs - Observations vector
-
-              V = [{}]
-              for s in states:
-                  V[0][s] = start_p[s]*emit_p[s][obs[0]]
-              for t in range(1,len(obs)):
-                  V.append({})
-                  for s in states:
-                      V[t][s] = max(V[t-1][s_i]*trans_p[s_i][s]*emit_p[s][obs[t]] for s_i in states)
-              return V
-              </code></pre>
-
-
-        </div>
-      </div>
-
-      <!-- The EM algorithm -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2><small> The <abbr title="Expectation Maximization">EM</abbr> algorithm </small></h2>
-        </div>
-        <div class="col-sm-10 well-sm" >
-          <h2 id="sec:EM">The EM algorithm</h2>
-          <p>The Expectation Maximization algorithm was describe in the paper of <span class="citation">A. P. Dempster (1977)</span>. The Baum-Welch algorithm extends the class of the EM algorithm and so we will focus on Baum-Welch instead.</p>
-
-        </div>
-      </div>
-
-      <!-- The Baum-Welch Algorithm -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h2><small> The Baum-Welch Algorithm algorithm </small></h2>
-        </div>
-        <div class="col-sm-10 well" >
-          <h2 id="sec:BW">The Baum-Welch Algorithm</h2>
-          <p>Given an observable sequence <span class="math inline">\(\mathcal{O} = \{o_1,o_2,...,o_T \}\)</span> and assuming this sequence was generated by an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> as define in section [HMM], we want to find out the most likely set of parameters of <span class="math inline">\(\lambda\)</span> that generated the sequence <span class="math inline">\(\mathcal{O}\)</span>. Denoting by <span class="math inline">\(\theta = \{\mathbb{A,B},\pi\}\)</span> the set of parameters of <span class="math inline">\(\lambda\)</span>, we want to find out <span class="math inline">\(\theta\)</span> that maximizes the probability:</p>
-          <p><span class="math display">\[\theta^{\star} = \underset{\theta}{\operatorname{arg\, max}}Pr\left(\mathcal{O} | \lambda(\theta)\right)\]</span></p>
-          <p>The Baum-Welch algorithm uses as the basis the EM algorithm, which in turn is very similar to the k-means algorithm.</p>
-          <p>The first step is to infer the number of states and initial parameters of the <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> using heuristic methods.</p>
-          <p>Secondly, using the forward/backward algorithm as described in section [sec:FBA] from page we find the updated Bayesian probability of observing <span class="math inline">\(o_t\)</span> at time <span class="math inline">\(t\)</span> in state <span class="math inline">\(x_i\)</span> : <span class="math display">\[\label{eq:gamma}
-          Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right) =  \frac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }\]</span> we will denote equation [eq:gamma] by: <span class="math display">\[\gamma_i(t) = Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right)\]</span> please note that in equation [eq:gamma] the denominator <span class="math inline">\(\sum_{j \in S}\alpha_j(t) \beta_j(t) \)</span> was used rather that a computationally more efficient <span class="math inline">\(\sum_{i \in S} \alpha_i(x_T) = Pr(\mathcal{O}|\lambda(\theta))\)</span> in order to make <span class="math inline">\(\gamma_i(t)\)</span> a probability distribution.</p>
-          <p>Also, using the same backward and forward procedures as described in equation [eq:ba1] and [eq:fwa] we can also compute the probability of switching from state <span class="math inline">\(x_k=i\)</span> to <span class="math inline">\(x_{k+1}=j\)</span> given a particular model <span class="math inline">\(\lambda(\theta)\)</span>:</p>
-          <p><span class="math display">\[\label{eq:xi}
-          Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda) =
-          \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t)}{Pr(\mathcal{O}|\lambda(\theta))}\]</span></p>
-          <p>we will denote equation [eq:xi] by <span class="math display">\[\xi_{ij}(t) = Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda)\]</span></p>
-          <p>Again, we need to make [eq:xi] a probability distribution, and even though it looks computationally attractive to rewrite the denominator as the probability of observing <span class="math inline">\(\mathcal{O}\)</span> either by the forward or backward algorithm, we cannot write [eq:xi], although wikipedia does<a href="#fn46" class="footnoteRef" id="fnref46"><sup>46</sup></a>, as: <span class="math display">\[\xi_{ij}(t) =
-          \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}{\sum_{j\in S} \alpha_j(T)}\]</span> for <span class="math inline">\(\xi_{ij}(t)\)</span> to be a probability distribution: <span class="math display">\[\xi_{ij}(t) =  \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
-                              {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }\]</span></p>
-          <p>Now recall that <span class="math inline">\(a_{ij}\)</span> is the probability of moving to state <span class="math inline">\(j\)</span> while already being in state <span class="math inline">\(i\)</span>, e.i. <span class="math display">\[a_{ij}= Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta)\]</span></p>
-          <p>We can rewrite the above equation of <span class="math inline">\(a_{ij}\)</span> by applying the Bayesian rule: <span class="math display">\[\label{eq:aij}
-          Pr(x_{t+1}=j|x_t=i, \mathcal{O}, \lambda(\theta) = \frac{Pr(x_{t+1}=j,x_t=i| \mathcal{O}, \lambda(\theta)}{Pr(x_t=i | \mathcal{O}, \lambda(\theta)}\]</span></p>
-          <p>Using equations [eq:xi] and [eq:gamma] in equation [eq:aij] we can finally obtain the posterior distribution of <span class="math inline">\(\bar{a_{ij}}\)</span>:</p>
-          <p><span class="math display">\[\bar{a_{ij}} = \frac{\sum_{t=1}^{T-1}\xi_{ij}(t)}{\sum_{t=1}^{T-1} \gamma_i(t)}\]</span></p>
-          <p>equivalently: <span class="math display">\[\bar{a_{ij}} = \dfrac{\dfrac{Pr(x_{t+1}=j,x_t=i| \mathcal{O}, \lambda(\theta)}{Pr(x_t=i | \mathcal{O}, \lambda(\theta)}}
-                   {\dfrac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }}\]</span> substituting <span class="math display">\[\bar{a_{ij}} = \dfrac{  \dfrac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
-                              {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }}
-                              {\dfrac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }}\]</span> now we have a formula for re-estimating the transition probabilities as a function of the backward and forward probabilities, both of which are linear in <span class="math inline">\(T\)</span>.</p>
-          <p>To update the initial state probability distribution: <span class="math display">\[\bar{\pi_i} = \gamma_1(i) = \frac{\alpha_i(1)\beta_i(1)}{\sum_{i \in S} \alpha_i(1)\beta_i(1) }\]</span></p>
-          <p>For the emissions probability we have the expected number of the system being in state <span class="math inline">\(i\)</span> and observing <span class="math inline">\(o_k\)</span> : <span class="math display">\[\bar{b_i(o_k)} = \frac{\sum_{t \in T} \gamma_t(i) \mathbf{1}_{o_t=o_k}}{\sum_{t \in T} \gamma_t(i)}\]</span></p>
-          <p>Therefore, given a model <span class="math inline">\(\lambda\)</span> , we can compute <span class="math inline">\(\bar{lambda}(\bar{\mathbb{A}}, \bar{\mathbb{B}}, \bar{\pi})\)</span> and using the results of the theorem provided by <span class="citation">Leonard E. Baum and Eagon (1967)</span>, specifically:</p>
-          <p>Let <span class="math inline">\(P(x) = P (\{x_{ij} \})\)</span> be a polynomial with non-negative coefficients homogeneous of degree <span class="math inline">\(d\)</span>. If <span class="math inline">\(x_{ij} \geq 0\)</span> and <span class="math inline">\(\sum_j x_{ij}=1\)</span>. Denoting: <span class="math display">\[\mathfrak{I}(x)_{ij}=
-          \dfrac{\left( x_{ij} \dfrac{\partial P}{\partial x_{ij}} \middle |_{(x)} \right)}
-          {\left( \sum_j x_{ij} \dfrac{\partial P}{\partial x_{ij}} \right)  }\]</span> then <span class="math inline">\(\mathbb{P}(\mathfrak{I}(x_{ij})) \geq \mathbb{P}(x_{ij}) \)</span></p>
-          <p>The proof is provided by <span class="citation">Leonard E. Baum and Eagon (1967)</span>.</p>
-          <p>we conclude that <span class="math inline">\(\bar{\lambda}\)</span> is a <em>better</em> HMM model than <span class="math inline">\(\lambda\)</span>. By <em>•</em><span>better</span> we mean that <span class="math display">\[\mathbb{P}(\mathcal{O}|\bar{\lambda} \geq \mathbb{P}(\mathcal{O}|\lambda)\]</span> Therefore we have obtained an improved version of <span class="math inline">\(\lambda\)</span>. Repeating this process iteratively we will converge to a local maximum. There is no guarantee however that this local maximum will also be a global maximum. Since the optimization surface of a Markov process can be extremely complex, what we can do is randomly assign initial probability distributions <span class="math inline">\(\mu_i\)</span> for <span class="math inline">\(i \in \bar{1..n}\)</span> and compare the local optima for each <span class="math inline">\(i\)</span>, hoping we reached the highest value. Most importantly, these new estimated probabilities <span class="math inline">\(\bar{A}, \bar{B}\)</span> need to make sense, therefore the holistic and heuristic reviews of the most likely models <span class="math inline">\(\lambda_i\)</span> need to be performed by experts in the field.</p>
-          <p>The implementation of the Baum Welch algorithm is at the heart of the open source HMM implementation<a href="#fn47" class="footnoteRef" id="fnref47"><sup>47</sup></a>.</p>
-          <p>To show for convenience purposes how the Baum Welch algorithm works in practice, we will use the data from the example provided by <a href="http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml">byu.edu</a><a href="#fn48" class="footnoteRef" id="fnref48"><sup>48</sup></a>, consider the nucleotide sequence <span class="math inline">\(\{a, c, g, t\}\)</span>, assume there is an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> and the observations <span class="math inline">\(\mathcal{O}\)</span>:</p>
-          <pre><code>[&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;,&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;]</code></pre>
-          <p>generated by two states <span class="math inline">\(normal, island\)</span>. We would like to know what was the sequence of states that generated these observations and would also like to see the most likelihood matrix <span class="math inline">\(\mathbb{A}\)</span> from the <span class="math inline">\(\lambda\)</span>.</p>
-          <p>The software implementation is provided in the Annex [app:simHMM].</p>
-          <p>As we see we have obtained <span class="math inline">\(\bar{\lambda}\)</span> with updated transition probabilities.</p>
-
-
-
-        </div>
-      </div>
-
-
-      <!-- Conclusioins -->
-      <div class="row">
-        <div class="col-sm-2 well-sm" style="background-color:lavender;">
-          <h1><small> The Baum-Welch Algorithm algorithm </small></h1>
-        </div>
-        <div class="col-sm-10 well">
-          <h1 id="conclusions">Conclusions</h1>
-          <p>As we have seen in the first part of this thesis Markov Chains have a wide area of applicability in modelling topics in Economics and Finance. Moreover, they provide a fresh paradigm for viewing traditional concepts in Economics such as long term economic growth or stock returns in Finance. The extension of the discrete state Markov chain to continuous states allows us to see the dynamics of the very probability distribution of the variable of interest rather than point estimates. Also, we have seen that the initial distribution assumptions play a crucial role in the variance of subsequent distributions and most importantly, the dispersion not only remains persistent after long periods of time (30 cycles in our case) but it can also increase casting doubt about concepts such as long run equilibrium <em>steady states</em>. On the other hand, Markov Chains are sensitive to how we define and what we incorporate in such abstract concepts as <em>states</em>. Even if we assume that the economy is governed by distinct economic states, it is still a matter of opinion when deciding the number of states. Nevertheless, I avail myself to conclude that the advantages of augmenting a model even with a parsimonious 2 state Markov Model can be expected to yield significant improvements.</p>
-          <p>A more general model of the Markov Chains that we have discussed in section [HMM], suitable with latent states or imperfect information, is the Hidden Markov Model (also called regime switching model in some sources). It not only allows better fit of traditional econometrics models such as ARMA and ARIMA, it does so using fewer parameters. The drawbacks of the HMM is its complexity and computational requirements in estimating the state transition probabilities. Fortunately, we have concluded that the use of dynamic programming techniques such as the Baum-Welch algorithm, extensively described in [sec:BW] partially solves these problems. The drawback of the Baum-Welch algorithm is that it does not guarantee a global optimum but only a local one and depending on the model, many random iterations of the initial probability distributions are needed to find the parameters of the HMM that generated the observations.</p>
-          <p>On future work I would like to continue on focusing on Hidden Markov Models and provide solutions to the problem of finding the global optimum. One way is to take advantage of computing parallelism or network distributed systems. This is possible since the bottleneck of estimating the transition probability matrix is in computing power and not in the network of the dimensions of the training set. Using mapreduce functions the central node can easily retain the highest likelihoods and discard others. Furthermore, I would like to further advance the HMM in the continuous state space and allow dimensionality reduction of external variables when defining abstract states of an HMM.</p>
-          <p>On a more philosophical note, we can conclude that history doesn’t matter for the future if we know <em>the present</em>. Therefore, predicting future returns, especially growth rates, solely on past returns is the wrong path. But do we know <em>the present</em>?</p>
-
-        </div>
-      </div>
-
-
-
-
-      <!-- References and Footnotes -->
-      <h2>   References  </h2>
-        <div id="refs" class="references">
-          <div id="ref-Dempster77">
-          <p>A. P. Dempster, D. B. Rubin, N. M. Laird. 1977. “Maximum Likelihood from Incomplete Data via the EM Algorithm.” <em>Journal of the Royal Statistical Society. Series B (Methodological)</em> 39 (1). [Royal Statistical Society, Wiley]: 1–38. <a href="http://www.jstor.org/stable/2984875" class="uri">http://www.jstor.org/stable/2984875</a>.</p>
-          </div>
-          <div id="ref-barbu08">
-          <p>Barbu, V.S., and N. Limnios. 2008. <em>Semi-Markov Chains and Hidden Semi-Markov Models Toward Applications: Their Use in Reliability and DNA Analysis</em>. Lecture Notes in Statistics. Springer New York. <a href="https://books.google.md/books?id=aNPajwEACAAJ" class="uri">https://books.google.md/books?id=aNPajwEACAAJ</a>.</p>
-          </div>
-          <div id="ref-baum1970maximization">
-          <p>Baum, Leonard E, Ted Petrie, George Soules, and Norman Weiss. 1970. “A Maximization Technique Occurring in the Statistical Analysis of Probabilistic Functions of Markov Chains.” <em>The Annals of Mathematical Statistics</em> 41 (1). JSTOR: 164–71.</p>
-          </div>
-          <div id="ref-baum1967">
-          <p>Baum, Leonard E., and J. A. Eagon. 1967. “An Inequality with Applications to Statistical Estimation for Probabilistic Functions of Markov Processes and to a Model for Ecology.” <em>Bull. Amer. Math. Soc.</em> 73 (3). American Mathematical Society: 360–63. <a href="http://projecteuclid.org/euclid.bams/1183528841" class="uri">http://projecteuclid.org/euclid.bams/1183528841</a>.</p>
-          </div>
-          <div id="ref-baum66">
-          <p>Baum, Leonard E., and Ted Petrie. 1966. “Statistical Inference for Probabilistic Functions of Finite State Markov Chains.” <em>Ann. Math. Statist.</em> 37 (6). The Institute of Mathematical Statistics: 1554–63. doi:<a href="https://doi.org/10.1214/aoms/1177699147">10.1214/aoms/1177699147</a>.</p>
-          </div>
-          <div id="ref-benesch2001baum">
-          <p>Benesch, T. 2001. “The Baum–Welch Algorithm for Parameter Estimation of Gaussian Autoregressive Mixture Models.” <em>Journal of Mathematical Sciences</em> 105 (6). Springer: 2515–8.</p>
-          </div>
-          <div id="ref-fraser08">
-          <p>Fraser, A.M. 2008. <em>Hidden Markov Models and Dynamical Systems</em>. SIAM E-Books. Society for Industrial; Applied Mathematics (SIAM, 3600 Market Street, Floor 6, Philadelphia, PA 19104). <a href="https://books.google.md/books?id=DMEWrB-2gGYC" class="uri">https://books.google.md/books?id=DMEWrB-2gGYC</a>.</p>
-          </div>
-          <div id="ref-Haggstrom02">
-          <p>Häggström, Olle. 2002. <em>Finite Markov Chains and Algorithmic Applications (London Mathematical Society Student Texts)</em>. 1st ed. Cambridge University Press. <a href="http://amazon.com/o/ASIN/0521890012/" class="uri">http://amazon.com/o/ASIN/0521890012/</a>.</p>
-          </div>
-          <div id="ref-hamilton2016macroeconomic">
-          <p>Hamilton, James D. 2016. “Macroeconomic Regimes and Regime Shifts.” National Bureau of Economic Research.</p>
-          </div>
-          <div id="ref-hamilton05">
-          <p>Hamilton, James D. 2005. “What’s Real About the Business Cycle?” Working Paper, Working paper series, no. 11161 (February). National Bureau of Economic Research. doi:<a href="https://doi.org/10.3386/w11161">10.3386/w11161</a>.</p>
-          </div>
-          <div id="ref-hamilton02">
-          <p>Hamilton, James D., and Baldev Raj. 2002. <em>Advances in Markov-Switching Models</em>. Springer Science Business Media. doi:<a href="https://doi.org/10.1007/978-3-642-51182-0">10.1007/978-3-642-51182-0</a>.</p>
-          </div>
-          <div id="ref-langville2011google">
-          <p>Langville, Amy N, and Carl D Meyer. 2011. <em>Google’s PageRank and Beyond: The Science of Search Engine Rankings</em>. Princeton University Press.</p>
-          </div>
-          <div id="ref-lin2011hunting">
-          <p>Lin, Da, and Mark Stamp. 2011. “Hunting for Undetectable Metamorphic Viruses.” <em>Journal in Computer Virology</em> 7 (3). Springer: 201–14.</p>
-          </div>
-          <div id="ref-Lozovanu15">
-          <p>Lozovanu, Dmitrii, and Stefan Pickl. 2015. <em>Optimization of Stochastic Discrete Systems and Control on Complex Networks</em>. Springer International Publishing. doi:<a href="https://doi.org/10.1007/978-3-319-11833-8">10.1007/978-3-319-11833-8</a>.</p>
-          </div>
-          <div id="ref-Rabiner89">
-          <p>Rabiner, L. R. 1989. “A Tutorial on Hidden Markov Models and Selected Applications in Speech Recognition.” <em>Proceedings of the IEEE</em> 77 (2): 257–86. doi:<a href="https://doi.org/10.1109/5.18626">10.1109/5.18626</a>.</p>
-          </div>
-          <div id="ref-Romer06">
-          <p>Romer, D. 2006. <em>Advanced Macroeconomics</em>. McGraw-Hill Higher Education. McGraw-Hill. <a href="https://books.google.md/books?id=9dW7AAAAIAAJ" class="uri">https://books.google.md/books?id=9dW7AAAAIAAJ</a>.</p>
-          </div>
-          <div id="ref-Stachurski2008">
-          <p>Stachurski, John, and Vance Martin. 2008. “Computing the Distributions of Economic Models via Simulation.” <em>Econometrica</em> 76 (2). The Econometric Society: 443–50. doi:<a href="https://doi.org/10.1111/j.1468-0262.2008.00839.x">10.1111/j.1468-0262.2008.00839.x</a>.</p>
-          </div>
-          <div id="ref-quantecon">
-          <p>Stachurski, John, and Thomas J. Sargent. 2016. “Quant Econ Quantative Economics.” <a href="http://quant-econ.net/" class="uri">http://quant-econ.net/</a>.</p>
-          </div>
-          <div id="ref-MITLA">
-          <p>Strang, Gilbert. 2011. “18.06SC Linear Algebra.” Massachusetts Institute of Technology: MIT OpenCourseWare. <a href="http://ocw.mit.edu/courses/mathematics/18-06sc-linear-algebra-fall-2011/index.htm" class="uri">http://ocw.mit.edu/courses/mathematics/18-06sc-linear-algebra-fall-2011/index.htm</a>.</p>
-          </div>
-          <div id="ref-sundberg1972maximum">
-          <p>Sundberg, R. 1972. “Maximum Likelihood Theory and Applications for Distributions Generated When Observing a Function of an Exponential Variable.” PhD thesis, PhD Thesis. Institute of Mathematics; Statistics, Stockholm University, Stockholm.</p>
-          </div>
-          <div id="ref-Tauchen86">
-          <p>Tauchen, George. 1986. “Finite State Markov-Chain Approximations to Univariate and Vector Autoregressions.” <em>Economics Letters</em> 20 (2). Elsevier BV: 177–81. doi:<a href="https://doi.org/10.1016/0165-1765(86)90168-0">10.1016/0165-1765(86)90168-0</a>.</p>
-          </div>
-        </div>
-        <div class="footnotes">
-          <hr />
-          <ol>
-          <li id="fn1"><p>see: <span class="citation">Langville and Meyer (2011)</span> and <span class="citation">Stachurski and Martin (2008)</span>,<a href="#fnref1">↩</a></p></li>
-          <li id="fn2"><p>For computer viruses and malware detection using Hidden Markov Models, see <span class="citation">(Lin and Stamp 2011)</span><a href="#fnref2">↩</a></p></li>
-          <li id="fn3"><p>see speech: <a href="http://www.math.harvard.edu/~kmatveev/markov.html">http://www.math.harvard.edu/ kmatveev/markov.html</a><a href="#fnref3">↩</a></p></li>
-          <li id="fn4"><p>Analogous to difference equations, we are not interested in the systems dependent on time <span class="math inline">\(t\)</span> as this will exponentially complicate our estimation technique.<a href="#fnref4">↩</a></p></li>
-          <li id="fn5"><p>In his book, On the Accuracy of Economic Observations (1950), Morgenstern expressed his concerns in the way the data is used from the national income accounts to reach conclusions about the state of the economy and about appropriate policies. Note for Mathematicians: Morgenstern was a friend of John von Neumann.<a href="#fnref5">↩</a></p></li>
-          <li id="fn6"><p>This is probably the reason this adaptation of the EM algorithm is called the Baum-Welch algorithm.<a href="#fnref6">↩</a></p></li>
-          <li id="fn7"><p>We define formally a Markov chain in section [smc]<a href="#fnref7">↩</a></p></li>
-          <li id="fn8"><p>For example, at the Math PISA test <span class="math inline">\(x_{ij}\)</span> could be whether student <span class="math inline">\(i\)</span> answered correctly problem <span class="math inline">\(j\)</span>.<a href="#fnref8">↩</a></p></li>
-          <li id="fn9"><p>The National Bureau of Economic Research (NBER) defines recession as “a significant decline in economic activity spread across the economy, lasting more than a few months, normally visible in real GDP, real income, employment, industrial production, and wholesale-retail sales.”, this is a much broader view than simply a decrease in GDP.<a href="#fnref9">↩</a></p></li>
-          <li id="fn10"><p>For example, the Gordon Dividend Discount Model which is augmented with a stream of dividends that are governed by a state transition matrix or a HMM which we will present in section [HMM].<a href="#fnref10">↩</a></p></li>
-          <li id="fn11"><p>which is a fancy way of saying that variables of interest are not always directly observable. Example: Suppose you’re looking for a partner and you want it to be intelligent. The IQ however is not directly observable, and you would have to infer it using his or her behaviour as a function of IQ.<a href="#fnref11">↩</a></p></li>
-          <li id="fn12"><p>Which is a fancy way of saying “observations”. The reason for that can be traced back to the applications of the Markovian processes in speech recognition tasks.<a href="#fnref12">↩</a></p></li>
-          <li id="fn13"><p>We could also think of an zero-order Markov process, the case when the current state is completely independent of the previous state, like throwing a dice. But then we simply get back to a classical probability distribution. If <span class="math inline">\(\left(\mathbf{\Omega, \Sigma, Pr}\right)\)</span> is a discrete sample space where <span class="math inline">\(\mathbf{\Omega}\)</span> is the set of all the possible outcomes, <span class="math inline">\(Pr: \Sigma \mapsto \mathbb{R}\)</span> where <span class="math inline">\(\sum_{x_{i}\in\mathbf{\Omega}}{Pr(x_{i})} =1\)</span>. In this case: <span class="math inline">\(Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i \right)\)</span>, therefore, it is completely redundant to introduce a zero-order Markov processes.<a href="#fnref13">↩</a></p></li>
-          <li id="fn14"><p>Please note that in a simple Markov Chain, unlike a Hidden Markov Model which we will define later, the states are observable.<a href="#fnref14">↩</a></p></li>
-          <li id="fn15"><p>One of the key insights of this paper is that a linear statistical model with homoskedastic errors cannot capture the nineteenth-century notion of a recurring cyclical pattern in key economic aggregates and that a simple Markov chain has a much better goodness of fit.<a href="#fnref15">↩</a></p></li>
-          <li id="fn16"><p>You can also simulate a Markov Chain given a stochastic matrix at <a href="http://setosa.io/ev/markov-chains/" class="uri">http://setosa.io/ev/markov-chains/</a><a href="#fnref16">↩</a></p></li>
-          <li id="fn17"><p>period is an abstract term, in the paper of <span class="citation">Rabiner (1989)</span> days are assumed, in the example of <span class="citation">James D. Hamilton and Raj (2002)</span> months, however for economic aggregates usually quarters are assumed<a href="#fnref17">↩</a></p></li>
-          <li id="fn18"><p>according to a Math professor from MIT (quote needed), this is the second most beautiful series in Math after <span class="math inline">\(e^x\)</span><a href="#fnref18">↩</a></p></li>
-          <li id="fn19"><p>other beautiful series derived from the geometric series: <a href="http://lycofs01.lycoming.edu/~sprgene/M332/Sums_Series.pdf"> http://lycofs01.lycoming.edu/ sprgene/M332/Sums_Series.pdf</a><a href="#fnref19">↩</a></p></li>
-          <li id="fn20"><p>data from the upstream oil industry as an example<a href="#fnref20">↩</a></p></li>
-          <li id="fn21"><p>In practice it is easier to estimate the profits of a given project in a year given the state of the economy.<a href="#fnref21">↩</a></p></li>
-          <li id="fn22"><p>Octave programming language is very similar to Matlab, except that it is free and open source.<a href="#fnref22">↩</a></p></li>
-          <li id="fn23"><p>The Production Sharing Contracts can be found at <a href="http://cabinet.gov.krd/p/p.aspx?l=12&amp;p=1" class="uri">http://cabinet.gov.krd/p/p.aspx?l=12&amp;p=1</a><a href="#fnref23">↩</a></p></li>
-          <li id="fn24"><p>This can be usually found at Article 6 clause 6.9, 6.10, 6.11 and 6.12, for example the Contract signed between Marathon and KRG at <a href="http://cabinet.gov.krd/p/p.aspx?l=12&amp;r=296&amp;h=1&amp;s=030000&amp;p=70" class="uri">http://cabinet.gov.krd/p/p.aspx?l=12&amp;r=296&amp;h=1&amp;s=030000&amp;p=70</a><a href="#fnref24">↩</a></p></li>
-          <li id="fn25"><p><span class="math inline">\(\mathbf{x}\mathbb{A} = \mathbf{x}\)</span> should not be confused with <span class="math inline">\(\mathbb{A}\mathbf{x} = \mathbf{x}\)</span> since any vector <span class="math inline">\(\mathbf{x}\)</span> which has <span class="math inline">\(x_i = x_j\)</span> satisfies this equality.<a href="#fnref25">↩</a></p></li>
-          <li id="fn26"><p>that is <span class="math inline">\(\mathbf{v}\)</span> is not a zero vector<a href="#fnref26">↩</a></p></li>
-          <li id="fn27"><p>In Octave as well as in other programming languages directly comparing sum(eig(A)) == trace(A) will usually not work due to rounding errors.<a href="#fnref27">↩</a></p></li>
-          <li id="fn28"><p>we will define what irreducible is later.<a href="#fnref28">↩</a></p></li>
-          <li id="fn29"><p>orthogonal is just another way of saying perpendicular or independent vectors<a href="#fnref29">↩</a></p></li>
-          <li id="fn30"><p>the limiting probability matrix is denoted by <span class="math inline">\(\mathbb{Q}\)</span><a href="#fnref30">↩</a></p></li>
-          <li id="fn31"><p>Of course we are assuming that the space state transition probability matrix <span class="math inline">\(\mathbb{A}\)</span> computed by <span class="citation">James D. Hamilton (2005)</span> for the United States is valid for Kurdistan Region of Iraq. For these conclusions to have any validity, the study of Hamilton needs to be replicated for KRG and more than 3 states would be desirable to be used.<a href="#fnref31">↩</a></p></li>
-          <li id="fn32"><p>we will present a model when the discount rate is not zero<a href="#fnref32">↩</a></p></li>
-          <li id="fn33"><p>also called stochastic kernel in literature, see for example http://quant-econ.net/jl/stationary_densities.html<a href="#fnref33">↩</a></p></li>
-          <li id="fn34"><p>In a nutshell, the Solow–Swan model assumes a closed market economy. A single good (output) is produced using two factors of production, labour <span class="math inline">\(L\)</span> and capital <span class="math inline">\(K\)</span> in an aggregate production function that satisfies the Inada conditions, which imply that the elasticity of substitution must be asymptotically equal to one. https://en.wikipedia.org/wiki/Solow-Swan_model<a href="#fnref34">↩</a></p></li>
-          <li id="fn35"><p>Robert Solow has was awarder the Nobel Prize in Economics.<a href="#fnref35">↩</a></p></li>
-          <li id="fn36"><p>For example the open source library KernelDensity for Julia programming language which is hosted at https://github.com/JuliaStats/KernelDensity.jl<a href="#fnref36">↩</a></p></li>
-          <li id="fn37"><p>For a 2 state economy over a span of 10 years, we would call our function 1024 times, in contrast, a 3 state economy on quarterly data would require 12157665459056928801 (<span class="math inline">\(1.22*10^{19}\)</span>) calls.<a href="#fnref37">↩</a></p></li>
-          <li id="fn38"><p>usually denoted by <span class="math inline">\(\varepsilon_i(k)\)</span> in the literature<a href="#fnref38">↩</a></p></li>
-          <li id="fn39"><p>In the appendix I will present the Bayesian rules in probability<a href="#fnref39">↩</a></p></li>
-          <li id="fn40"><p>Since the current outcome depends on the current state and not on past outcomes <span class="math inline">\(Pr(o_k|x_k,o_{k-1},o_{k-2}...) =Pr(o_k|x_k) \)</span>. In practice, it is reasonable to assume that the expected outcome of a function (the growth of Economy) depends on the intrinsic values that define the system, rather than past outcomes.<a href="#fnref40">↩</a></p></li>
-          <li id="fn41"><p>Mathematicalmonk channel present a gentle introduction to HMM and builds intuition what types of questions we can answer https://www.youtube.com/watch?v=7zDARfKVm7s&amp;list=PLD0F06AA0D2E8FFBA<a href="#fnref41">↩</a></p></li>
-          <li id="fn42"><p>usually denoted by <span class="math inline">\(\varepsilon_i(k)\)</span> in the literature<a href="#fnref42">↩</a></p></li>
-          <li id="fn43"><p>I follow the notation of: http://personal.ee.surrey.ac.uk/Personal/P.Jackson/tutorial/hmm_tut2.pdf<a href="#fnref43">↩</a></p></li>
-          <li id="fn44"><p>I used the steps of the algorithm from Wikipedia, https://en.wikipedia.org/wiki/Forward_algorithm except that I corrected for mistakes. For example: Wiki says it uses chain rule, when they meant the law of total probability.<a href="#fnref44">↩</a></p></li>
-          <li id="fn45"><p>Simple as it may sound, according to David Forney<a href="#fnref45">↩</a></p></li>
-          <li id="fn46"><p>https://en.wikipedia.org/wiki/Baum-Welch_algorithm<a href="#fnref46">↩</a></p></li>
-          <li id="fn47"><p>see: http://ghmm.org/<a href="#fnref47">↩</a></p></li>
-          <li id="fn48"><p>link: <a href="http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml" class="uri">http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml</a><a href="#fnref48">↩</a></p></li>
-          <li id="fn49"><p><a href="https://github.com/moldovean/usm/tree/master/Thesis" class="uri">https://github.com/moldovean/usm/tree/master/Thesis</a><a href="#fnref49">↩</a></p></li>
-          <li id="fn50"><p>link: <a href="http://sourceforge.net/svn/?group_id=67094" class="uri">http://sourceforge.net/svn/?group_id=67094</a><a href="#fnref50">↩</a></p></li>
-          <li id="fn51"><p>link: http://stats.stackexchange.com/questions/70545/looking-for-a-good-and-complete-probability-and-statistics-book<a href="#fnref51">↩</a></p></li>
-          <li id="fn52"><p>link: <a href="https://onlinecourses.science.psu.edu/stat414/node/241" class="uri">https://onlinecourses.science.psu.edu/stat414/node/241</a><a href="#fnref52">↩</a></p></li>
-          <li id="fn53"><p>link: https://www.statlect.com/fundamentals-of-probability/Bayes-rule<a href="#fnref53">↩</a></p></li>
-          <li id="fn54"><p>link: http://stattrek.com/probability/bayes-theorem.aspx<a href="#fnref54">↩</a></p></li>
-          <li id="fn55"><p>link: http://setosa.io/ev/eigenvectors-and-eigenvalues/<a href="#fnref55">↩</a></p></li>
-          <li id="fn56"><p><a href="http://ghmm.org" class="uri">http://ghmm.org</a><a href="#fnref56">↩</a></p></li>
-          <li id="fn57"><p><a href="http://www.cs.rutgers.edu/~schliep/index.html">http://www.cs.rutgers.edu/ schliep/index.html</a><a href="#fnref57">↩</a></p></li>
-          <li id="fn58"><p><a href="https://en.wikipedia.org/wiki/Andrey_Markov" class="uri">https://en.wikipedia.org/wiki/Andrey_Markov</a><a href="#fnref58">↩</a></p></li>
-          </ol>
-          </div>
-    </div>
-
-  </body>
+		</script>
+	</body>
 </html>
