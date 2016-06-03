@@ -389,34 +389,39 @@
 
           title(&quot;Markov Chain Simulation for Marathon Oil, \$n=10^3\$&quot;)</code></pre>
           <div class="figure">
-          <img src="graphs/mcLogReturns_5.png" class="img-responsive" alt="Markov Chain Simulation" style="width:90.0%" />
+          <img id="TVscreen" src="graphs/mcLogReturns_5.png" class="img-responsive" alt="Markov Chain Simulation" style="width:70.0%" />
           <p class="caption">Markov Chain Simulation<span data-label="fig:MCSim5"></span></p>
           </div>
           <div class="row">
             <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_3.png"  class="thumbnail">
+              <a href="#TVscreen" onclick="myfun(3)" class="thumbnail">
                 <p> Monte Carlo for <span class="math inline"> \(n=10^3 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_3.png" alt="Log Returns for 1000 iterations" style="width:95.0%" />
+                <img  onclick="myfun(3)" src="graphs/mcLogReturns_3.png" alt="Log Returns for 1000 iterations" style="width:95.0%" />
               </a>
             </div>
             <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_4.png"  class="thumbnail">
+              <a href="#TVscreen" onclick="myfun(4)"  class="thumbnail">
                 <p> Monte Carlo for <span class="math inline"> \(n=10^4 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_4.png" alt="Log Returns for 10000 iterations" style="width:95.0%" />
+                <img  onclick="myfun(4)" src="graphs/mcLogReturns_4.png" alt="Log Returns for 10000 iterations" style="width:95.0%" />
               </a>
             </div>
             <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_5.png"  class="thumbnail">
+              <a href="#TVscreen" onclick="myfun(5)" class="thumbnail">
                 <p> Monte Carlo for <span class="math inline"> \(n=10^5 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_5.png" alt="Log Returns for 100000 iterations" style="width:95.0%" />
+                <img onclick="myfun(5)" src="graphs/mcLogReturns_5.png" alt="Log Returns for 100000 iterations" style="width:95.0%" />
               </a>
             </div>
             <div class="col-sm-3">
-              <a href="graphs/mcLogReturns_6.png"  class="thumbnail">
+              <a href="#TVscreen" onclick="myfun(6)"  class="thumbnail">
                 <p> Monte Carlo for <span class="math inline"> \(n=10^6 \)</span> iterations </p>
-                <img src="graphs/mcLogReturns_6.png" alt="Log Returns for 1000000 iterations" style="width:95.0%" />
+                <img onclick="myfun(6)" src="graphs/mcLogReturns_6.png" alt="Log Returns for 1000000 iterations" style="width:95.0%" />
               </a>
             </div>
+            <script>
+            function myfun(dest){
+              document.getElementById("TVscreen").src="graphs/mcLogReturns_"+dest+".png";
+            }
+            </script>
           </div>
 
           <p>To get bigger images for <span class="math inline">\(n = \{10^3, 10^4, 10^5, 10^6\}\)</span> iterations, click on the thumbnails above. </p>
