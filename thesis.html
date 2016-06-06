@@ -11,6 +11,9 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <!-- MathJax -->
     <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+    <!-- Prism -->
+    <link rel="stylesheet" href="css/prism.css">
+    <script type="text/javascript" src="js/prism.js"></script>
   </head>
 
   <body>
@@ -123,21 +126,22 @@
             0.35
             \end{array} \right)\]</span></p>
             <p>We can already calculate the expected pay-off using the Octave programming language.<a href="#fn22" class="footnoteRef" id="fnref22"><sup>22</sup></a></p>
-            <pre><code>A = [0.97100   0.02900   0.00000;
-                 0.14500   0.77800   0.07700;
-                 0.00000   0.50800   0.49200 ];
+            <pre><code class="language-matlab">A = 
+            [0.97100   0.02900   0.00000;
+            0.14500   0.77800   0.07700;
+            0.00000   0.50800   0.49200 ];
             E = [0.215,   0.015,  -0.18];
             E = transpose(E);
             mu = [0.1,   0.55,   0.35];
 
             #for the next period, given the state
             A*E</code></pre>
-            <pre><code>ans =
+            <pre><code class="language-matlab">ans =
 
-               0.209200
-               0.028985
-              -0.080940</code></pre>
-            <pre><code>#if the state is not known
+            0.209200
+            0.028985
+            -0.080940</code></pre>
+            <pre><code class="language-matlab">#if the state is not known
             &gt;&gt; mu*A*E
             ans =  0.0085328</code></pre>
             <p>Given that the expected pay-off is basically zero, we might wrongly conclude that the project is not worth investing in.</p>
@@ -153,7 +157,7 @@
             0.145 &amp; 0.778-\lambda &amp; 0.077 \\
             0 &amp; 0.508 &amp; 0.492-\lambda
             \end{array} \right| =0\]</span></p>
-            <pre><code>&gt;&gt; eigs(A)
+            <pre><code class="language-matlab">&gt;&gt; eigs(A)
             ans =
                1.00000
                0.85157
@@ -163,7 +167,7 @@
                0.85157 \\
                0.38943 \\
             \end{array} \right)\]</span> We can verify that these are indeed the eigenvalues of <span class="math inline">\(\mathbb{A}\)</span> by comparing the trace of <span class="math inline">\(\mathbb{A}\)</span> with the sum of the eigenvalues and the determinant of <span class="math inline">\(\mathbb{A}\)</span> should be equal to the product of the eigenvalues.<a href="#fn27" class="footnoteRef" id="fnref27"><sup>27</sup></a></p>
-            <pre><code>&gt;&gt; trace(A)
+            <pre><code class="language-matlab">&gt;&gt; trace(A)
             ans =  2.2410
             &gt;&gt; sum(eig(A))
             ans =  2.2410
@@ -172,16 +176,16 @@
             &gt;&gt; det(A)
             ans =  0.33163</code></pre>
             <p>Now having found the eigenvalues, we substitute each of the eigenvalues into <span class="math inline">\(\lambda\)</span> and get a 3 degenerate matrices. We can easily verify this:</p>
-            <pre><code>&gt;&gt; det(A-eye(3))
+            <pre><code class="language-matlab">&gt;&gt; det(A-eye(3))
             ans =   -1.6611e-18</code></pre>
             <p>which we assume is <span class="math inline">\(0\)</span> due to rounding errors.</p>
             <p>Then we find the null space of these new matrices and find the eigenvectors corresponding to each eigenvalue.</p>
-            <pre><code>&gt;&gt; [evects, evals] = eigs(A)
+            <pre><code class="language-matlab">&gt;&gt; [evects, evals] = eigs(A)
             evects =
 
-               0.5773503  -0.1389312   0.0098689
-               0.5773503   0.5721371  -0.1979135
-               0.5773503   0.8083052   0.9801698
+            0.5773503  -0.1389312   0.0098689
+            0.5773503   0.5721371  -0.1979135
+            0.5773503   0.8083052   0.9801698
 
             evals =
 
@@ -196,7 +200,7 @@
                0.5773503 &amp; 0.8083052 &amp; 0.9801698 \\
 
             \end{array}\right)\]</span> then <span class="math inline">\(\mathbf{S}^{-1}\)</span> is:</p>
-            <pre><code>&gt;&gt; pinv(evects)
+            <pre><code class="language-matlab">&gt;&gt; pinv(evects)
             ans =</code></pre>
             <p><span class="math display">\[\mathbf{S}^{-1} = \left(\begin{array}{ccc}
             1.407811   &amp;0.281562   &amp;0.042678 \\
@@ -204,7 +208,7 @@
             0.266324  &amp;-1.068188   &amp;0.801864 \\
             \end{array}\right)\]</span></p>
             <p>Now we are able to compute the values of the vector from equation [eq:canonical] :</p>
-            <pre><code>&gt;&gt; evects*(evals^25)*pinv(evects)
+            <pre><code class="language-matlab">&gt;&gt; evects*(evals^25)*pinv(evects)
             ans =</code></pre>
             <p><span class="math display">\[\mathbf{S}\mathbf{\Lambda}^{25}\mathbf{S}^{-1} = \left(\begin{array}{ccc}
                0.816125   &amp;0.159822   &amp;0.024054 \\
@@ -213,11 +217,11 @@
             \end{array}\right)\]</span></p>
             <p>What if <span class="math inline">\(\mathbb{A}\)</span> is not irreducible<a href="#fn28" class="footnoteRef" id="fnref28"><sup>28</sup></a> like in a for of a diagonal matrix? In this case, even if we get <span class="math inline">\(n\)</span> different eigenvalues we will not get <span class="math inline">\(n\)</span> orthogonal<a href="#fn29" class="footnoteRef" id="fnref29"><sup>29</sup></a> eigenvectors. To solve these types of problems we can use the algorithms proposed by <span class="citation">(Lozovanu and Pickl 2015)</span> for solving for <span class="math inline">\(\mathbb{Q}\)</span><a href="#fn30" class="footnoteRef" id="fnref30"><sup>30</sup></a> which can solve it in <span class="math inline">\(\mathcal{O}(n^3)\)</span> operations.</p>
             <p>If eigenvectors seem too foreign or the method is too confusing and since we only have 3 states and <span class="math inline">\(t=25\)</span> we can directly solve it using any programming language. In Octave or Matlab it is as simple as:</p>
-            <pre><code>&gt;&gt; mu*A^25*E
+            <pre><code class="language-matlab">&gt;&gt; mu*A^25*E
             ans =  0.16948</code></pre>
             <p>Now the expected return is 17<span class="math inline">\(\%\)</span> and the decision for Marathon to invest in developing this region will depend on on their ability to attract capital with less than 17<span class="math inline">\(\%\)</span> interest as well as the availability of other more attractive opportunities.<a href="#fn31" class="footnoteRef" id="fnref31"><sup>31</sup></a></p>
             <p>Another curiosity is the range the IRR takes as a function of <span class="math inline">\(\mu\)</span>. Again, with a Markovian chain this is trivial once we have our limiting probability matrix <span class="math inline">\(\mathbb{Q}\)</span> or <span class="math inline">\(\mathbb{A}^t\)</span>. Using the transition matrix provided by <span class="citation">James D. Hamilton (2005)</span>, the long term expectation of being in a particular state can be written as: <span class="math display">\[E[X] = \mu \mathbb{Q}\]</span> Even if we take <span class="math inline">\(\mu\)</span> to be <span class="math inline">\([0,0,1]\)</span> e.i. the worst case scenario:</p>
-            <pre><code>&gt;&gt; mu
+            <pre><code class="language-matlab">&gt;&gt; mu
             mu =
                0   0   1
             &gt;&gt; mu*A^25
@@ -266,7 +270,7 @@
           0 &amp;0 &amp;0 \\
           0 &amp;0 &amp;0 \\
           \end{array}\right) \mathbf{S}^{-1}\]</span></p>
-          <pre><code>evects*[1,0,0;0,0,0;0,0,0]*evects^(-1)
+          <pre><code class="language-matlab">evects*[1,0,0;0,0,0;0,0,0]*evects^(-1)
           ans =
 
              0.812800   0.162560   0.024640
@@ -289,13 +293,13 @@
           <h2 id="sec:SimMC">Simulating a Markov Chain</h2>
           <p>In order to have a better understanding of the implicit variance of the Markov chain presented above we can simulate it. There are a plethora of open source libraries providing frameworks to accomplish such simulations. We will make our own using the open source QuantEcon package from GitHub which was written by <span class="citation">Stachurski and Sargent. (2016)</span>. We will simulate our example using the Julia programming language for the example from Hamilton based on software recommendations from <span class="citation">Stachurski and Sargent. (2016)</span>. Below we provide a working example. The requirements to replicate this example will be provided in the Annex.</p>
           <p>Inputting the data: The probability transition matrix <span class="math inline">\(\mathbb{A}\)</span>, the initial state probability vector <span class="math inline">\(\mu\)</span> and pay-off expectations <span class="math inline">\(\mathbb{E}\)</span></p>
-          <pre><code>A = [0.971 0.029 0; 0.145 0.778 0.077; 0 0.508 0.492] # Probability Transition Matrix
+          <pre><code class="language-julia">A = [0.971 0.029 0; 0.145 0.778 0.077; 0 0.508 0.492] # Probability Transition Matrix
           mu = [0.1 0.55 0.35] # initial state probability vector
           E = [0.215 0.015 -0.18]&#39; #column vector of pay-off expectations - project specific
 
           using QuantEcon</code></pre>
           <p>A sample for Markov Chain is given by the function <em>MarkovChain_sample</em> which takes as input matrix <span class="math inline">\(\mathbb{A}\)</span> - the probability transition matrix and the initial state probability distribution vector <span class="math inline">\(\mu\)</span>. Optionally, we can provide the <em>sample_size</em> or <span class="math inline">\(t\)</span> which in our case for the petroleum industry is 25 years.</p>
-          <pre><code>function MarkovChain_sample(A, mu; sample_size=25)
+          <pre><code class="language-julia">function MarkovChain_sample(A, mu; sample_size=25)
               X = Array(Int16, sample_size)
               p_mu = DiscreteRV(vec(mu))
               X[1] = draw(p_mu)
@@ -306,7 +310,7 @@
               return X
           end</code></pre>
           <p>The array X is the container of Integers where we will store the state from one instance of the Markov process. The function <em>DiscreteRV</em> from the QuantEcon package take as input a vector whose elements sum to 1 and converts it into a discrete probability distribution. The variable <span class="math inline">\(P_\mu\)</span> is therefore the initial state discrete probability distribution from which we determine the first state our system will take. The <em>draw</em> function form the QuantEcon package takes a probability distribution as input and outputs a sample output. In line 4 we convert our probability transition matrix into <span class="math inline">\(n\)</span> distinct discrete probability distribution and then we assign a state to <span class="math inline">\(X_t\)</span> from a random draw according to the pdf of <span class="math inline">\(X_{t-1}\)</span>. Here is a sample output when we call <em>MarkovChain_sample</em></p>
-          <pre><code>iaka = MarkovChain_sample(A,mu)
+          <pre><code class="language-julia">iaka = MarkovChain_sample(A,mu)
           iaka&#39;
 
           Out:
@@ -314,7 +318,7 @@
            2  2  1  1  1  1  1  1  1  1  1  1  1  1  1  1  3  3  2  2  2  2  1  1  1 </code></pre>
           <p>Once we have a sample path and the pay-off vector <span class="math inline">\(\mathbb{E}\)</span>, we can calculate the result of the investment project. Assuming for simplicity that the discount <span class="math inline">\(\beta\)</span> rate is zero<a href="#fn32" class="footnoteRef" id="fnref32"><sup>32</sup></a> the pay-off would simply be: <span class="math display">\[\text{Payoff} = \prod_{t=1}^{25}(1+E(x_t))\]</span></p>
           <p>Below we present a Monte Carlo procedure to simulate a Markov Chain without discount.</p>
-          <pre><code>function MarkovChain_simulation(ff::Function, A, mu, E; nr_iter=100, t=25)
+          <pre><code class="language-julia">function MarkovChain_simulation(ff::Function, A, mu, E; nr_iter=100, t=25)
               X = Array(Float32,nr_iter)
               #sample_path = Array(Int16, t)
               for i in 1:nr_iter
@@ -324,7 +328,7 @@
               return X
           end    </code></pre>
           <p>where in addition to the parameters from <em>MarkovChain_sample</em> we have <em>ff</em> which is a reference to a function, and vector <span class="math inline">\(\mathbb{E}\)</span> the pay-offs vector. The function <em>MarkovChain simulation</em> returns an array <span class="math inline">\(X\)</span> of logarithmic returns without a discount. These classes of simulations are useful for simulating the Future Value of a financial asset. Also, this algorithm is not very efficient since it uses iterative processes which do not take advantage for multiprocessor architectures in modern computers. Therefore, we propose a slightly improved procedure for simulating a Markovian process:</p>
-          <pre><code>function MC_sim(ff, A, mu, E; nr_iter=10,t=25)
+          <pre><code class="language-julia">function MC_sim(ff, A, mu, E; nr_iter=10,t=25)
               X = Array(Float32,nr_iter)
               for i in 1:nr_iter
                   sample_path = ff(A,mu, sample_size= t)
@@ -333,7 +337,7 @@
               return X
           end</code></pre>
           <p>Here we take advantage of the multi-processor architecture using the mapreduce procedures with the plus binary operator. To be of any use for our petroleum example, we would also need to discount each return with respect to the internal cost of capital <span class="math inline">\(\beta\)</span>. Without loss of generality we assume <span class="math inline">\(\beta = 0.1\)</span></p>
-          <pre><code>function MC_sim_discount(mc::Function, A, mu, E; nr_iter=10,t=25, discount=0.1)
+          <pre><code class="language-julia">function MC_sim_discount(mc::Function, A, mu, E; nr_iter=10,t=25, discount=0.1)
               &quot;&quot;&quot;
               Calculates the cummulative Economic profit, based on the discount rate
               Required:
@@ -356,7 +360,7 @@
               return X
           end</code></pre>
           <p>Here we take advantage of the log returns property to discount each pay-off as a function of the state the system is in. We can still improve the above algorithm, at the cost of readability, by getting rid of the first <em>for</em> loop and calculate the average log return rather than the cumulative economic return.</p>
-          <pre><code>function MC_sim(mc::Function, A, mu, E; nr_iter=10,t=25)
+          <pre><code class="language-julia">function MC_sim(mc::Function, A, mu, E; nr_iter=10,t=25)
               &quot;&quot;&quot;
               Markov Chain Simulation computes the average log return
               Required:
@@ -377,7 +381,7 @@
           end</code></pre>
           <p>Now, thanks to the very high level paradigm of Julia language and onion code, our simulation function is effectively only three lines of code, though much less readable.</p>
           <p>Now we can proceed to simulate our Markov Chain using different number of iterations to observe how the variance behaves. Since a picture is a thousand words we will plot the log returns for <span class="math inline">\(n= \{10^3, 10^4, 10^5, 10^6 \}\)</span> where <span class="math inline">\(n\)</span> is the number of iterations.</p>
-          <pre><code>n = 1000
+          <pre><code class="language-julia">n = 1000
           simulation = MC_sim(MarkovChain_sample,A, mu, E; nr_iter=n);
 
           fig = figure(&quot;pyplot_histogram&quot;,figsize=(8,8))
@@ -509,7 +513,7 @@
           <p>Therefore, we can write our continuous state probability density as the average of probabilities: <span class="math display">\[\psi_t^n(y) = \frac{1}{n} \sum_{i=1}^n p(k_{t-1}^i, y)\]</span></p>
           <p>Since an efficient implementation of the Monte Carlo simulation for the continuous state Markov process requires a more significant number of steps than in the discrete case, as shown in section [sec:SimMC], and also taking into account that the continuous case is not conceptually different than in the discrete case, providing a step by step implementation as in section is beyond the scope of this thesis. On the other hand, I will present the implementation of <span class="citation">Stachurski and Martin (2008)</span> in Julia language in the Annex for convenience purposes.</p>
           <p>Given the Solow-Swan model, and using the implementation of the <code>LAE, lae_est</code> as provided in the Annex, we can now ask how fast does the initial density probability function for the continuous state Markov Chain converge to the steady state distribution of capital per capita <span class="math inline">\(k\)</span>. To answer this question we only need to write the function for the probability kernel <span class="math inline">\(p(x,y)\)</span>.</p>
-          <pre><code>function p(x, y)
+          <pre><code class="language-julia">function p(x, y)
               #=
               Stochastic kernel for the growth model with Cobb-Douglas production.
               Both x and y must be strictly positive.
@@ -520,11 +524,11 @@
           end</code></pre>
           <p>The idea is that any initial state density distribution for the <span class="math inline">\(k_0\)</span> will converge to a steady state density distribution. Suppose the initial density distribution follows: <span class="math display">\[f(x; \alpha, \beta) = \frac{1}{B(\alpha, \beta)}
            x^{\alpha - 1} (1 - x)^{\beta - 1}, \quad x \in [0, 1]\]</span> which is known as the Beta Distribution.</p>
-          <pre><code>a_sigma = 0.4
+          <pre><code class="language-julia">a_sigma = 0.4
           phi = LogNormal(0.0, a_sigma) #Technological Change Distribution
           psi_0 = Beta(1.8, 2.8)
           ygrid = linspace(0.01, 4.0, 200)</code></pre>
-          <pre><code>fig, ax = subplots()
+          <pre><code class="language-julia">fig, ax = subplots()
           #for (x,y) in zip(ygrid, ygrid)
           ax[:plot](ygrid, pdf(psi_0, ygrid), color=&quot;0.5&quot;)
           t=LaTeXString(&quot; Initial density Distribution: Beta(1.8,2.8) &quot;)
@@ -536,7 +540,7 @@
           <p class="caption">Beta Distribution<span data-label="fig:BD"></span></p>
           </div>
           <p>and then by iteratively applying the lae function with the density kernel, we can observe the speed of convergence.</p>
-          <pre><code>s = 0.2 # Savings Rate
+          <pre><code class="language-julia">s = 0.2 # Savings Rate
           \delta = 0.1 # Capital Depreciation Rate
           a_\sigma = 0.4  # A = exp(B) where B ~ N(0, a_sigma)
           \alpha = 0.4  # We set f(k) = k**alpha
@@ -581,7 +585,7 @@
           <img src="graphs/LevyConvergence.png" alt="Levy Distribution Convergence" style="width:95.0%" />
           <p class="caption">Levy Distribution Convergence<span data-label="fig:LevyDistConvergence"></span></p>
           </div>
-          <pre><code>s = 0.2 # Savings Rate
+          <pre><code class="language-julia">s = 0.2 # Savings Rate
           \delta = 0.1 # Capital Depreciation Rate
           a_\sigma = 0.4  # A = exp(B) where B ~ N(0, a_sigma)
           \alpha = 0.4  # We set f(k) = k**alpha
@@ -644,7 +648,7 @@
             \end{array}\right)\]</span></p>
             <div>
               <pre>
-                <code>
+                <code class="language-python">
                   import ghmm
                   A = [[0.9, 0.1], [0.2, 0.8]]
                   efair = [1.0 / 2] * 2
@@ -659,7 +663,7 @@
 
             <p>invoking the print method for the HMM model <span class="math inline">\(m\)</span></p>
             <pre class="pre-scrollable">
-              <code>print m
+              <code class="language-python">print m
 
             DiscreteEmissionHMM(N=2, M=2)
               state 0 (initial=0.50)
@@ -669,7 +673,7 @@
                 Emissions: 0.15, 0.85
                 Transitions: -&gt;0 (0.20), -&gt;1 (0.80)</code></pre>
             <p>generating a sample of 40 observations and printing them.</p>
-            <pre><code>obs_seq = m.sampleSingle(40)
+            <pre><code class="language-python">obs_seq = m.sampleSingle(40)
             obs = map(sigma.external, obs_seq)
 
             print obs
@@ -697,7 +701,8 @@
         <div class="col-sm-10 well" >
           <h2 id="a-formal-introduction-to-an-hmm">A formal introduction to an HMM</h2>
             <p>Suppose we have identified a sequence <span class="math inline">\(\mathcal{O} \in \mathbf{\Omega}\)</span> that we assume is generated by an HMM: <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span> as defined in chapter [HMM]. Given <span class="math inline">\(\lambda\)</span>, we would like to know: <span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></p>
-            <p>A direct approach is that given the parameters of the HMM, we can compute the probability of observing a particular observation on a given chain of states: <span class="math display">\[\label{eq:basic}
+            <p>A direct approach is that given the parameters of the HMM, we can compute the probability of observing a particular observation on a given chain of states: 
+            <span class="math display">\[\label{eq:basic}
             Pr\left(o_1,o_2,...,o_{T} |x_1,x_2,...,x_k,...x_T, \lambda \right)=  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)\]</span></p>
             <p>And then we could sum the probabilities from equation [eq:basic] over all possible states <span class="math inline">\(X\)</span>:</p>
             <p><span class="math display">\[\label{eq:directApproach}
@@ -742,9 +747,10 @@
         </div>
         <div class="col-sm-10 well" >
           <h2 id="sec:FBA">The Forward/Backward Algorithm</h2>
-            <p>Given an HMM<span class="math inline">\((\mathbb{A}, \mathbb{B}, \pi)\)</span>, as introduced in section [HMM] which we will denote by <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, where <span class="math inline">\(i \in \{1..N\}\)</span>, the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span> e.i.: <span class="math display">\[Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}\]</span> We can use Bayesian rule<a href="#fn39" class="footnoteRef" id="fnref39"><sup>39</sup></a> to write <span class="math inline">\(Pr(x_k | \mathcal{O} , \mathbf{\lambda})\)</span> as</p>
+            <p>Given an HMM<span class="math inline">\((\mathbb{A}, \mathbb{B}, \pi)\)</span>, as introduced in section [HMM] which we will denote by <span class="math inline">\(\lambda(\mathbb{A}, \mathbb{B}, \pi)\)</span>, where <span class="math inline">\(\mathbb{A}\)</span> is the state transition probability e.i. <span class="math inline">\(a_{ij}=a[i][j]=Pr(x_{t+1}=j|x_t=i)\)</span> and <span class="math inline">\(\mathbb{B}\)</span> is the emissions probability, e.i. <span class="math inline">\(b_i(k) = Pr(o_t = k|x_t=i)\)</span>,<a href="#fn38" class="footnoteRef" id="fnref38"><sup>38</sup></a> and <span class="math inline">\(\pi\)</span> is the initial probability distribution of states at <span class="math inline">\(t=1\)</span>, e.i. <span class="math inline">\(\pi_i = Pr(x_1=i)\)</span>, where <span class="math inline">\(i \in \{1..N\}\)</span>, 
+            the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span> e.i.: <span class="math display">\[Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}\]</span> We can use Bayesian rule<a href="#fn39" class="footnoteRef" id="fnref39"><sup>39</sup></a> to write <span class="math inline">\(Pr(x_k | \mathcal{O} , \mathbf{\lambda})\)</span> as</p>
             <p><span class="math display">\[\label{eq:fb1}
-            Pr(x_k | O, \mathbf{\lambda}) =  \frac{Pr(x_k, \mathcal{O} | \mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})} = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} )*Pr(o_{k+1},...,o_T|x_k,o_1,...o_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
+            Pr(x_k | \mathcal{O}, \mathbf{\lambda}) =  \frac{Pr(x_k, \mathcal{O} | \mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})} = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} )*Pr(o_{k+1},...,o_T|x_k,o_1,...o_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
             <p>Using the Markovian property in the second half of [eq:fb1]<a href="#fn40" class="footnoteRef" id="fnref40"><sup>40</sup></a> :</p>
             <p><span class="math display">\[\label{eq:fb2}
             Pr(x_k | \mathcal{O}, \mathbf{\lambda}) = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} ) Pr(o_{k+1},...,o_T|x_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}\]</span></p>
@@ -801,7 +807,7 @@
 
           <h2 id="viterbi-algorithm">Viterbi Algorithm</h2>
           <p>The goal of this subsection is to create a parsimonious implementation of the Viterbi algorithm for demonstration purposes. I used the default Python 2.7 and IPython Notebook, but it should work in Python 3.+ as well, though I did not test it.</p>
-          <pre><code>
+          <pre><code class="language-python">
           def viterbi(obs, states, start_p, trans_p, emit_p):
               //obs - Observations vector
 
@@ -871,7 +877,7 @@
           <p>we conclude that <span class="math inline">\(\bar{\lambda}\)</span> is a <em>better</em> HMM model than <span class="math inline">\(\lambda\)</span>. By <em>•</em><span>better</span> we mean that <span class="math display">\[\mathbb{P}(\mathcal{O}|\bar{\lambda} \geq \mathbb{P}(\mathcal{O}|\lambda)\]</span> Therefore we have obtained an improved version of <span class="math inline">\(\lambda\)</span>. Repeating this process iteratively we will converge to a local maximum. There is no guarantee however that this local maximum will also be a global maximum. Since the optimization surface of a Markov process can be extremely complex, what we can do is randomly assign initial probability distributions <span class="math inline">\(\mu_i\)</span> for <span class="math inline">\(i \in \bar{1..n}\)</span> and compare the local optima for each <span class="math inline">\(i\)</span>, hoping we reached the highest value. Most importantly, these new estimated probabilities <span class="math inline">\(\bar{A}, \bar{B}\)</span> need to make sense, therefore the holistic and heuristic reviews of the most likely models <span class="math inline">\(\lambda_i\)</span> need to be performed by experts in the field.</p>
           <p>The implementation of the Baum Welch algorithm is at the heart of the open source HMM implementation<a href="#fn47" class="footnoteRef" id="fnref47"><sup>47</sup></a>.</p>
           <p>To show for convenience purposes how the Baum Welch algorithm works in practice, we will use the data from the example provided by <a href="http://dna.cs.byu.edu/bio465/Labs/hmmtut.shtml">byu.edu</a><a href="#fn48" class="footnoteRef" id="fnref48"><sup>48</sup></a>, consider the nucleotide sequence <span class="math inline">\(\{a, c, g, t\}\)</span>, assume there is an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span> and the observations <span class="math inline">\(\mathcal{O}\)</span>:</p>
-          <pre><code>[&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;,&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;]</code></pre>
+          <pre><code class="language-python">[&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;,&#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;g&#39;, &#39;c&#39;, &#39;c&#39;, &#39;c&#39;,&#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;a&#39;, &#39;a&#39;, &#39;t&#39;, &#39;a&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;, &#39;t&#39;]</code></pre>
           <p>generated by two states <span class="math inline">\(normal, island\)</span>. We would like to know what was the sequence of states that generated these observations and would also like to see the most likelihood matrix <span class="math inline">\(\mathbb{A}\)</span> from the <span class="math inline">\(\lambda\)</span>.</p>
           <p>The software implementation is provided in the Annex [app:simHMM].</p>
           <p>As we see we have obtained <span class="math inline">\(\bar{\lambda}\)</span> with updated transition probabilities.</p>
