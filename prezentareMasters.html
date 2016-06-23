@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title> Estimating the State Transition Matrix in HMMs </title>
+		<title> Estimating Latent Parameters in Stochastic State Transition Matrices in HMMs </title>
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
@@ -35,9 +35,9 @@
 				<section>
 					<!-- Name -->
 					<section>
-						<h2>Estimating the State Transition Matrix in  <abbr title="Hidden Markov Model">Hidden Markov Models</abbr></h2>
-						<p> By: Adrian@Vrabie.net </p>
-
+						<h2>Applications of Markovian Processes in Economics and Latent Parameters Estimation in <abbr title="Hidden Markov Model">Hidden Markov Models</abbr></h2>
+						<p> Author: Adrian@Vrabie.net </p>
+						<p> Adviser: Dr. Habil. Univ Professor Dmitrii Lozovanu </p>
 
 					</section>
 
@@ -157,27 +157,12 @@
 
 					</section>
 
-					<section>
+					<section data-autoslide="4000">
 						<h2>A Markov Chain is:</h2>
-						<p>
-							We describe a Markov chains as follows: There is a set of states $S = \{ x_1, x_2 .. x_N \}$
-							The process starts in one of these states and moves successively from one state to another.
-							The key ingredient is that <em>each state has its own probability distribution of moving to other states</em>.
-						</p>
-						<p>
-							The fact that each step has its own transition probability distribution,
-							attributes the system <em>the Markovian Property.</em>
-						</p>
-					</section>
-					<section >
-						<h2>A Markov Chain is:</h2>
-						<p class=""> a dynamic stochastic process with a <em>Markovian Property</em> </p>
-						<h4 class="" data-autoslide="4000"> What is a <em>Markovian Property</em>? </h4>
-						<span class="">$Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i|X_{t-1} \right)$</span>
-						<p>
-							where $t \in {2..T}$
-						</p>
-
+						<p class="fragment"> a dynamic stochastic process with a <em>Markovian Property</em> </p>.
+						<h4 class="fragment" data-autoslide="4000"> What is a <em>Markovian Property</em>? </h4>
+						<span class="fragment">$Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i|X_{t-1} \right)$</span>
+						<span class="fragment" data-autoslide="8000"></span>
 
 
 					</section>
