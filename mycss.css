@@ -8,7 +8,7 @@ h1 {
 .make-round-borders {
       border-color: #5DBCD2;
       border-style: solid;
-      border-width: 0px;
+      border-width: 5px;
       border-radius: 50%;
       }
 
