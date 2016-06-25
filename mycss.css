@@ -1,0 +1,21 @@
+body {
+  position: relative;
+}
+
+h1 {
+  font-family: Lobster;
+}
+.make-round-borders {
+      border-color: #5DBCD2;
+      border-style: solid;
+      border-width: 0px;
+      border-radius: 50%;
+      }
+
+#interests-list {
+    display: none;
+   }
+
+#div-contact {
+    display: none;
+   }

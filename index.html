@@ -1,571 +1,207 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-		<title> Estimating the State Transition Matrix in HMMs </title>
-
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
-
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/zenburn.css">
-
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-		<!-- Prims for code highlighting -->
-		<link rel="stylesheet" href="css/prism.css">
-		<script type="text/javascript" src="js/prism.js"></script>
-
-	</head>
-
-	<body>
-
-		<div class="reveal">
-			<div class="slides">
-
-				<!-- Slide Intro and Contents -->
-				<section>
-					<!-- Name -->
-					<section>
-						<h2>Estimating the State Transition Matrix in  <abbr title="Hidden Markov Model">Hidden Markov Models</abbr></h2>
-						<p> By: Adrian@Vrabie.net </p>
-
-
-					</section>
-
-					<!-- Contents -->
-					<section>
-						<h2>Contens:</h2>
-						<ol>
-
-							<li> Introduction	</li>
-							<li> Applications of Discrete State Markov Chains in Economics</li>
-							<li> Continuous State Space Markov Chains	</li>
-
-							<li> Part II: Estimating the State Transition Matrix </li>
-							<li> Code Implementation </li>
-
-						</ol>
-
-					</section>
-
-					<!-- Introduction -->
-					<section>
-						 <h3> Introduction </h3>
-							<ol>
-								<li class="fragment"> Why study Markov Chains? </li>
-								<li class="fragment"> What are Markovian Processes? </li>
-								<li class="fragment"> What types of questions can we answer using Markov Chains? </li>
-							</ol>
-					</section>
-
-					<!-- Applications of Discrete State Markov Chains in Economics -->
-					<section>
-						 <h3> Applications of Discrete State Markov Chains in Economics </h3>
-							<ol>
-								<li>First Order Markov Chain </li>
-								<li> Stationary Distribution </li>
-								<li> Simulating a Markov Chain </li>
-								<li> Second and N-order Markov Processes </li>
-							</ol>
-					</section>
-
-					<!-- Continuous State Markov Chains -->
-					<section>
-						<h3> Continuous State Markov Chains </h3>
-							<ul>
-								<li> Simulating a Continuous State Markov Chain </li>
-								<li> Look Ahead Estimate </li>
-							</ul>
-
-					</section>
-
-					<!-- Part II: Estimating the State Transition Matrix -->
-					<section>
-						<h2> Part II: Estimating the State Transition Matrix </h2>
-							<ol>
-								<li> The Hidden Markov Model </li>
-								<li> Simulating a Hidden Markov Model </li>
-								<li> The Forward/Backward Algorithm> </li>
-								<li> The Viterbi Algorithm> </li>
-								<li> The Baum Welch Algorithm </li>
-							</ol>
-
-					</section>
-
-				</section>
-
-				<!-- Introduction Presentation -->
-				<section>
-					<section>
-						<h1>Why study Markov Chains? </h1>
-						<blockquote>
-							Jeffrey Kuan at Harvard University claimed that Markov models might well be the most “real world” useful mathematical concept after that of a derivative.
-						</blockquote>
-					</section>
-					<section>
-						<h2>Why study Markov Chains? </h2>
-
-						<p> Markovian processes are used in:
-						<ul>
-							<li> algorithmic music composition </li>
-							<li> <a href="https://en.wikipedia.org/wiki/PageRank"> google search engine </a> </li>
-							<li> asset pricing models  </li>
-							<li> information processing  </li>
-							<li> machine learning </li>
-							<li> computer malware detection </li>
-							<li> speech recognition </li>
-							<li> nucleotide sequencing </li>
-							<li> <a href="http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0034637"> lung cancer </a> </li>
-							<li> and many more </li>
-						</ul>
-					</p>
-
-					</section>
-
-
-					<section>
-						<h2> History of Markov Chains </h2>
-						Andrey Markov wanted to disprove Nekrasov's claim that only independet events could converge on predictable distributions.
-					</section>
-
-					<section>
-						<h5>History of Markov Chains from 4m10s</h5>
-						<iframe class="stretch" src="http://www.youtube.com/embed/o-jdJxXL_W4"></iframe>
-					</section>
-
-					<section>
-						<h5>First Order Markov Chain in Music</h5>
-						<iframe class="stretch" src="http://www.youtube.com/embed/4Gi-TucPQlc"></iframe>
-					</section>
-
-
-				</section>
-
-				<!-- Formal intro of a Markov Chain -->
-				<section>
-					<section>
-						<h1>What is a Markov Chain?</h1>
-
-					</section>
-
-					<section>
-						<h2>A Markov Chain is:</h2>
-						<p>
-							We describe a Markov chains as follows: There is a set of states $S = \{ x_1, x_2 .. x_N \}$
-							The process starts in one of these states and moves successively from one state to another.
-							The key ingredient is that <em>each state has its own probability distribution of moving to other states</em>.
-						</p>
-						<p>
-							The fact that each step has its own transition probability distribution,
-							attributes the system <em>the Markovian Property.</em>
-						</p>
-					</section>
-					<section >
-						<h2>A Markov Chain is:</h2>
-						<p class=""> a dynamic stochastic process with a <em>Markovian Property</em> </p>
-						<h4 class="" data-autoslide="4000"> What is a <em>Markovian Property</em>? </h4>
-						<span class="">$Pr\left(X_t = x_i |X_{t-1},X_{t-2},...,X_{1}  \right) = Pr\left( X_t=x_i|X_{t-1} \right)$</span>
-						<p>
-							where $t \in {2..T}$
-						</p>
-
-
-
-					</section>
-
-					<section>
-						<h3>First order Markov Chain?</h3>
-						<iframe class="stretch" src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.3%2C0.3%2C0.4%5D%2C%5B0.3%2C0.5%2C0.2%5D%2C%5B0.4%2C0.4%2C0.2%5D%5D%7D"> </iframe>
-					</section>
-
-					<section>
-						<h3>First order Markov Chain?</h3>
-						<iframe background-color="transparent" class="stretch" src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.2%2C0.2%2C0%2C0.2%2C0.3%2C0%2C0.1%5D%2C%5B0.9%2C0%2C0%2C0%2C0%2C0%2C0.1%5D%2C%5B0%2C0.8%2C0%2C0.2%2C0%2C0%2C0%5D%2C%5B0%2C0.2%2C0.3%2C0.3%2C0%2C0%2C0.2%5D%2C%5B0%2C0.2%2C0.3%2C0%2C0%2C0.4%2C0.1%5D%2C%5B0.3%2C0.1%2C0%2C0%2C0.1%2C0.2%2C0.3%5D%2C%5B0%2C0.1%2C0%2C0%2C0%2C0.1%2C0.8%5D%5D%7D"> </iframe>
-					</section>
-
-				</section>
-
-				<!--  Applications of Markov Chains in Economics -->
-				<section>
-					<section>
-						<h1> Applications of Markov Chains in Economics </h1>
-					</section>
-					<section>
-						<h3> Applications of Markov Chains in Economics </h3>
-						<p> From Hamilton, Economic Transition </p>
-						$$\mathbb{A} = \left( \begin{array}{ccc}
-            0.971 & 0.029 & 0 \\
-            0.145 & 0.778 & 0.077 \\
-            0 & 0.508 & 0.492
-            \end{array} \right) $$
-						<p>With the followint payoffs</p>
-						$$\mathbb{E} = \left( \begin{array}{c}
-            0.215 \\
-            0.015 \\
-            -0.18 \\
-            \end{array} \right)$$
-					</section>
-					<section>
-						<h4>The Hamilton Matrix simulation</h4>
-						<iframe class="stretch" src="http://setosa.io/markov/index.html#%7B%22tm%22%3A%5B%5B0.971%2C0.029%2C0%5D%2C%5B0.145%2C0.778%2C0.077%5D%2C%5B0%2C0.508%2C0.492%5D%5D%7D"> </iframe>
-						<p class="fragment"> But We will do this later! </p>
-					</section>
-					<section>
-						<h4>Find Eigenvalues and Eigenvectors of $\mathbb{A}$</h4>
-						$$\left| \mathbb{A}-I\lambda \right| = \left| \begin{array}{ccc}
-            0.971-\lambda & 0.029 & 0 \\
-            0.145 & 0.778-\lambda & 0.077 \\
-            0 & 0.508 & 0.492-\lambda
-            \end{array} \right| =0$$
-						<p class="fragment"> This gives us: </p>
-						<span class="fragment">
-						$$
-						\mathbf{\lambda} = \left(\begin{array}{c}
-               1.00000 \\
-               0.85157 \\
-               0.38943 \\
-            \end{array} \right)
-						$$
-						<p class="fragment">Then find the null space for each eigenvalue</p>
-						</span>
-					</section>
-					<section>
-						<h4> We can now calculate the expected payoff conditional on $\mu$</h4>
-						$$\mathbf{S}\mathbf{\Lambda}^{25}\mathbf{S}^{-1} = \left(\begin{array}{ccc}
-               0.816125   &0.159822   &0.024054 \\
-               0.799109   &0.173836   &0.027055 \\
-               0.793458   &0.178491   &0.028051 \\
-            \end{array}\right)$$
-					</section>
-
-					<section>
-						<h4>Simulating Marathon Oil Returns </h4>
-						<iframe allowfullscreen class="stretch" data-src="iframes/MCSimulation.html" width="645" height="655"></iframe>
-					</section>
-
-				</section>
-
-				<!-- A lil bit of theory -->
-				<section>
-					<section>
-						<h1> A little bit of Theory </h1>
-					</section>
-					<section>
-						<h4> Irreducible Stochastic Matrices </h4>
-						<p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>irreducible</strong> if its graph is strongly connected, that is: there <span class="math inline">\(\exists \; t \geq 0\)</span> : <span class="math inline">\(Pr(X_{t}=j|X_{0}=i) &gt; 0 \)</span></p>
-						<p> In our example, $\mathbb{A}$ is irreducible since we can end up in any state from any state after <span class="math inline">\(t \geq 1\)</span> steps.</p>
-					</section>
-					<section>
-						<h4 id="aperiodic-stochastic-matrices">Aperiodic Stochastic Matrices</h4>
-	          <p>A stochastic matrix, <span class="math inline">\(\mathbb{A}\)</span> is <strong>aperiodic</strong> if the greatest common divisor of the set S(x) defined as <span class="math display">\[S(x) = \{t \geq 1 : P^t(x, x) &gt; 0\}\]</span> equals 1.</p>
-						<p>We can easily check that matrix <span class="math inline">\(\mathbb{A}\)</span> from our example is aperiodic.</p>
-					</section>
-					<section>
-						<h4 id="stationary-distribution">Stationary Distribution</h4>
-          	<p>A probability distribution <span class="math inline">\(\pi\)</span> over <span class="math inline">\(X\)</span> is <strong>stationary</strong> over <span class="math inline">\(\mathbb{A}\)</span> if: <span class="math display">\[\pi = \pi \mathbb{A}\]</span></p>
-					</section>
-					<section>
-						<h4>Fundamental Theorem of Markov Chains</h4>
-						A theorem proven by <span class="citation">Häggström (2002)</span> states that:</p>
-	          <p>[Fundamental Theorem of Markov Chains][Haggstrom] If a stochastic matrix <span class="math inline">\(\mathbb{A}\)</span> is irreducible and aperiodic then there is a unique probability distribution <span class="math inline">\(\pi\)</span> that is stationary on <span class="math inline">\(\mathbb{A}\)</span>.</p>
-	          <p>provided by <span class="citation">Häggström (2002)</span>.</p>
-						<p class="fragment"> Therefore, we can write: $$\lim_{t \to \infty} \mu \mathbb{A}^t = \pi$$</p>
-
-					</section>
-					<section>
-						<p> Since all but one of the eigenvalues is smaller than unity. </p>
-						$$\mathbf{\phi} = \lim_{t \to \infty} \mathbf{S}\Lambda^t\mathbf{S}^{-1} = \mathbf{S} \left(\begin{array}{ccc}
-          1 &0 &0 \\
-          0 &0 &0 \\
-          0 &0 &0 \\
-          \end{array}\right) \mathbf{S}^{-1}$$
-					<p class="fragment"> in our example: </p>
-					<span class="fragment">$$\phi = \left(\begin{array}{c}
-          0.812800, 0.162560,  0.024640\\
-          \end{array} \right)$$ </span>
-					</section>
-
-
-				</section>
-
-				<!-- Hidden Markov Model -->
-				<section>
-					<section>
-					<h1>The Hidden Markov Model</h1>
-					</section>
-					<section>
-					<h2 id="HMM">The Hidden Markov Model </h2>
-
-			            <div class="figure">
-			            <img src="graphs/HMM.jpg" alt="Hidden Markov Model from pp.9Fraser (2008, 9)" style="width:95.0%" />
-			            <p class="caption">Hidden Markov Model from <span class="citation">Fraser (2008, 9)</span><span data-label="fig:HMM"></span></p>
-			            </div>
-			            <p> we have an oriented graph which can easily be transposed to a HMM model.</p>
-
-					</section>
-
-					<section>
-					<h3>The Hidden Markov Model</h3>
-					<p>
-					$$\mathbb{A} = \begin{array}{c} e \\ f \\ g \\ h \end{array} \left( \begin{array}{cccc}
-			            0.9 &amp; 0.1&amp; 0  &amp; 0 \\
-			            0   &amp; 0  &amp; 1  &amp; 0 \\
-			            0   &amp; 0  &amp; 0.9&amp; 0.1 \\
-			            1   &amp; 0  &amp; 0  &amp; 0 \end{array} \right)$$</p>
-
-			            <p>The emission probabilities for the events <span class="math inline">\(\Sigma = \{a,b,c,d\}\)</span>, as specified in the [smc]: <span class="math display">\[\mathbb{B} =
-			            \begin{array}{c} e \\ f \\ g \\ h \end{array}
-			            \begin{pmatrix}
-			            0.1 &amp; 0.9 &amp; 0 &amp; 0 \\
-			            0   &amp; 1   &amp; 0 &amp; 0 \\
-			            0 &amp; 0.8 &amp; 0.2 &amp; 0 \\
-			            0 &amp; 0&amp; 0&amp; 1
-			            \end{pmatrix}\]</span></p>
-			            <p> An initial probability distribution among the states $\pi$</p>
-
-					</section>
-
-					<!-- Formally defining the HMM -->
-					<section>
-					<h2>The Hidden Markov Model</h2>
-					<p>Formally we define an HMM $\lambda(\mathbb{A,B},\pi)$</p>
-					<p>Parameters, $\mathbb{A,B},\pi$ are often denoted by $\theta$, thus $\lambda(\theta)$ </p>
-
-					</section>
-
-					<section>
-					<h2 >Simulating a Hidden Markov Model</h2>
-		            <p> Using external libraries  <a href="http://ghmm.org" class="uri">http://ghmm.org</a>.</p>
-
-		            $$\mathbb{A}= \left(\begin{array}{cc}
-		            0.9 &amp; 0.1 \\
-		            0.2 &amp; 0.8 \\
-		            \end{array}\right)$$
-		            <p>Emissions: one fair coin and one biased</p>
-		            $$\mathbb{B}= \left(\begin{array}{cc}
-		            0.5 &amp; 0.5 \\
-		            0.15 &amp; 0.85 \\
-		            \end{array}\right)$$
-
-		            <p>Outcomes: <em> Head (0)</em> or <em>Tail (1)</em>. </p>
-		            <p>[1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0 ...</p>
-		            <p>The code is provided in the Annex</p>
-					</section>
-
-
-
-				</section>
-
-				<!-- Part I The Baum Welch Algorithm -->
-				<section>
-					<section>
-					<h1>Forward, Backward and Viterbi Algorithm</h1>
-					</section>
-
-					<section>
-					<h3>Estimating $\lambda(\mathbb{A,B},\pi)$</h3>
-					<p class="fragment">Before we estimate $\lambda$, it is helpful to answer the following questions:</p>
-					<dl>
-		              <dt class="fragment"> Evaluation: $Pr(\mathcal{O}|\lambda)=?$ </dt>
-		                <dd class="fragment">- Use the Forward in combination with Backward algorithm </dd>
-		              <dt class="fragment"> Decoding: Most likelihood sequence of states  $ \texttt{argmax}_{\mathcal{X}} Pr(\mathcal{O}|\mathcal{X},\lambda)=?$  </dt>
-		                <dd class="fragment">- Viterbi algorithm </dd>
-		              <dt class="fragment"> Learning: estimate $\lambda$ </dt>
-		                <dd class="fragment">- Use the <em>Bayesian rule</em> along with the <em>Markovian property</em> to update the parameters of the HMM: Baum-Welch algorithm.
-		            </dl>
-
-					</section>
-
-					<section>
-						<h3>Probability of $\mathcal(O|\lambda)$</h3>
-						<p>Suppose we have identified a sequence <span class="math inline">\(\mathcal{O} \in \mathbf{\Omega}\)</span> that we assume is generated by an HMM: <span class="math inline">\(\lambda(\mathbb{A},\mathbb{B},\pi)\)</span>. Given <span class="math inline">\(\lambda\)</span>, we would like to know: <span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></p>
-
-					</section>
-
-					<section>
-					<h3>Direct approach</h3>
-					<p>Given a model $\lambda$ a sequence of observations $o_1, o_2, ...$ and states $x_1, x_2, ...$</p>
-					<span class="fragment">$$Pr\left(o_1,o_2,...,o_{T} |x_1,x_2,...,x_k,...x_T, \lambda \right)=  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)$$</span>
-					<p class="fragment">We then sum over all possible states</p>
-					<span class="fragment">$$Pr\left(\mathcal{O} | \lambda \right)= \sum_X  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t) Pr(X|\lambda)$$</span>
-					</section>
-
-					<section>
-					<h3><span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></h3>
-					<p>The difficulty of this approach is that the total number of possibilities of sequences of states that can generate <span class="math inline">\(\mathcal{O}\)</span> is exponential in the number of observations <span class="math inline">\(T\)</span> </p>
-					$$Pr\left(\mathcal{O} | \lambda \right)= \sum_X  \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t) Pr(X|\lambda)$$
-					</section>
-
-					<section>
-					<h3><span class="math display">\[Pr(\mathcal{O}|\lambda)=?\]</span></h3>
-					<p>A better approach to calculate the unconditional probability <span class="math inline">\(Pr(\mathcal{O}|\lambda)\)</span> is the forward/backward algorithm which is a class of dynamic programming algorithms and takes advantage of the assumptions of the Markovian processes to filter all possible combinations of states <span class="math inline">\(X\)</span>.</p>
-					</section>
-
-					<!-- Forward Backward decomposition -->
-					<section>
-					<h3>The Forward/Backward decomposition</h3>
-					<p>the objective of the forward/backward algorithm is to compute the probability of being in a particular state <span class="math inline">\(x_t\)</span> at time <span class="math inline">\(t\)</span>, given a sequence of observations <span class="math inline">\(\mathcal{O}\)</span></p>
-					$$Pr(x_k | \mathcal{O})= ? , k \in \{1..T \}$$
-					</section>
-					<section>
-					<h3>The Forward/Backward decomposition</h3>
-					<p>$$Pr(x_k | \mathcal{O}, \mathbf{\lambda}) =  \frac{Pr(x_k, \mathcal{O} | \mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})} = $$</p>
-					<p class="fragment">$$\frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} )*Pr(o_{k+1},...,o_T|x_k,o_1,...o_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}$$</p>
-					<p class="fragment">using the Markovian property:</p>
-					<p class="fragment">$$Pr(x_k | \mathcal{O}, \mathbf{\lambda}) = \frac{Pr(x_k,o_1,o_2,...o_k |\mathbf{\lambda} ) Pr(o_{k+1},...,o_T|x_k,\mathbf{\lambda})}{Pr(\mathcal{O}|\mathbf{\lambda})}$$</p>
-					</section>
-					<!-- alpha -->
-					<section>
-					<h3>The Forward/Backward decomposition</h3>
-					We denote:
-					$$\alpha_i(k)=\alpha\left( x_k=i \right) = Pr(o_1,o_2,...o_k,x_k | \lambda) \quad\quad o_k \in \mathcal{O}, k=\overline{1,T}$$
-					$$\beta_i(k)=\beta(x_k=i) = Pr(o_{k+1},o_{k+2},...,o_{T} | x_k=i, \lambda) \quad i=\overline{1,N}, k=\overline{1,T}$$
-					<p class="fragment">$$Pr(x_k=i | \mathcal{O}, \mathbf{\lambda}) = \frac{\alpha_i(k) \beta_i(k)}{Pr(\mathcal{O}|\mathbf{\lambda})} =$$</p>
-					<p class="fragment">$$ \frac{\alpha_i(k) \beta_i(k)}{\sum_{i=1}^N \alpha_i(k=T)} $$</p>
-					</section>
-					<!-- Forward -->
-					<section>
-					<h3>The Forward algorithm</h3>
-					\begin{aligned}
-		              \alpha_i\left( x_k \right) =& \sum_{x_{k-1}} Pr(o_1,o_2,...o_k,x_{k-1},x_k | \lambda) \\
-		              = &\sum_{x_{k-1}} Pr(o_k | o_1,o_2,...o_{k-1},x_{k-1},x_k, \lambda)\times \\&Pr(x_k|o_1,o_2,...o_{k-1},x_{k-1},\lambda) Pr(o_1,o_2,...o_{k-1},x_{k-1}|\lambda)
-		              \\ =& \sum_{x_{k-1}} Pr(o_k | x_k, \lambda)Pr(x_k|x_{k-1},\lambda) \alpha\left( x_{k-1} \right)
-		              \\ =& \sum_{x_{k-1}} \mathbf{b}_{x_k}(o_k)  \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right)
-		              \\ =& \mathbf{b}_{x_k}(o_k) \sum_{x_{k-1}} \mathbf{a}_{(k-1,k)}\alpha\left( x_{k-1} \right) , \quad x_{k-1}=\overline{1,N}, k=\overline{2,T}\end{aligned}
-					</section>
-					<!-- Backward -->
-					<section>
-					<h3>The Backward algorithm</h3>
-					Similarly:
-					$$\begin{aligned}
-              		\beta(x_k) &= \sum_{x_{k+1}}\beta(x_{k+1})\mathbf{b}_{k+1}(o_{k+1})\mathbf{a}_{k,k+1}, \quad\quad k=\overline{1,T-1}\end{aligned}$$
-					</section>
-
-					<!-- Viterbi -->
-					<section>
-					<h2>Decoding: The Viterbi Algorithm</h2>
-					Given $\lambda$, our objective is:
-					$$Pr\left(\mathcal{O}, x_1,x_2,...x_T,| \lambda \right)= \underset{X}{\operatorname{argmax}} \: \pi_i b_i(o_1) \prod_{t=2}^{t=T} a_{t-1,t}b_{a_t}(o_t)$$
-					<span class="fragment">$$Pr(x_1=k|o_1,\lambda) = \frac{Pr(x_1=k,o_1)}{\sum_{x_1\in S}Pr(x_1,o_1)}= \frac{\pi_{x_1}b_{x_1}(o_1)}{\sum_{x_i \in S} \pi_{x_i}b_{x_i}(o_1)}$$</span>
-					<span class="fragment">$$V_{1,k}=\pi_{x_k}b_{x_k}(o_1)$$ </span>
-					<span class="fragment"> $$V_{t,k} = \underset{x_{t-1}\in S}{\operatorname{max}}\left( V_{t-1,x_{t-1}} \mathbf{a}_{x_{t-1},k} \mathbf{b}_{k}(o_t) \right)$$ </span>
-					</section>
-
-
-				</section>
-
-				<!-- Baum Welch -->
-				<section>
-
-					<section>
-					<h1>Baum Welch algorithm: estimating $\lambda$</h1>
-
-					</section>
-					<section>
-					<p>Given an observable sequence <span class="math inline">\(\mathcal{O} = \{o_1,o_2,...,o_T \}\)</span>
-					and assuming this sequence was generated by an HMM model <span class="math inline">\(\lambda(\mathbb{A,B},\pi)\)</span>
-					we want to find out the most likely set of parameters of <span class="math inline">\(\lambda\)</span> that generated the sequence
-					<span class="math inline">\(\mathcal{O}\)</span>.
-					we want to find out <span class="math inline">\(\theta\)</span> that maximizes the probability:</p>
-					$$\theta^{\star} = \underset{\theta}{\operatorname{arg\, max}}Pr\left(\mathcal{O} | \lambda(\theta)\right)$$
-
-					</section>
-
-					<section>
-					$$Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right) =  \frac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }$$
-					$$\gamma_i(t) = Pr\left(x_t=i|\mathcal{O},\lambda(\theta)\right)$$
-					</section>
-
-					<section>
-					$$Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda) =
-          				\frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t)}{Pr(\mathcal{O}|\lambda(\theta))}$$
-          			$$\xi_{ij}(t) = Pr(X_t=i,X_{t+1}=j|\mathcal{O},\lambda)$$
-          			$$\xi_{ij}(t) =  \frac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
-                              {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }$$
-					</section>
-
-					<section>
-					$$a_{ij} = \frac{\sum_{t=1}^{T-1}\xi_{ij}(t)}{\sum_{t=1}^{T-1} \gamma_i(t)}$$
-					<p > Substituting:
-					<span class="fragment">$$\bar{a_{ij}} = \dfrac{  \dfrac{\alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1)}
-                              {\sum_{i\in S}\sum_{j\in S} \alpha_i(t) a_{ij} b_j(o_{t+1}) \beta_j(t+1) }}
-                              {\dfrac{\alpha_i(t) \beta_i(t)}{\sum_{j \in S}\alpha_j(t) \beta_j(t) }} $$ </span> </p>
-
-					</section>
-
-					<section>
-					$$\bar{\pi_i} = \gamma_1(i) = \frac{\alpha_i(1)\beta_i(1)}{\sum_{i \in S} \alpha_i(1)\beta_i(1) }$$
-
-					</section>
-
-					<section>
-					$$\bar{b_i(o_k)} = \frac{\sum_{t \in T} \gamma_t(i) \mathbf{1}_{o_t=o_k}}{\sum_{t \in T} \gamma_t(i)}$$
-					Leonard E. Baum and Eagon (1967): $\mathbb{P}(\mathcal{O}|\bar{\lambda} \geq \mathbb{P}(\mathcal{O}|\lambda)$
-					</section>
-					<section>
-						<h5>example on nucleotides, assuming 2 states:</h5>
-						<iframe class="stretch" src="http://nbviewer.jupyter.org/github/moldovean/usm/blob/master/Thesis/scripts/Python/GHMM%20BW%201.ipynb"></iframe>
-					</section>
-
-				</section>
-
-				<!-- Links -->
-				<section>
-					<section>
-						<h1>There is much more:</h1>
-						<p> <a href="thesis.html" target="_blank">HTML: Applications of Homogeneous Markovian Processes in Economics and Latent Parameters Estimation for Discrete State Hidden Markov Models</a> </p>
-						<p> <a href="docs/thesis_main.pdf" target="_blank"> The PDF version (complete) </a> </p>
-						<p> This presentation: <a href="http://moldovean.github.io" target="_blank">moldovean.github.io</a> </p>
-						<p> replicate results : <a href="https://github.com/moldovean/usm/tree/master/Thesis" target="_blank"> github.com/moldovean/usm/tree/master/Thesis </a> </p>
-					</section>
-					<section>
-						<iframe class="stretch" src="http://nbviewer.jupyter.org/github/moldovean/usm/blob/master/Thesis/scripts/Python/GHMM%20BW%201.ipynb"></iframe>
-					</section>
-					<section>
-						<h1>Thank you for your attention!</h1>
-					</section>
-					<section>
-						<iframe class="stretch" src="docs/thesis_main.pdf"></iframe>
-					</section>
-				</section>
-				<!-- the end -->
-
-			</div>
-		</div>
-
-
-
-		<script src="lib/js/head.min.js"></script>
-		<script src="js/reveal.js"></script>
-
-		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
-				parallaxBackgroundImage: 'pics/mandelbrot.jpg',
-				parallaxBackgroundSize: '3840px 2160px',
-
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-					// MathJax
-        	{ src: 'plugin/math/math.js', async: true }
-				]
-			});
-			Reveal.configure({ slideNumber: 'h/v' });
-
-		</script>
-	</body>
-</html>
+<head>
+  <title>About me </title>
+  <!-- Import Bootstrap -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <!-- Import Font Awesome -->
+  <script src="https://use.fontawesome.com/22245d07b6.js"></script>
+  <!-- Import jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <!-- Import Font Lobster -->
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+  <!-- Import my CSS -->
+  <link rel="stylesheet" href="mycss.css" charset="utf-8">
+  <!-- my jQuery -->
+  <script src="myjQuery.js">  </script>
+
+  <style media="screen">
+
+  </style>
+</head>
+
+
+<body data-spy="scroll" data-target=".navbar" data-offset="150px;">
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-fixed-top" id="myNavbar">
+    <div class="container-fluid" id="myTopNav">
+      <ul class="nav navbar-nav">
+        <div class="navbar-header">
+          <li><a class="navbar-brand" href="#"> Adrian Vrabie <span class="glyphicon glyphicon-home"></span></a></li>
+        </div>
+
+        <li><a href="#AboutMe">About Me <span class="glyphicon glyphicon-pencil"></span></a> </li>
+        <li class="active"><a href="#Portfolio">Portfolio <i class="fa fa-suitcase"></i> </a></li>
+        <li><a href="#Contact">Contact <i class="fa fa-paper-plane"></i></a></li>
+        <li><a href="#">My Interests</a></li>
+      </ul>
+
+    </div>
+  </nav>
+
+
+  <div class="container-fluid" id="container-main" >
+    <div class="container-fluid" id="container-content" style="width: 90%">
+      <!-- About me -->
+      <div class="container-fluid" id="AboutMe">
+
+        <!-- Header Row -->
+        <div class="row">
+          <div class="col-xs-8">
+            <h1> About me: </h1>
+            <p> Welcome &amp thanks for visiting! I am  Adrian Vrabie. I would like to share my interests for Data Science and Hidden Markov Models.</p>
+            <p class="well"> I consider myself fortunate to have enjoyed the works of Dmitrii Lozovanu on Markov Chains, Valentin Belousov on Quasigroups, Andrew Viterbi on Dynamic Programming and many others. All of them successfully humbled me, and I hope to help you find the beauty in themi too.</p>
+            <p> Another part of me is an Economist by training and Economics is sarcastically entertaining (easily allowing tautologies such as <em>utility</em> to shape your models)  and forebodingly motivating (think of the implications of Monetary Policy) in real life. Moreover, Economics can explain mathemagically, with few assumptions,  why the Baum-Welch algorithm, despite its applicability and insight, is less popular than the Viterbi algorithm.</p>
+            <p> Currently I am involved in the Energy sector: have been in the exploration phases of upstream petroleum and getting involved in lng terminals and logistics. </p>
+            <p> Before doing any calculations or modelling, I like getting an insider view and getting as much info as possible about the business in question.       </p>
+            <p> Although not as comprehensive as a CV, I've put some info that holistically reflect the amalgam of my interests in Applied Mathematics, Programming and <em>Data Science</em>.</p>
+          </div>
+          <div class="col-xs-4">
+            <img src="pics/me.png" class="img-responsive make-round-borders" >
+          </div>
+        </div>
+
+        <!--Second Row -->
+        <div class="row">
+          <div class="col-xs-8">
+            <button class="btn btn-info btn-block" id="btn-interests">My Interests</button>
+            <ul id="interests-list">
+              <h2 class="text-primary" >Things I'm interested in  </h2>
+              <li>Dynamic Stochastic Systems and Systems of Differential Equations
+                <ul>
+                  <li>Discrete and Continuous State Markovian Processes</li>
+                  <li>Hidden Markov Models </li>
+                  <li>DSGE models</li>
+                  <li>Algorithms for Data Analysis
+                    <ul>
+                      <li>Clustering and classification</li>
+                      <li>Regression models</li>
+                      <li>Logistic models</li>
+                      <li>Principal Component Analysis</li>
+                      <li>Matrix decomposition algorithms</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Programming:
+                <ul>
+                  <li> SQL </li>
+                  <li>Julia / Python</li>
+                  <li>Java</li>
+                  <li>C/C++</li>
+                  <li> HTML, CSS, JavaScrip, Bootstrap, JQuery, JavaScript</li>
+                </ul>
+              </li>
+              <li>Applications of Markovian processes in Economics, Finance and Genomics</li>
+            </ul>
+          </div>
+
+          <div class="col-xs-4">
+            <button class="btn btn-info btn-block" id="btn-contact">Contact me @:</button>
+            <div id="div-contact">
+              <p>You can reach me at adrian@vrabie.net</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Portfolio Page -->
+      <div class="container-fluid" id="Portfolio"  >
+        <div class="row">
+          <h1 >Portfolio</h1>
+        </div>
+        <div class="row">
+
+          <div class="col-md-4" >
+
+            <img src="pics/thesis.jpg" alt="Thesis Hidden Markov Model parameter estimation" class="img-responsive img-thumbnail" />
+            <img src="pics/baumwelch.jpg" alt="Baum Welch" class="img-responsive img-thumbnail"/>
+          </div>
+          <div class="col-md-4">
+            <img src="pics/cecmi_slides.jpg" alt="Math USM CECMI slides on HMM" class="img-responsive img-thumbnail"/>
+            <img src="pics/baumwelch.jpg" alt="Baum Welch" class="img-responsive img-thumbnail"/>
+
+          </div>
+          <div class="col-md-4">
+            <img src="pics/thesis.jpg" alt="Thesis Hidden Markov Model parameter estimation" class="img-responsive img-thumbnail" />
+            <img src="pics/thesis.jpg" alt="Thesis Hidden Markov Model parameter estimation" class="img-responsive img-thumbnail"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Page -->
+      <div class="container-fluid" id="Contact">
+        <div class="row">
+          <div class="col-xs-8">
+            <h1>Get in touch with me @:</h1>
+
+              <ul class="list-inline text-center">
+                <li><a href="https://twitter.com/adrianvrabie" ><h2> <i class="fa fa-twitter"></i> </h2></a></li>
+                <li><a href="http://stackoverflow.com/users/959876/moldovean"><h2><i class="fa fa-stack-overflow"></i></h2></a></li>
+                <li><a href="http://github.com/moldovean"><h2><i class="fa fa-fw fa-github"></i></h2></a></li>
+
+                <li><a href="https://www.facebook.com/avrabie"><h2><i class="fa fa-facebook"></i></h2> </a></li>
+                <li><a href="https://plus.google.com/+AdrianVrabie"><h2><i class="fa fa-google-plus"></i></h2> </a></li>
+
+              </ul>
+              <p >
+                <h3 class="text-center"> <i class="fa fa-paper-plane"></i> first-name@last-name.net</h3>
+              </p>
+
+
+              <div class="container-fluid">
+                <div class="row">
+                <h3>Or use this:</h3>
+
+                <form class="form-horizontal" action="https://formspree.io/adrian@vrabie.net" method="post">
+                  <div class="form-group">
+                     <label class="control-label col-sm-3" for="email">Email:</label>
+                     <div class="col-sm-9">
+                       <input type="email" name="_replyto" class="form-control" id="email" placeholder="Enter your email address:">
+                     </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="email-content">Message:</label>
+                    <div class="col-sm-9">
+                      <textarea name="name" class=" col-sm-12" rows="7" ></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3"> </label>
+                    <div class="col-sm-9">
+                      <input class="btn btn-info " type="submit" name="name" value="Send">
+                      <button type="submit" class="btn btn-info">Send <i class="fa fa-paper-plane"></i></button>
+                    </div>
+
+                  </div>
+
+                </form>
+                </div>
+
+              </div>
+
+
+          </div>
+          <div class="col-md-4">
+            <script src="http://platform.twitter.com/widgets.js"></script>
+            <a class="twitter-timeline" data-width="500" data-height="650" href="https://twitter.com/adrianvrabie">Tweets by adrianvrabie</a>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+
+  </body>
+
+  </html>
