@@ -25,14 +25,15 @@ $(document).ready(function(){
     //}  // End if
   });
 
-  $(".container-fluid").css("padding-top","51px");
-  $("#myTopNav").css("padding-top","0px");
-  $("#container-main").css("padding-top","0px");
+  $(".container-fluid .content").css("padding-top","50px");
+  //$("#myTopNav").css("padding-top","0px");
+  //$("#container-main").css("padding-top","0px");
+  //$("#Footer").css("padding-top","0px");
 
   $(".container-fluid").css("background-color","#efefef");
   $("#container-main").css("background-color","#999999");
-  $("#myNavbar").css("background-color","#8f246b");
+  $("#myNavbar").css("background-color","#5DBCD2");
   //$("#myNavbar").addClass("navbar-inverse");
-  $("#myNavbar").css("padding-bottom","10px");
+  $("#myNavbar").css("padding-bottom","7px");
 
 });
