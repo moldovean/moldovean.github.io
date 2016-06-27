@@ -12,7 +12,6 @@ $(document).ready(function(){
 
   $("#myNavbar a").on('click', function(event) {
 
-
       var hash = this.hash;
       //alert("the hash is"+hash);
       // Using jQuery's animate() method to add smooth page scroll
@@ -24,7 +23,7 @@ $(document).ready(function(){
       });
     //}  // End if
   });
-
+  $(".navbar-brand a").css("font-size","1.3em");
   $(".container-fluid .content").css("padding-top","50px");
   //$("#myTopNav").css("padding-top","0px");
   //$("#container-main").css("padding-top","0px");
