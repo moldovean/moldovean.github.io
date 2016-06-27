@@ -1,6 +1,12 @@
 $(document).ready(function(){
+  $("p").addClass("text-justify");
+  //var test = $("#Footer p").html(); alert(test);
+  $("#Footer p").removeClass("text-justify");
+  $("#Footer p").addClass("text-center");
 
-  $("h1").addClass("text-primary text-center")
+
+  $("h1").addClass("text-primary text-center");
+
   $("#btn-interests").click(function(){
     $("#interests-list").slideToggle(350);
   });

@@ -1,0 +1,285 @@
+<!doctype html>
+<html>
+<head>
+  <title>About me </title>
+  <!-- Import Bootstrap -->
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <!-- Import Font Awesome -->
+  <script src="https://use.fontawesome.com/22245d07b6.js"></script>
+  <!-- Import jQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+  <!-- Import Font Lobster -->
+  <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+
+  <!-- Import my CSS -->
+  <link rel="stylesheet" href="css/mycss.css" charset="utf-8">
+  <!-- my jQuery -->
+  <script src="js/myjQuery.js">  </script>
+
+  <style media="screen">
+  #AboutMe {
+    background: url('https://static.pexels.com/photos/6248/desk-laptop-notebook-working.jpg');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+
+  }
+
+  </style>
+</head>
+
+
+<body data-spy="scroll" data-target=".navbar" data-offset="150px;">
+<header>
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation" id="myNavbar">
+    <div class="container-fluid" id="myTopNav">
+
+        <div class="navbar-header" >
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle Navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#" style="font-size:1.3em"> Adrian Vrabie <i class="fa fa-home"></i></a>
+        </div>
+
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+          <li><a href="#AboutMe">About Me <i class="fa fa-pencil"></i></a> </li>
+          <li class="active"><a href="#Portfolio">Portfolio <i class="fa fa-suitcase"></i> </a></li>
+          <li><a href="#Contact">Contact <i class="fa fa-paper-plane"></i></a></li>
+          <li><a href="#Publications">My Publications <i class="fa fa-book"></i></a></li>
+        </ul>
+
+        </div>
+
+    </div>
+  </nav>
+
+</header>
+
+
+  <div class="container-fluid" id="container-main" >
+    <div class="container-fluid" id="container-content" style="width: 90%">
+      <!-- About me -->
+      <div class="container-fluid content" id="AboutMe">
+        <div class="row">
+          <h1> About me <i class="fa fa-pencil"></i> </h1>
+        </div>
+        <!-- Header Row -->
+        <div class="row">
+
+          <div class="col-xs-8">
+
+            <p> Welcome! My name is Adrian Vrabie. I would like to share my interests for Data Science and Hidden Markov Models.</p>
+            <p class="well"> I consider myself fortunate to have enjoyed the works of Dmitrii Lozovanu on Markov Chains, Valentin Belousov on Quasigroups, Andrew Viterbi on Dynamic Programming and many others. All of them successfully humbled me, and I hope to help you find the beauty in them too.</p>
+            <p> Another part of me is an Economist by training. Economics is a social science that extensively uses the mathematics apparatus to provide plausible explanations. Ex: with few assumptions, Ecnomics can explain <em>why</em> the Baum-Welch algorithm, despite its applicability and insight, is less popular than the Viterbi algorithm.</p>
+            <p> Currently I am involved in the Energy sector: have been in the exploration phases of upstream petroleum and getting involved in lng terminals and logistics. </p>
+            <p> Before doing any calculations or modelling, I like getting an insider view and getting as much info as possible about the business in question.       </p>
+            <p> Although not as comprehensive as a <a href="files/cv/resume.html">CV</a>, I've put some info that holistically reflect the amalgam of my interests in Applied Mathematics, Programming and <em>Data Science</em>.</p>
+          </div>
+          <div class="col-xs-4">
+            <img src="pics/me.jpg" class="img-responsive make-round-borders" >
+          </div>
+        </div>
+
+        <!--Second Row -->
+        <div class="row">
+          <div class="col-xs-8">
+            <button class="btn btn-info btn-block" id="btn-interests">My Interests</button>
+            <ul id="interests-list">
+              <h2 class="text-primary" >Things I'm interested in  </h2>
+              <li>Dynamic Stochastic Systems and Systems of Differential Equations
+                <ul>
+                  <li>Discrete and Continuous State Markovian Processes</li>
+                  <li>Hidden Markov Models </li>
+                  <li>DSGE models</li>
+                  <li>Algorithms for Data Analysis
+                    <ul>
+                      <li>Clustering and classification</li>
+                      <li>Regression models</li>
+                      <li>Logistic models</li>
+                      <li>Principal Component Analysis</li>
+                      <li>Matrix decomposition algorithms</li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li>Programming:
+                <ul>
+                  <li> SQL </li>
+                  <li>Julia / Python</li>
+                  <li>Java</li>
+                  <li>C/C++</li>
+                  <li> HTML, CSS, JavaScrip, Bootstrap, JQuery, JavaScript</li>
+                </ul>
+              </li>
+              <li>Applications of Markovian processes in Economics, Finance and Genomics</li>
+            </ul>
+          </div>
+
+          <div class="col-xs-4">
+            <button class="btn btn-info btn-block" id="btn-contact">Contact me @:</button>
+            <div id="div-contact">
+              <h2><i class="fa fa-mobile"></i> +373 79128987 </h2>
+              <h3 > <i class="fa fa-paper-plane"></i> first-name@last-name.net</h3>
+              <ul class="list-inline ">
+                <li><a href="https://twitter.com/adrianvrabie" ><h2> <i class="fa fa-twitter"></i> </h2></a></li>
+                <li><a href="http://stackoverflow.com/users/959876/moldovean"><h2><i class="fa fa-stack-overflow"></i></h2></a></li>
+                <li><a href="http://github.com/moldovean"><h2><i class="fa fa-fw fa-github"></i></h2></a></li>
+                <li><a href="https://www.facebook.com/avrabie"><h2><i class="fa fa-facebook"></i></h2> </a></li>
+                <li><a href="https://plus.google.com/+AdrianVrabie"><h2><i class="fa fa-google-plus"></i></h2> </a></li>
+              </ul>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Portfolio Page -->
+      <div class="container-fluid content" id="Portfolio"  >
+        <div class="row" >
+          <h1 >Portfolio <i class="fa fa-suitcase"></i></h1>
+        </div>
+        <div class="row" >
+
+          <div class="col-md-4" >
+            <a href="thesis/thesis.html"><img src="pics/thesis.jpg" alt="Thesis Hidden Markov Model parameter estimation" class="img-responsive img-thumbnail" /></a>
+            <a href="http://codepen.io/moldovean/full/Mejxqy"><img src="pics/baumwelch.jpg" alt="Baum Welch" class="img-responsive img-thumbnail"/></a>
+            <a href="http://www.codeskulptor.org/#user27_7K9mGZoYlt_18.py"><img class="img-responsive img-thumbnail" src="pics/RiceRocks.jpg" alt="Rice Rocks" /></a>
+
+
+          </div>
+          <div class="col-md-4">
+            <a href="thesis/slides.html"><img src="pics/cecmi_slides.jpg" alt="Math USM CECMI slides on HMM" class="img-responsive img-thumbnail"/></a>
+            <a href="https://github.com/moldovean/Leontief-Matrix"><img src="pics/leontief.jpg" class="img-responsive img-thumbnail" alt="Leontief Matrix for estimating the economic impact" /></a>
+
+
+          </div>
+          <div class="col-md-4">
+            <a href="https://github.com/moldovean/usm/blob/master/Fractals/Sherpinsky.ipynb"><img src="pics/fractal.jpg" class="img-responsive img-thumbnail" alt="fractal pic" /></a>
+            <a href="http://avrabie.blogspot.md/"><img class="img-responsive img-thumbnail" src="pics/oldblog.jpg" alt="Old blog of Adrian Vrabie" /></a>
+
+          </div>
+        </div>
+        <div class="row">
+
+
+        </div>
+      </div>
+
+      <!-- Contact Page -->
+      <div class="container-fluid content" id="Contact">
+        <div class="row">
+          <h1>Get in touch <i class="fa fa-paper-plane"></i></h1>
+        </div>
+        <div class="row">
+          <div class="col-xs-8">
+
+
+            <ul class="list-inline text-center">
+              <li><a href="https://twitter.com/adrianvrabie" ><h2> <i class="fa fa-twitter"></i> </h2></a></li>
+              <li><a href="http://stackoverflow.com/users/959876/moldovean"><h2><i class="fa fa-stack-overflow"></i></h2></a></li>
+              <li><a href="http://github.com/moldovean"><h2><i class="fa fa-fw fa-github"></i></h2></a></li>
+              <li><a href="https://www.facebook.com/avrabie"><h2><i class="fa fa-facebook"></i></h2> </a></li>
+              <li><a href="https://plus.google.com/+AdrianVrabie"><h2><i class="fa fa-google-plus"></i></h2> </a></li>
+            </ul>
+            <p >
+              <h4 class="text-center"> <i class="fa fa-paper-plane"></i> first-name@last-name.net</h4>
+            </p>
+
+
+            <div class="container-fluid">
+              <div class="row">
+                <h3>Or use this:</h3>
+
+                <form class="form-horizontal" action="https://formspree.io/adrian@vrabie.net" method="post">
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="email">Your Email:</label>
+                    <div class="col-sm-9">
+                      <input type="email" name="_replyto" class="form-control" id="email" placeholder="Enter your email address:">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="email-content">Message:</label>
+                    <div class="col-sm-9">
+                      <textarea name="email-content" class="form-control" rows="7" placeholder="Your message"></textarea>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3" for="name">Your Name:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="name" placeholder="What is your name?">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-3"> </label>
+                    <div class="col-sm-9">
+
+                      <button type="submit" class="btn btn-info">Send <i class="fa fa-paper-plane"></i></button>
+                    </div>
+
+                  </div>
+
+                </form>
+              </div>
+
+            </div>
+
+
+          </div>
+          <div class="col-md-4">
+            <script src="http://platform.twitter.com/widgets.js"></script>
+            <a class="twitter-timeline"  data-height="600" href="https://twitter.com/adrianvrabie">Tweets by adrianvrabie</a>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="container-fluid content" id="Publications">
+        <div class="row">
+          <h1>Publications <i class="fa fa-book"></i></h1>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <ul>
+              <li> <em>(forthcoming:)</em> A Vrabie <em>Methods in Estimating the State transition matrix in HMMs</em> International Scientific Conference Mathematics & IT: Research and Education MITRE-2016</li>
+              <li> A Vrabie <em>"Economic Growth and Education in Republic of Moldova: from Illusion to Reality"</em>,  <a href="http://ase.md/files/publicatii/economica/2012/ec_2012_1.pdf">Economica An XX nr 1 (79)</a>, March 2012, Academy of Economic Studies of Moldova pp 18-28 </li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="container-fluid" id="Footer" >
+    <div class="row" style="background-color:#5DBCD2">
+      <div class="" >
+        <p class="text-center" style="padding-top: 50px">
+          Created by Adrian Vrabie for <a href="http://freecodecamp.com">freeCodeCamp</a> 2016.
+          No: <i class="fa fa-copyright fa-spin"></i> So feel free to copy anything if you need!
+        </p>
+        <p>
+          Would appreciate your thoughts!
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+</html>
