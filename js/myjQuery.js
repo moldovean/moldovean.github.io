@@ -23,7 +23,7 @@ $(document).ready(function(){
       // Using jQuery's animate() method to add smooth page scroll
       $('html, body').animate({
         scrollTop: $(hash).offset().top
-      }, 800, function(){
+      }, 950, function(){
         // Add hash (#) to URL when done scrolling (default click behavior)
         //window.location.hash = hash;
       });
@@ -40,5 +40,14 @@ $(document).ready(function(){
   $("#myNavbar").css("background-color","#5DBCD2");
   //$("#myNavbar").addClass("navbar-inverse");
   $("#myNavbar").css("padding-bottom","7px");
+
+  $(".card").hover(function(){
+      $(this).find(".card-front").slideToggle(200);
+      $(this).find(".card-back").slideToggle(200);
+  },
+  function(){
+    $(this).find(".card-front").slideToggle(200);
+    $(this).find(".card-back").slideToggle(200);
+  });
 
 });

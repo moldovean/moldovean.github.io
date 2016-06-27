@@ -19,17 +19,6 @@
   <script src="js/myjQuery.js">  </script>
 
   <style media="screen">
-  #AboutMe {
-    background: url('https://static.pexels.com/photos/6248/desk-laptop-notebook-working.jpg');
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-attachment: fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-
-  }
 
   </style>
 </head>
@@ -79,12 +68,14 @@
 
           <div class="col-xs-8">
 
-            <p> Welcome! My name is Adrian Vrabie. I would like to share my interests for Data Science and Hidden Markov Models.</p>
+            <p class="well"> Welcome! My name is Adrian Vrabie. I would like to share my interests for Data Science and Hidden Markov Models.</p>
             <p class="well"> I consider myself fortunate to have enjoyed the works of Dmitrii Lozovanu on Markov Chains, Valentin Belousov on Quasigroups, Andrew Viterbi on Dynamic Programming and many others. All of them successfully humbled me, and I hope to help you find the beauty in them too.</p>
-            <p> Another part of me is an Economist by training. Economics is a social science that extensively uses the mathematics apparatus to provide plausible explanations. Ex: with few assumptions, Ecnomics can explain <em>why</em> the Baum-Welch algorithm, despite its applicability and insight, is less popular than the Viterbi algorithm.</p>
-            <p> Currently I am involved in the Energy sector: have been in the exploration phases of upstream petroleum and getting involved in lng terminals and logistics. </p>
-            <p> Before doing any calculations or modelling, I like getting an insider view and getting as much info as possible about the business in question.       </p>
-            <p> Although not as comprehensive as a <a href="files/cv/resume.html">CV</a>, I've put some info that holistically reflect the amalgam of my interests in Applied Mathematics, Programming and <em>Data Science</em>.</p>
+            <p class="well"> Another part of me is an Economist by training.
+              <small>Economics is a social science that extensively uses the mathematics apparatus to provide plausible explanations. Ex: with few assumptions, Economics can explain <em>why</em> the Baum-Welch algorithm, despite its applicability and insight, is less popular than the Viterbi algorithm.
+               Currently I am involved in the Energy sector: have been in the exploration phases of upstream petroleum and getting involved in lng terminals and logistics.</small>
+            </p>
+            <p class="well"> Before modelling, it is imperative for me to get some insider views and assess the <em>kernel</em> of each major project. </p>
+            <p class="well"> Although not as comprehensive as a <a href="files/cv/resume.html">CV</a>, I've put some info that holistically reflect the amalgam of my interests in Applied Mathematics, Programming and <em>Data Science</em>.</p>
           </div>
           <div class="col-xs-4">
             <img src="pics/me.jpg" class="img-responsive make-round-borders" >
@@ -95,7 +86,8 @@
         <div class="row">
           <div class="col-xs-8">
             <button class="btn btn-info btn-block" id="btn-interests">My Interests</button>
-            <ul id="interests-list">
+
+            <ul id="interests-list" class="well">
               <h2 class="text-primary" >Things I'm interested in  </h2>
               <li>Dynamic Stochastic Systems and Systems of Differential Equations
                 <ul>
@@ -160,9 +152,19 @@
 
           </div>
           <div class="col-md-4">
+
             <a href="thesis/slides.html"><img src="pics/cecmi_slides.jpg" alt="Math USM CECMI slides on HMM" class="img-responsive img-thumbnail"/></a>
             <a href="https://github.com/moldovean/Leontief-Matrix"><img src="pics/leontief.jpg" class="img-responsive img-thumbnail" alt="Leontief Matrix for estimating the economic impact" /></a>
 
+            <!-- testing -->
+            <div class="card">
+              <div class="card-front">
+                <img class="img-responsive img-thumbnail" src="https://pixabay.com/static/uploads/photo/2016/05/21/23/51/squirrel-1407699_960_720.jpg" />
+              </div>
+              <div class="collapse card-back">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Odio veniam dolorum eos nostrum voluptates minima expedita, quasi quaerat a dolorem quidem maiores ipsa molestias aspernatur explicabo esse nobis quam. Voluptatum?</p>
+              </div>
+            </div>
 
           </div>
           <div class="col-md-4">
@@ -252,7 +254,7 @@
         <div class="row">
           <div class="col-md-12">
             <ul>
-              <li> <em>(forthcoming:)</em> A Vrabie <em>Methods in Estimating the State transition matrix in HMMs</em> International Scientific Conference Mathematics & IT: Research and Education MITRE-2016</li>
+              <li> <em>(forthcoming:)</em> A Vrabie <em>Methods in Estimating the State transition matrix in HMMs</em> International Scientific Conference Mathematics & IT: Research and Education <a href="http://cecmi.usm.md/mitre/en/node/457">MITRE-2016</a> </li>
               <li> A Vrabie <em>"Economic Growth and Education in Republic of Moldova: from Illusion to Reality"</em>,  <a href="http://ase.md/files/publicatii/economica/2012/ec_2012_1.pdf">Economica An XX nr 1 (79)</a>, March 2012, Academy of Economic Studies of Moldova pp 18-28 </li>
 
             </ul>
