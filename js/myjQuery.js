@@ -1,7 +1,8 @@
+
 $(document).ready(function(){
   $("#Games a").attr("target","_blank");
   $("#Portfolio a").attr("target","_blank");
-  
+
   $("p").addClass("text-justify");
   //var test = $("#Footer p").html(); alert(test);
   $("#Footer p").removeClass("text-justify");
