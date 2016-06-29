@@ -6,22 +6,39 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     <script type="text/javascript">
 
-
       navigator.geolocation.getCurrentPosition(function(position){
         var posLat = position.coords.latitude;
         var posLon = position.coords.longitude;
         $("#lat").html(posLat);
         $("#long").html(posLon);
       });
-
-
+    </script>
+    <script type="text/javascript">
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: {
+          lat: 42.397,
+          lng: 31.644
+        },
+        zoom: 6
+      });
+      var infoWindow = new google.maps.InfoWindow({
+        map: map
+      });
+    };
     </script>
   </head>
   <body>
     <h1>Here you are:</h1>
 
-      Your Lat:<p id="lat"></p> <br>
-      Your longitude: <p id="long"></p>
+    Your Lat:<p id="lat"></p>
+    Your longitude: <p id="long"></p>
+    <h2>Map</h2>
+    <div id="map">
+      <script type="text/javascript" async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkUOdZ5y7hMm0yrcCQoCvLwzdM6M8s5qk&callback=initMap">
+      // this calls the map function and uses Key API
+      </script>
+    </div>
 
   </body>
 </html>
