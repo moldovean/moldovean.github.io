@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Using Navigator for Geolocation</title>
+    <script type="text/javascript">
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(function(position){
+        var posLat = position.coords.latitude;
+        var posLon = position.coords.longitude;
+        $("#lat").html(posLat);
+        $("#long").html(posLon);
+      });
+    }
+
+    </script>
+  </head>
+  <body>
+    <h1>Here you are:</h1>
+    <p id="demo">
+      Your Lat:<span id="lat"></span> <br>
+      Your longitude: <span id=long></span>
+    </p>
+  </body>
+</html>
