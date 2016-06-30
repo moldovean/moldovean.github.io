@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Random Quote Machine</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!-- Import jQuery -->
+    <script   src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $("#btnjson").on("click",function(){
+          $.getJSON("json/quotes.json",function(json){
+            var myHTML="";
+            myHTML=JSON.stringify(json);
+            $("#quotetext").html(myHTML);
+          });
+        });
+        $("#demo").on("click",function(){
+          $("#quotetext").html("It does change, actually!");
+        })
+
+      });
+    </script>
+
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-xs-6">
+          <h1 style="text-align: right;"><small>Nice and Simple</small></h1>
+        </div>
+        <div class="col-xs-6">
+          <h1>Random Quote Generator</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3">
+
+        </div>
+        <div class="col-xs-6">
+          <p>
+            Does this even work on python -m SimpleHTTPServer 8000
+          </p>
+          <p>
+            Our quote of the day from <span id="quote-author"><em>me</em></span>:
+          </p>
+          <p id="quotetext">
+            This is the place to put some meaningful platitudes! :D
+          </p>
+          <blockquote cite="http://google.com">
+            daaa!
+          </blockquote>
+        </div>
+        <div class="col-xs-3">
+
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3">
+
+        </div>
+        <div class="col-xs-6">
+
+          <button type="button" name="button" class="btn btn-info" id="quote-btn">Generate new</button>
+          <button type="button" name="button" class="btn btn-default" id="btnjson">Get Json!</button>
+          <button type="button" name="button" class="btn btn-default" id="demo">testing</button>
+        </div>
+        <div class="col-xs-3">
+
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </body>
+</html>
