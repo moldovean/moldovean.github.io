@@ -1,12 +1,52 @@
 {"quotes":[
   {
     "id": "1",
-    "quote": "If you're going to limit your dreams, at least tend them to infinity",
+    "quote": "If youre going to limit your dreams, at least tend them to infinity",
     "author": "internet"
   },
   {
     "id": "2",
     "quote": "If people don't believe Mathematics is simple, it is only because they do not realize how complicated life is.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "3",
+    "quote": "I'm not afraid of storms, for Im learning how to sail my ship.",
+    "author": "Louisa Alcott"
+  },
+  {
+    "id": "4",
+    "quote": "There's no sense in being precise when you don't even know what you're talking about.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "5",
+    "quote": "Anyone who attempts to generate random numbers by deterministic means is, of course, living in a state of sin.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "6",
+    "quote": "You insist that there is something a machine cannot do. If you tell me precisely what it is a machine cannot do, then I can always make a machine which will do just that.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "7",
+    "quote": "Computers are like humans - they do everything except think.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "8",
+    "quote": "There probably is a God. Many things are easier to explain if there is than if there isn't.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "9",
+    "quote": "Science, as well as technology, will in the near and in the farther future increasingly turn from problems of intensity, substance, and energy, to problems of structure, organization, information, and control.",
+    "author": "John von Neumann"
+  },
+  {
+    "id": "10",
+    "quote": "The total subject of mathematics is clearly too broad for any of us. I do not think that any mathematician since Gauss has covered it uniformly and fully; even Hilbert did not and all of us are of considerably lesser width quite apart from the question of depth than Hilbert.",
     "author": "John von Neumann"
   }
   ]

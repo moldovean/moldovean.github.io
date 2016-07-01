@@ -3,54 +3,49 @@
   <head>
     <meta charset="utf-8">
     <title>Random Quote Machine</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <!-- Import jQuery -->
-    <script   src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
-    <script type="text/javascript">
-      $(document).ready(function(){
-        $("#btnjson").on("click",function(){
-          $.getJSON("json/quotes.json",function(json){
-            var myHTML="";
-            myHTML=JSON.stringify(json);
-            $("#quotetext").html(myHTML);
-          });
-        });
-        $("#demo").on("click",function(){
-          $("#quotetext").html("It does change, actually!");
-        })
+    <!-- Latest compiled and minified CSS
+    for production
 
-      });
-    </script>
+    -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://use.fontawesome.com/22245d07b6.js"></script>
+
+    <script   src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/ui/jquery-ui-git.js"> </script>
+
+    <script type="text/javascript" src="randomQuote.js"> </script>
 
   </head>
-  <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-xs-6">
-          <h1 style="text-align: right;"><small>Nice and Simple</small></h1>
+  <body class="color-me">
+    <div class="container-fluid" >
+      <div class="row" id="head" >
+        <div class="col-xs-6" >
+          <h2 style="text-align: right;">Math Quote Generator</h2>
         </div>
         <div class="col-xs-6">
-          <h1>Random Quote Generator</h1>
+          <h2><small>keep it simple, stupid</small></h2>
         </div>
+
       </div>
-      <div class="row">
+
+      <div class="row" id="main-content" >
         <div class="col-xs-3">
 
         </div>
         <div class="col-xs-6">
-          <p>
-            Does this even work on python -m SimpleHTTPServer 8000
-          </p>
-          <p>
-            Our quote of the day from <span id="quote-author"><em>me</em></span>:
-          </p>
-          <p id="quotetext">
-            This is the place to put some meaningful platitudes! :D
-          </p>
-          <blockquote cite="http://google.com">
-            daaa!
+
+        <div class="jumbotron" id="myTV">
+          <a id="twitter" href="#"><i class="fa fa-twitter-square fa-3x" aria-hidden="true" > </i></a>
+          <h5><i class="fa fa-quote-left"></i></h5>
+
+          <blockquote >
+            <span id="quote-text">This is the best place to get inspired with meaningles platitudes!</span>
+            <h5 style="text-align: right"><i class="fa fa-quote-right"></i></h5>
+            <h3><footer style="text-align: right" class="quote-author">me</footer></h3>
           </blockquote>
+
+        </div>
+
         </div>
         <div class="col-xs-3">
 
@@ -62,9 +57,9 @@
         </div>
         <div class="col-xs-6">
 
-          <button type="button" name="button" class="btn btn-info" id="quote-btn">Generate new</button>
-          <button type="button" name="button" class="btn btn-default" id="btnjson">Get Json!</button>
-          <button type="button" name="button" class="btn btn-default" id="demo">testing</button>
+          <button type="button" name="button" class="btn btn-info" id="quote-btn">Start Quote Generation</button>
+
+
         </div>
         <div class="col-xs-3">
 
