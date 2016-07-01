@@ -14,7 +14,7 @@ $(document).ready(function(){
 
 
   $("#quote-btn").on("click",function(){
-    $.getJSON("/json/quotes.json",function(json){
+    $.getJSON("http://moldovean.github.io/apps/quote/json/quotes.json",function(json){
       var myHTML="";
       var quoteNr = Math.floor(Math.random()*10);
       myHTML += json.quotes[quoteNr].quote;
