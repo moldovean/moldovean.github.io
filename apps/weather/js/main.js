@@ -38,7 +38,9 @@ $(document).ready(function(){
       $("#location").html("<img src='"+"http://openweathermap.org/img/w/"+data.weather[0].icon+".png"+"'>"+data.sys.country+", "+data.name);
       $("#humidity").html("<i class='wi wi-humidity'></i> "+data.main.humidity);
       $("#pressure").html("<i class='wi wi-barometer'></i> "+data.main.pressure+ " hPa");
-      $("#visibility").html("Visibility: "+data.visibility + " m");
+
+      if(data.visibility !=undefined) $("#visibility").html(", Visibility: "+data.visibility + " m");
+      else $("#visibility").html("");
 
       var windHTML = "Wind speed: "+data.wind.speed+ " m/s ";
       if(data.wind.deg != "") windHTML+=" direction "+data.wind.deg+"&deg";
