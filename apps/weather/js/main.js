@@ -10,6 +10,7 @@ function errorPosition(){
 
 $(document).ready(function(){
 
+  $("#getWeather").on("click",function(){location.reload();});
 
   $("h1").css('text-align','center');
   $("*").css('text-align','center');
@@ -19,7 +20,7 @@ $(document).ready(function(){
     navigator.geolocation.getCurrentPosition(function(position){
       Geo.lat = position.coords.latitude;
       Geo.lng = position.coords.longitude;
-      $("#position").html("Lat: "+Math.round(Geo.lat*100)/100+ " Long: "+ Math.round(Geo.lng*100)/100);
+      $("#position").html("<i class='fa fa-crosshairs'></i> Lat: "+Math.round(Geo.lat*10000)/10000+ " Lng: "+ Math.round(Geo.lng*10000)/10000);
       resolve(Geo);
     }, errorPosition);
   });
@@ -33,16 +34,19 @@ $(document).ready(function(){
     });
     reqWeatherData.then(function(data){
       //$("#demo").html(JSON.stringify(data));
-      $("#temperature").html("<i class='wi wi-thermometer'></i> "+Math.round((data.main.temp-273.15)*10)/10 +" <i class='wi wi-celsius'></i>");
+      $("#temperature").html("<i class='wi wi-thermometer'></i> "+Math.round((data.main.temp-273.15)*10)/10 +" <i class='wi wi-celsius'></i>, "+"<i class='wi wi-humidity'></i> "+data.main.humidity+"%");
       $("#location").html("<img src='"+"http://openweathermap.org/img/w/"+data.weather[0].icon+".png"+"'>"+data.sys.country+", "+data.name);
       $("#humidity").html("<i class='wi wi-humidity'></i> "+data.main.humidity);
-      $("#pressure").html("<i class='wi wi-barometer'></i> "+data.main.pressure);
-      $("#visibility").html("Visibility: "+data.visibility + " feet");
-      $("#wind").html("Wind speed: "+data.wind.speed);
-      skyHTML=""+ ": "+data.weather[0].description+ " No: "+data.clouds.all;
+      $("#pressure").html("<i class='wi wi-barometer'></i> "+data.main.pressure+ " hPa");
+      $("#visibility").html("Visibility: "+data.visibility + " m");
+
+      var windHTML = "Wind speed: "+data.wind.speed+ " m/s ";
+      if(data.wind.deg != "") windHTML+=" direction "+data.wind.deg+"&deg";
+      $("#wind").html(windHTML);
+      skyHTML=""+ ": "+data.weather[0].description+ ", Cloudiness "+data.clouds.all+"%";
 
       reqWeatherIcons = new Promise(function(resolve, reject){
-        weatherIcons = $.getJSON("https://gist.githubusercontent.com/tbranyen/62d974681dea8ee0caa1/raw/3405bfb2a76b7cbd90fde33d8536f0cd13706955/icons.json");
+        weatherIcons = $.getJSON("js/icons.json");
         resolve(weatherIcons);
       });
       reqWeatherIcons.then(function(weatherIcons){
@@ -60,14 +64,10 @@ $(document).ready(function(){
       }, function(reject){});
 
 
-
     }, function(reject){});
 
 
   },function(reject){});
-
-
-
 
 
 
