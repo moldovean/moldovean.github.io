@@ -1,3 +1,23 @@
-p: {
-  font-size: 1.5em;
+
+.main-site {
+/*
+
+  background: radial-gradient(farthest-corner at 70% 75%, #b5b2c2, #81daff, #022a5a); /* Standard syntax */
+  background: linear-gradient(to bottom, rgb(12, 22, 38) 9%, rgb(116, 143, 180) 59%, rgb(42, 63, 103) 95%);
+  /* http://gradientfinder.com/ */
+
+}
+
+.TV {
+
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  border-radius: 5px;
+  margin-top: 1%;
+  margin-bottom: 5%;
 }
