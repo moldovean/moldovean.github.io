@@ -1,9 +1,10 @@
 
-.main-site {
+.body {
 /*
 
   background: radial-gradient(farthest-corner at 70% 75%, #b5b2c2, #81daff, #022a5a); /* Standard syntax */
-  background: linear-gradient(to bottom, rgb(12, 22, 38) 9%, rgb(116, 143, 180) 59%, rgb(42, 63, 103) 95%);
+  background: linear-gradient(to bottom, rgb(12, 22, 38) 9%, rgb(116, 143, 180) 59%, rgb(42, 63, 103) 100%);
+
   /* http://gradientfinder.com/ */
 
 }

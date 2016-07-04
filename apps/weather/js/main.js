@@ -60,7 +60,7 @@ $(document).ready(function(){
               icon = 'night-' + icon;
               $("h3, h2, h1, p").css("color","white");
               $(".TV").css("background","url('https://static.pexels.com/photos/36487/above-adventure-aerial-air.jpg')");
-              $(".main-site").css("background","linear-gradient(to bottom, rgb(12, 22, 38) 9%, rgb(116, 143, 180) 59%, rgb(42, 63, 103) 95%)");
+              $("body").css("background","linear-gradient(to bottom, rgb(12, 22, 38) 9%, rgb(116, 143, 180) 59%, rgb(42, 63, 103) 95%)");
               $(".TV-info").css("background","#000000");
 
 
@@ -69,11 +69,11 @@ $(document).ready(function(){
               icon = 'day-' + icon;
               $("h3, h2, h1, p").css("color","black");
               $(".TV").css("background","url('https://static.pexels.com/photos/53594/blue-clouds-day-fluffy-53594.jpeg')");
-              $(".main-site").css("background","linear-gradient(179deg, rgb(182, 206, 246) 0%, rgb(67, 111, 171) 80%, rgb(103, 116, 141) 100%)");
+              $("body").css("background","linear-gradient(179deg, rgb(182, 206, 246) 0%, rgb(67, 111, 171) 80%, rgb(103, 116, 141) 100%)");
               $(".TV-info").css("background","#ffffff");
 
               // testing .. delete in production
-              
+
 
             }
           };
