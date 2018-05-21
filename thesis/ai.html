@@ -35,7 +35,6 @@
     <div class="slides">
 
 
-
         <!-- Slide Intro and Contents -->
         <section>
             <!-- Name -->
@@ -56,8 +55,8 @@
                     <li> Introduction to OLS</li>
                     <li> Logistic Regression</li>
                     <li> The Feed Forward Neural Networks</li>
-                    <li> Discrete State Markov Chains</li>
                     <hr/>
+                    <li> Discrete State Markov Chains</li>
                     <li> Workshop on Neural Networks</li>
                     <li> Feed Forward</li>
                     <li> Continuous State Space Markov Chains</li>
@@ -118,6 +117,8 @@
 
         </section>
 
+
+        <!--OLS-->
         <section>
             <!-- OLS -->
             <section>
@@ -133,20 +134,200 @@
                 <h3>Correlatioin</h3>
                 <p> What is correlation? </p>
                 <p class="fragment">$$\rho = \frac{\text{cov}(X,Y)}{\sigma_x \sigma_y}$$</p>
-                <p class="fragment" > What is Covariance? / SD? </p>
-                <p class="fragment">$$E[(x_i - \overline{x})(y_i - \overline{y})] = \frac{1}{n} \sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})$$</p>
+                <p class="fragment"> What is Covariance? / SD? </p>
+                <p class="fragment">$$E[(x_i - \overline{x})(y_i - \overline{y})] = \frac{1}{n} \sum_{i=1}^{n} (x_i -
+                    \overline{x})(y_i - \overline{y})$$</p>
                 <p class="fragment">$$r = \frac{{}\sum_{i=1}^{n} (x_i - \overline{x})(y_i - \overline{y})}
                     {\sqrt{\sum_{i=1}^{n} (x_i - \overline{x})^2(y_i - \overline{y})^2}}$$</p>
 
             </section>
+            <section>
+                <p>$$Y_i = \beta_0 + \beta_1 X_1i \epsilon_i$$</p>
+                <p>$$Y_i = \beta_0 + \beta_1 X_1i + \beta_2 X_2i \epsilon_i$$</p>
+                <p>Estimation:</p>
+                <p>$$\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i + \hat{\epsilon}_i$$</p>
+            </section>
+
 
             <section>
                 <iframe class="stretch" src="http://setosa.io/ev/ordinary-least-squares-regression/"></iframe>
 
             </section>
+
+            <section>
+                <h3>Gradient Descent Panacea</h3>
+
+            </section>
+
         </section>
 
-        <!-- Introduction Presentation -->
+
+        <!--History of Ai-->
+        <section>
+
+            <section>
+                <h3>Walter Pitts & McCulloch</h3>
+                <ol>
+                    <li class="fragment"> Seminal Paper: "A Logical Calculus of Ideas Immanent in Nervous Activity"
+                        (1943) Walter Pitts & McCulloch, Bulletin of Mathematical Biophysics.
+                    </li>
+
+                    <ul>
+                        <li class="fragment"> Fresh from reading a new paper by Alan Turing which proved the possibility
+                            of a machine that could compute any function
+                        </li>
+                        <li class="fragment"> McCulloch became convinced that the brain was just such a machine</li>
+                        <li class="fragment"> Introduced the so-called perceptron (neuron), known as McCulloch–Pitts <a
+                                href="https://en.wikipedia.org/wiki/Artificial_neuron">(MCP) neuron</a></li>
+
+                    </ul>
+
+                </ol>
+            </section>
+
+            <section>
+                <h3>History of AI</h3>
+                <p><i>"we know how we know..."</i></p>
+                <ul>
+                    <li class="fragment"> Principa Matematica by Russell and Whitehead</li>
+                    <ul>
+                        <li class="fragment">all of mathematics could be built from the ground up using basic,
+                            indisputable logic
+                        </li>
+                    </ul>
+                    <li class="fragment">Walter Pitts b. 1923 & Warren Sturgis McCulloch b. 1898</li>
+                    <ol>
+                        <li class="fragment"> Principa Matematica: 3 days for Pitts at age 12</li>
+                        <li class="fragment"> At 15 Pitts finds out Russell is coming to U. of Chicago, runs away from
+                            home
+                        </li>
+                        <li class="fragment"> meets Jerome Lettvin during Math classes</li>
+                        <li class="fragment"> Jerome Lettvin - introduces Pitts to McCulloch</li>
+                    </ol>
+                </ul>
+            </section>
+
+            <section>
+                <h3>History of AI</h3>
+                <p><i>"we know how we know..."</i></p>
+                <p>McCulloch is fascinated by Pitts. They both shared the passion for Principa Matematica.
+                    Pitts helps McCulloch formalize the myriad of his ideas into rigurous mathematical functions.</p>
+                <p class="fragment">McCulloch had very crisp ideas how a neuron might function but lacked the
+                    mathematical skills.</p>
+                <p class="fragment">McCulloch invites Pitts to move with his family.</p>
+                <p class="fragment"> Seminal Paper: "A Logical Calculus of Ideas Immanent in Nervous Activity" (1943)
+                    Walter Pitts & McCulloch, Bulletin of Mathematical Biophysics.</p>
+
+            </section>
+
+            <section>
+                <h3> yet more events: </h3>
+                <ol>
+                    <li>Lettvin brought Pitts to: Norbert Wiener at MIT</li>
+                    <li>They did not even introduce over small talk... straight to math</li>
+                    <li>Wiener would later write that Pitts was “without question the strongest young scientist whom I
+                        have ever met..."
+                    </li>
+                </ol>
+                <p class="fragment">Wiener figured that if Pitts was going to make a realistic model of the brain’s 100
+                    billion interconnected neurons, he was going to need statistics on his side. And statistics and
+                    probability theory were Wiener’s area of expertise. </p>
+            </section>
+
+            <section>
+                <p> His work with Wiener was :</p>
+                <p class="fragment"> “to constitute the first adequate discussion of statistical mechanics, understood
+                    in the most general possible sense, so that it includes for example the problem of deriving the
+                    psychological, or statistical, laws of behavior from the microscopic laws of neurophysiology …
+                    Doesn’t it sound fine?”</p>
+            </section>
+
+            <section>
+                <h3> Pitts goes to Princeton: </h3>
+                <p class="fragment"> John von Neumann meets Pitts </p>
+                <p class="fragment"> ... equally impressed</p>
+                <p class="fragment">The following June, 1945, von Neumann penned what would become a historic document
+                    entitled “First Draft of a Report on the EDVAC,” the first published description of a stored-program
+                    binary computing machine—the modern computer.</p>
+            </section>
+
+            <section>
+                <h3>The modern computer arhitecture </h3>
+                <p> To accomplish this, von Neumann suggested modeling the computer after Pitts and McCulloch’s neural
+                    networks. In place of neurons, he suggested vacuum tubes, which would serve as logic gates, and by
+                    stringing them together exactly as Pitts and McCulloch had discovered, you could carry out any
+                    computation. To store the programs as data, the computer would need something new: a memory. That’s
+                    where Pitts’ loops came into play. “An element which stimulates itself will hold a stimulus
+                    indefinitely,” von Neumann wrote in his report, echoing Pitts and employing his modulo mathematics.
+                    He detailed every aspect of this new computational architecture. In the entire report, he cited only
+                    a single paper: “A Logical Calculus” by McCulloch and Pitts. </p>
+            </section>
+
+            <section>
+                <h3>Seminal Papers: </h3>
+                <li>"What the Frog's Eye Tells the Frog's Brain" (1959) Pitts & Lettvin</li>
+                <ul>
+                    <li> one of the most cited papers in the Science Citation Index</li>
+                    <li> McCulloch, Humberto Maturana, Oliver Selfridge also contributed</li>
+                </ul>
+            </section>
+
+            <section>
+                <h4>The first AI group</h4>
+                <ul>
+                    <li>
+                        A group was established with Wiener, Pitts, McCulloch, Lettvin, and John von Neumann.
+                    </li>
+                    <li>
+                        <ul>
+                            <li> Wiener's wife did not like Mcculloch and his promiscuous nature</li>
+                            <li> Pitts started work on a dissertation on the properties of neural nets connected in
+                                three
+                                dimensions...
+                            </li>
+                            <li> Lettvin described Pitts as "in no uncertain sense the genius of the group … when you
+                                asked him a question, you would get back a whole textbook".
+                            </li>
+                            <li> McCulloch : promiscuous -> invented LISP programming language</li>
+                            <li> Lettvin : vocal and politically active, against the use of LCD and other recreational
+                                drugs, IG Nobel Prize winner
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </section>
+
+        </section>
+
+
+        <!--BackPropagation-->
+        <section>
+            <section>
+                <h1>What is a neuron</h1>
+                <p>$$z_j = b_j + \sum_i a_i w_{ij}$$</p>
+                <p>$$ h_ \theta (x) =  \frac{\mathrm{1} }{\mathrm{1} + e^{- z_j} }  $$ </p>
+                <p>$$\theta = \{\mathbf{W},\mathbf{b}\}$$</p>
+                
+            </section>
+
+            <section>
+                <div style="background: white">
+                    <img src="https://i.stack.imgur.com/76Kuo.png" alt="enter image description here">
+                </div>
+            </section>
+
+            <section>
+                <p>we need to find the rate of change of the error with respect to the change in weight for a given weight.</p>
+                <p>$$E_k = \frac{1}{2} (d - y_k)^2 $$</p>
+                <p>$$V_L = \sum\limits_{A,B \epsilon S} w_{ABmn} y_{Am} $$</p>
+                <p>$$y_L = \sigma(V_L) $$</p>
+                <p>$$\Delta w = - \eta \frac{\partial E_k}{\partial w_{ABmn}} $$</p>
+            </section>
+
+        </section>
+
+
+        <!-- Markov Chains -->
         <section>
             <section>
                 <h1>Why study Markov Chains? </h1>
@@ -161,10 +342,9 @@
                 <p> Markovian processes are used in:
                 <ul>
                     <li> algorithmic music composition</li>
-                    <li><a href="https://en.wikipedia.org/wiki/PageRank"> google search engine </a></li>
+                    <li><a href="https://en.wikipedia.org/wiki/PageRank"> google search engine (Page Rank) </a></li>
                     <li> asset pricing models</li>
                     <li> information processing</li>
-                    <li> machine learning</li>
                     <li> computer malware detection</li>
                     <li> speech recognition</li>
                     <li> nucleotide sequencing</li>
